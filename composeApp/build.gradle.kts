@@ -1,8 +1,6 @@
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
-import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
-import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask
 
 plugins {
@@ -17,6 +15,8 @@ plugins {
 //    alias(libs.plugins.kotlin.parcelize)
     id("kotlin-parcelize") // add this
     id("kotlin-kapt") // add this
+    alias(libs.plugins.room)
+
 //    id("com.google.devtools.ksp")
 //    alias(libs.plugins.screenshot)
 }
@@ -106,6 +106,8 @@ kotlin {
 
             //// Room Libraries
             implementation(libs.room.runtime)
+            implementation(libs.room.runtime)
+            implementation(libs.sqlite.bundled)
 //            implementation(libs.room.ktx)
 ////            ksp(libs.room.compiler)
 
@@ -196,6 +198,12 @@ dependencies {
     add("kspIosX64", libs.koin.ksp.compiler)
     add("kspIosArm64", libs.koin.ksp.compiler)
     add("kspIosSimulatorArm64", libs.koin.ksp.compiler)
+
+    add("kspAndroid", libs.room.compiler)
+    add("kspDesktop", libs.room.compiler)
+    add("kspIosSimulatorArm64", libs.room.compiler)
+    add("kspIosX64", libs.room.compiler)
+    add("kspIosArm64", libs.room.compiler)
 }
 
 // Trigger Common Metadata Generation from Native tasks
@@ -203,6 +211,15 @@ project.tasks.withType(KotlinCompilationTask::class.java).configureEach {
     if(name != "kspCommonMainKotlinMetadata") {
         dependsOn("kspCommonMainKotlinMetadata")
     }
+}
+
+// Desktop depends on Android Coroutines and crashes otherwise
+configurations.named("desktopMainApi") {
+    exclude(group = "org.jetbrains.kotlinx", module = "kotlinx-coroutines-android")
+}
+
+room {
+    schemaDirectory("$projectDir/schemas")
 }
 
 // Use KoinViewModel annotation with multiplatform support
@@ -219,9 +236,5 @@ compose.desktop {
             packageName = "com.isao.yfoo3"
             packageVersion = "1.0.0"
         }
-    }
-
-    configurations.commonMainApi {
-        exclude(group = "org.jetbrains.kotlinx", module = "kotlinx-coroutines-android")
     }
 }

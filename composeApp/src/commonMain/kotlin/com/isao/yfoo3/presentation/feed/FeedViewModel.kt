@@ -2,18 +2,16 @@ package com.isao.yfoo3.presentation.feed
 
 
 import com.isao.yfoo3.core.MviViewModel
-import com.isao.yfoo3.core.extensions.resultOf
-import com.isao.yfoo3.domain.model.FeedImage
-import com.isao.yfoo3.domain.model.ImageSource
+import com.isao.yfoo3.domain.usecase.DeleteFeedImageUseCase
+import com.isao.yfoo3.domain.usecase.GetFeedImagesUseCase
+import com.isao.yfoo3.domain.usecase.LikeImageUseCase
 import com.isao.yfoo3.presentation.feed.mapper.toPresentationModel
 import com.isao.yfoo3.presentation.feed.model.FeedItemDisplayable
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onStart
 import org.koin.android.annotation.KoinViewModel
-import org.koin.core.annotation.Single
 
 
 @KoinViewModel
@@ -92,37 +90,5 @@ class FeedViewModel(
             .onFailure {
                 emit(FeedPartialState.Error(it))
             }
-    }
-}
-@Single
-class LikeImageUseCase {
-    operator fun invoke(any: Any): Result<Unit> {
-        return resultOf {
-            Unit
-        }
-    }
-}
-@Single
-class DeleteFeedImageUseCase {
-    operator fun invoke(any: Any): Result<Unit> {
-        return resultOf {
-            Unit
-        }
-    }
-}
-@Single
-class GetFeedImagesUseCase {
-    operator fun invoke(): Flow<Result<List<FeedImage>>> {
-        return flowOf(
-            resultOf {
-                List(20) {
-                    FeedImage(
-                        id = (1001 + it).toString(),
-                        imageId = (1001 + it).toString(),
-                        source = ImageSource.THIS_NIGHT_SKY_DOES_NOT_EXIST
-                    )
-                }
-            }
-        )
     }
 }

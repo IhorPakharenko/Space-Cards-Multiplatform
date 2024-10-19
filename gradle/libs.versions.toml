@@ -54,6 +54,7 @@ mockk = "1.13.12"
 kotestAssertionsAndroid = "1.1.1"
 screenshot = "0.0.1-alpha07"
 uiToolingPreviewAndroid = "1.7.4"
+sqlite = "2.5.0-alpha10"
 
 
 
@@ -151,6 +152,7 @@ coil = { module = "io.coil-kt.coil3:coil", version.ref = "coil" }
 coil-network-ktor = { module = "io.coil-kt.coil3:coil-network-ktor3", version.ref = "coil" }
 coil_compose = { module = "io.coil-kt.coil3:coil-compose", version.ref = "coil" }
 coil_compose_core = { module = "io.coil-kt.coil3:coil-compose-core", version.ref = "coil" }
+sqlite-bundled = { module = "androidx.sqlite:sqlite-bundled", version.ref = "sqlite" }
 
 [bundles]
 ktor-common = ["ktor-client-core", "ktor-client-json", "ktor-client-logging", "ktor-client-serialization", "ktor-client-content-negotiation", "ktor-serialization-kotlinx-json"]

@@ -3,12 +3,10 @@ package com.isao.yfoo3.core
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.WindowCompat
-import com.google.accompanist.drawablepainter.rememberDrawablePainter
 import com.isao.yfoo3.App
 import com.isao.yfoo3.core.theme.Yfoo2ThemeAndroid
 import com.isao.yfoo3.core.utils.SplashScreenHost
