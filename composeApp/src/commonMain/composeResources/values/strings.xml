@@ -1,0 +1,13 @@
+<resources>
+    <string name="app_name">Yfoo3</string>
+    <string name="feed">Feed</string>
+    <string name="liked">Liked</string>
+    <string name="like">Like</string>
+    <string name="nope">Nope</string>
+    <string name="nothing_is_there_yet">Nothing is there yet!</string>
+    <string name="something_went_wrong">Something went wrong</string>
+    <string name="loading">loading</string>
+    <string name="added">Added</string>
+    <string name="image_by">Image by %1$s</string>
+    <string name="delete">Delete</string>
+</resources>
