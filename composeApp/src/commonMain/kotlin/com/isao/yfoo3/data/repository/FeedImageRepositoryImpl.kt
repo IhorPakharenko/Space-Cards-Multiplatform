@@ -10,6 +10,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import org.koin.core.annotation.Single
+import kotlin.random.Random
 
 @Single(binds = [FeedImageRepository::class])
 class FeedImageRepositoryImpl(
@@ -47,7 +48,7 @@ class FeedImageRepositoryImpl(
             // Disable adding new images by This Waifu Does Not Exist for now.
             // Right now, their quality contrasts too much with other sources and the app itself.
             val source = (ImageSource.entries - ImageSource.THIS_WAIFU_DOES_NOT_EXIST).random()
-            val imageId = source.getRandomImageId()
+            val imageId = source.getRandomImageId(Random)
             insertedRowId = feedImageDao.saveFeedImage(
                 FeedImage(
                     id = "${source}_$imageId",

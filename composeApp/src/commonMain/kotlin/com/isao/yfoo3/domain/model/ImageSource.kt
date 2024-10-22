@@ -27,9 +27,9 @@ enum class ImageSource {
         THIS_NIGHT_SKY_DOES_NOT_EXIST -> "https://firebasestorage.googleapis.com/v0/b/thisnightskydoesnotexist.appspot.com/o/images%2Fseed$imageId.jpg?alt=media"
     }
 
-    fun getRandomImageId() = when (this) {
-        THIS_WAIFU_DOES_NOT_EXIST -> Random.nextInt(100000 + 1).toString()
-        THESE_CATS_DO_NOT_EXIST -> Random.nextInt(8000 + 1).toString()
-        THIS_NIGHT_SKY_DOES_NOT_EXIST -> Random.nextInt(1000, 5000 + 1).toString()
+    fun getRandomImageId(random: Random) = when (this) {
+        THIS_WAIFU_DOES_NOT_EXIST -> random.nextInt(100000 + 1).toString()
+        THESE_CATS_DO_NOT_EXIST -> random.nextInt(8000 + 1).toString()
+        THIS_NIGHT_SKY_DOES_NOT_EXIST -> random.nextInt(1000, 5000 + 1).toString()
     }
 }

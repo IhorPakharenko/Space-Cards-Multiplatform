@@ -1,5 +1,5 @@
 [versions]
-agp = "8.2.2"
+agp = "8.7.1"
 android-compileSdk = "34"
 android-minSdk = "24"
 android-targetSdk = "34"
@@ -126,11 +126,13 @@ kotlin-reflect = { group = "org.jetbrains.kotlin", name = "kotlin-reflect", vers
 kotest-runner-junit5 = { group = "io.kotest", name = "kotest-runner-junit5", version.ref = "kotest" }
 kotest-assertions-core = { group = "io.kotest", name = "kotest-assertions-core", version.ref = "kotest" }
 kotest-framework-datatest = { group = "io.kotest", name = "kotest-framework-datatest", version.ref = "kotest" }
+kotest-framework-engine = { group = "io.kotest", name = "kotest-framework-engine", version.ref = "kotest" }
 kotest-extensions-android = { group = "br.com.colman", name = "kotest-extensions-android", version.ref = "kotestAndroid" }
 kotest-extensions-koin = { group = "io.kotest.extensions", name = "kotest-extensions-koin", version.ref = "kotestKoin" }
 turbine = { group = "app.cash.turbine", name = "turbine", version.ref = "turbine" }
 mockk-android = { group = "io.mockk", name = "mockk-android", version.ref = "mockk" }
 mockk-agent = { group = "io.mockk", name = "mockk-agent", version.ref = "mockk" }
+mockk = { group = "io.mockk", name = "mockk", version.ref = "mockk" }
 kotest-assertions-android = { group = "br.com.colman", name = "kotest-assertions-android", version.ref = "kotestAssertionsAndroid" }
 androidx-ui-tooling-preview-android = { group = "androidx.compose.ui", name = "ui-tooling-preview-android", version.ref = "uiToolingPreviewAndroid" }
 
@@ -172,3 +174,4 @@ ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 kotlin-parcelize = { id = "org.jetbrains.kotlin.plugin.parcelize", version.ref = "kotlin" }
 screenshot = { id = "com.android.compose.screenshot", version.ref = "screenshot" }
 room = { id = "androidx.room", version.ref = "room" }
+kotest-multiplatform = { id = "io.kotest.multiplatform", version.ref = "kotest" }

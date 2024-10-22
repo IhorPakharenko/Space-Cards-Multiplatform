@@ -8,7 +8,7 @@ sealed class LikedPartialState {
 
     data class Error(val throwable: Throwable) : LikedPartialState()
 
-    object Loading : LikedPartialState()
+    data object Loading : LikedPartialState()
 
     data class Sorted(val shouldSortAscending: Boolean) : LikedPartialState()
 }

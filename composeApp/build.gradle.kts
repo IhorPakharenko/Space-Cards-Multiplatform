@@ -1,6 +1,7 @@
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSetTree
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask
 
 plugins {
@@ -14,8 +15,11 @@ plugins {
     alias(libs.plugins.ksp)
 //    alias(libs.plugins.kotlin.parcelize)
     id("kotlin-parcelize") // add this
-    id("kotlin-kapt") // add this
+//    id("kotlin-kapt") // add this
     alias(libs.plugins.room)
+
+    alias(libs.plugins.screenshot)
+    alias(libs.plugins.kotest.multiplatform)
 
 //    id("com.google.devtools.ksp")
 //    alias(libs.plugins.screenshot)
@@ -47,6 +51,8 @@ kotlin {
         compilerOptions {
             jvmTarget.set(JvmTarget.JVM_11)
         }
+        @OptIn(ExperimentalKotlinGradlePluginApi::class)
+        instrumentedTestVariant.sourceSetTree.set(KotlinSourceSetTree.test)
     }
     
     jvm("desktop")
@@ -64,6 +70,7 @@ kotlin {
     
     sourceSets {
         val desktopMain by getting
+        val desktopTest by getting
         
         androidMain.dependencies {
             implementation(compose.preview)
@@ -71,6 +78,8 @@ kotlin {
             implementation(libs.koin.android)
             implementation(libs.androidx.core.splashscreen)
             implementation(libs.ktor.client.android)
+
+//            screenshotTestImplementation(libs.compose.ui.tooling)
         }
         commonMain.dependencies {
             implementation(compose.runtime)
@@ -81,26 +90,10 @@ kotlin {
             implementation(compose.components.resources)
             implementation(compose.components.uiToolingPreview)
             implementation(libs.androidx.lifecycle.viewmodel)
-////            implementation("org.jetbrains.androidx.lifecycle:lifecycle-viewmodel-compose:2.8.3")
             implementation(libs.androidx.lifecycle.runtime.compose)
-
-
-//            implementation(libs.androidx.core.ktx)
-//            implementation(libs.androidx.lifecycle.runtime)
-////            implementation(libs.androidx.lifecycle.runtime.compose)
-//            implementation(libs.compose.ui)
-//            implementation(libs.compose.animation)
-//            implementation(libs.compose.ui.tooling.preview)
-//            implementation(libs.compose.material3)
-//            implementation(libs.compose.material)
-//            implementation(libs.compose.material.icons.extended)
-//            implementation(libs.coil.compose)
-//            implementation("io.coil-kt.coil3:coil:3.0.0-rc01")
-//            implementation("io.coil-kt.coil3:coil-network-ktor3:3.0.0-rc01")
             implementation(libs.ktor.client.core)
             implementation(libs.coil.compose)
             implementation(libs.coil.network.ktor)
-////            implementation(libs.accompanist.navigation.animation)
             implementation(libs.accompanist.placeholder.material)
             implementation(libs.accompanist.drawablepainter)
 
@@ -108,27 +101,16 @@ kotlin {
             implementation(libs.room.runtime)
             implementation(libs.room.runtime)
             implementation(libs.sqlite.bundled)
-//            implementation(libs.room.ktx)
-////            ksp(libs.room.compiler)
 
             //// Koin Libraries
             implementation(libs.koin.core)
             implementation(libs.koin.core.coroutines)
             implementation(libs.koin.compose.viewmodel)
-////            implementation(libs.koin.compose)
-////            implementation(libs.koin.compose.navigation)
             implementation("org.jetbrains.androidx.navigation:navigation-compose:2.7.0-alpha07")
             api(libs.koin.annotations)
-////            ksp(libs.koin.ksp.compiler)
 
             //// Other Libraries
             implementation(libs.kotlinx.serialization.json)
-////            implementation(libs.retrofit.kotlinx.serialization.converter)
-//            implementation(libs.okhttp.logging.interceptor)
-//            implementation(libs.timber)
-////            implementation(libs.navigation.compose)
-////            coreLibraryDesugaring(libs.desugar.jdk.libs)
-////            lintChecks(libs.compose.lint.checks)
             implementation("co.touchlab:kermit:2.0.4")
             implementation("co.touchlab:kermit-koin:2.0.4")
             implementation(compose.materialIconsExtended)
@@ -136,7 +118,6 @@ kotlin {
             implementation(libs.coil.network.ktor)
             implementation(libs.koin.compose)
             implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.6.1")
-
         }
         desktopMain.dependencies {
             implementation(compose.desktop.currentOs)
@@ -144,9 +125,41 @@ kotlin {
             implementation(libs.ktor.client.java)
 
         }
-
         iosMain.dependencies {
             implementation(libs.ktor.client.darwin)
+        }
+
+        commonTest.dependencies {
+            implementation(libs.kotest.assertions.core)
+            implementation(libs.kotest.framework.engine)
+            implementation(libs.kotest.framework.datatest)
+            implementation(libs.kotest.extensions.koin)
+            implementation(libs.koin.test)
+            implementation(libs.turbine)
+
+            implementation(kotlin("test"))
+            @OptIn(org.jetbrains.compose.ExperimentalComposeLibrary::class)
+            implementation(compose.uiTest)
+        }
+        desktopTest.dependencies { //TODO is this the same as desktopTest?
+            implementation(libs.mockk)
+            implementation(libs.koin.test.junit5)
+            implementation(libs.kotest.runner.junit5)
+            implementation(compose.desktop.currentOs)
+        }
+        androidUnitTest.dependencies {
+            implementation(libs.mockk.android)
+            implementation(libs.mockk.agent)
+            implementation(libs.kotest.extensions.android)
+            implementation(libs.kotest.runner.android)
+        }
+        androidInstrumentedTest.dependencies {
+            implementation(libs.kotest.runner.android)
+            implementation(libs.koin.test)
+//            implementation(libs.androidx.test.ext.junit)
+//            implementation(libs.androidx.test.espresso.core)
+            implementation(libs.kotest.assertions.android)
+            implementation(libs.compose.ui.test.junit4)
         }
 
         // KSP Common sourceSet
@@ -166,6 +179,8 @@ android {
         targetSdk = libs.versions.android.targetSdk.get().toInt()
         versionCode = 1
         versionName = "1.0"
+
+        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
     packaging {
         resources {
@@ -181,11 +196,38 @@ android {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
     }
+
+    experimentalProperties["android.experimental.enableScreenshotTest"] = true
+
+    dependencies { //TODO is this needed?
+        screenshotTestImplementation(libs.compose.ui.tooling)
+    }
+
+    sourceSets.all {
+        java.srcDirs("src/$name/kotlin")
+    }
+    testOptions {
+        unitTests {
+            isIncludeAndroidResources = true
+        }
+    }
+    tasks.withType<Test> {
+        testLogging { // Enables println() in unit tests
+            events("standardOut")
+        }
+    }
+}
+
+composeCompiler {
+    stabilityConfigurationFile = File(projectDir, "compose_stability.conf") //TODO check if it works
 }
 
 dependencies {
     implementation(libs.androidx.ui.tooling.preview.android)
     debugImplementation(compose.uiTooling)
+
+    androidTestImplementation("androidx.compose.ui:ui-test-junit4-android:1.7.4")
+    debugImplementation("androidx.compose.ui:ui-test-manifest:1.7.4")
 //    debugImplementation(libs.compose.ui.tooling) obsolete?
 //    debugImplementation(libs.compose.ui.test.manifest) do these work?
 //    androidTestImplementation(libs.compose.ui.test.junit4) do these work?
@@ -238,3 +280,22 @@ compose.desktop {
         }
     }
 }
+
+tasks.named<Test>("desktopTest") {
+    useJUnitPlatform()
+//    filter {
+//        isFailOnNoMatchingTests = false
+//    }
+    testLogging {
+        showExceptions = true
+        showStandardStreams = true
+        events = setOf(
+            org.gradle.api.tasks.testing.logging.TestLogEvent.FAILED,
+            org.gradle.api.tasks.testing.logging.TestLogEvent.PASSED
+        )
+        exceptionFormat = org.gradle.api.tasks.testing.logging.TestExceptionFormat.FULL
+    }
+}
+
+// How to run tests
+// https://www.jetbrains.com/help/kotlin-multiplatform-dev/compose-test.html#z4y19y3_55
