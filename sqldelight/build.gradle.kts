@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask
+
 plugins {
 //    id("java-library")
 //    alias(libs.plugins.jetbrains.kotlin.jvm)
@@ -24,6 +26,9 @@ kotlin {
     sourceSets {
         commonMain.dependencies {
             api(projects.db)
+
+            implementation(libs.koin.core)
+            api(libs.koin.annotations)
             implementation("app.cash.sqldelight:coroutines-extensions:2.0.2")
         }
         androidMain.dependencies {
@@ -38,10 +43,31 @@ kotlin {
 //        jsMain.dependencies {
 //
 //        }
+        // KSP Common sourceSet
+        sourceSets.named("commonMain").configure {
+            kotlin.srcDir("build/generated/ksp/metadata/commonMain/kotlin")
+        }
     }
 //    compilerOptions {
 //        jvmTarget = org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_11
 //    }
+}
+
+// KSP Tasks
+dependencies {
+    add("kspCommonMainMetadata", libs.koin.ksp.compiler)
+    add("kspAndroid", libs.koin.ksp.compiler)
+    add("kspDesktop", libs.koin.ksp.compiler)
+    add("kspIosX64", libs.koin.ksp.compiler)
+    add("kspIosArm64", libs.koin.ksp.compiler)
+    add("kspIosSimulatorArm64", libs.koin.ksp.compiler)
+}
+
+// Trigger Common Metadata Generation from Native tasks
+project.tasks.withType(KotlinCompilationTask::class.java).configureEach {
+    if (name != "kspCommonMainKotlinMetadata") {
+        dependsOn("kspCommonMainKotlinMetadata")
+    }
 }
 
 sqldelight {

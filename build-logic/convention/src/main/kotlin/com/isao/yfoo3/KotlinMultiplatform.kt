@@ -42,10 +42,10 @@ internal fun Project.configureKotlinMultiplatform(
 //                    implementation(libs.findLibrary("koin.android").get())
                     implementation(libs.findLibrary("kotlinx.coroutines.android").get())
                 }
+            }
 
-                jvmMain.dependencies {
-                    implementation(libs.findLibrary("kotlinx.coroutines.swing").get())
-                }
+            jvmMain.dependencies {
+                implementation(libs.findLibrary("kotlinx.coroutines.swing").get())
             }
         }
     }
