@@ -47,6 +47,10 @@ internal fun Project.configureKotlinMultiplatform(
             jvmMain.dependencies {
                 implementation(libs.findLibrary("kotlinx.coroutines.swing").get())
             }
+
+            jsMain.dependencies {
+
+            }
         }
     }
 

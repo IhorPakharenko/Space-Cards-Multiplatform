@@ -1,7 +1,9 @@
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
+import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSetTree
+import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask
 
 plugins {
@@ -16,7 +18,7 @@ plugins {
 //    alias(libs.plugins.kotlin.parcelize)
     id("kotlin-parcelize") // add this
 //    id("kotlin-kapt") // add this
-    alias(libs.plugins.room)
+//    alias(libs.plugins.room)
 
     alias(libs.plugins.screenshot)
     alias(libs.plugins.kotest.multiplatform)
@@ -26,25 +28,25 @@ plugins {
 }
 
 kotlin {
-//    @OptIn(ExperimentalWasmDsl::class)
-//    wasmJs {
-//        moduleName = "composeApp"
-//        browser {
-//            val rootDirPath = project.rootDir.path
-//            val projectDirPath = project.projectDir.path
-//            commonWebpackConfig {
-//                outputFileName = "composeApp.js"
-//                devServer = (devServer ?: KotlinWebpackConfig.DevServer()).apply {
-//                    static = (static ?: mutableListOf()).apply {
-//                        // Serve sources to debug inside browser
-//                        add(rootDirPath)
-//                        add(projectDirPath)
-//                    }
-//                }
-//            }
-//        }
-//        binaries.executable()
-//    }
+    @OptIn(ExperimentalWasmDsl::class)
+    wasmJs {
+        moduleName = "composeApp"
+        browser {
+            val rootDirPath = project.rootDir.path
+            val projectDirPath = project.projectDir.path
+            commonWebpackConfig {
+                outputFileName = "composeApp.js"
+                devServer = (devServer ?: KotlinWebpackConfig.DevServer()).apply {
+                    static = (static ?: mutableListOf()).apply {
+                        // Serve sources to debug inside browser
+                        add(rootDirPath)
+                        add(projectDirPath)
+                    }
+                }
+            }
+        }
+        binaries.executable()
+    }
     
     androidTarget {
         @OptIn(ExperimentalKotlinGradlePluginApi::class)
@@ -96,13 +98,13 @@ kotlin {
             implementation(libs.ktor.client.core)
             implementation(libs.coil.compose)
             implementation(libs.coil.network.ktor)
-            implementation(libs.accompanist.placeholder.material)
-            implementation(libs.accompanist.drawablepainter)
+//            implementation(libs.accompanist.placeholder.material)
+//            implementation(libs.accompanist.drawablepainter)
 
             //// Room Libraries
-            implementation(libs.room.runtime)
-            implementation(libs.room.runtime)
-            implementation(libs.sqlite.bundled)
+//            implementation(libs.room.runtime)
+//            implementation(libs.room.runtime)
+//            implementation(libs.sqlite.bundled)
 
             //// Koin Libraries
             implementation(libs.koin.core)
@@ -121,7 +123,7 @@ kotlin {
             implementation(libs.koin.compose)
             implementation(libs.kotlinx.datetime)
 
-            implementation("com.squareup.sqldelight:runtime:1.5.5")
+//            implementation("com.squareup.sqldelight:runtime:1.5.5")
         }
         desktopMain.dependencies {
             implementation(compose.desktop.currentOs)
@@ -133,9 +135,13 @@ kotlin {
             implementation(libs.ktor.client.darwin)
             implementation("com.squareup.sqldelight:native-driver:1.5.5")
         }
-//        jsMain.dependencies {
-//            implementation("com.squareup.sqldelight:sqljs-driver:1.5.5")
-//        }
+        jsMain.dependencies {
+            implementation(libs.ktor.client.js)
+//            implementation(libs.koin.core.js)
+//            implementation(libs.koin.core.coroutines.js)
+            implementation("com.squareup.sqldelight:sqljs-driver:1.5.5")
+            implementation("co.touchlab:kermit-koin-js:2.0.4")
+        }
 
         commonTest.dependencies {
             implementation(libs.kotest.assertions.core)
@@ -249,11 +255,11 @@ dependencies {
     add("kspIosArm64", libs.koin.ksp.compiler)
     add("kspIosSimulatorArm64", libs.koin.ksp.compiler)
 
-    add("kspAndroid", libs.room.compiler)
-    add("kspDesktop", libs.room.compiler)
-    add("kspIosSimulatorArm64", libs.room.compiler)
-    add("kspIosX64", libs.room.compiler)
-    add("kspIosArm64", libs.room.compiler)
+//    add("kspAndroid", libs.room.compiler)
+//    add("kspDesktop", libs.room.compiler)
+//    add("kspIosSimulatorArm64", libs.room.compiler)
+//    add("kspIosX64", libs.room.compiler)
+//    add("kspIosArm64", libs.room.compiler)
 }
 
 // Trigger Common Metadata Generation from Native tasks
@@ -268,9 +274,9 @@ configurations.named("desktopMainApi") {
     exclude(group = "org.jetbrains.kotlinx", module = "kotlinx-coroutines-android")
 }
 
-room {
-    schemaDirectory("$projectDir/schemas")
-}
+//room {
+//    schemaDirectory("$projectDir/schemas")
+//}
 
 //sqldelight {
 //    databases {

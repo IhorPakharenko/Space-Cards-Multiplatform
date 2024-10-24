@@ -13,6 +13,11 @@ plugins {
 //}
 
 kotlin {
+    //TODO uncommenting this results in Dispatchers being unavalable in module (wtf???)
+//    @OptIn(ExperimentalWasmDsl::class)
+//    wasmJs {
+//        browser()
+//    }
     listOf(
         iosX64(),
         iosArm64(),
@@ -40,9 +45,13 @@ kotlin {
         iosMain.dependencies {
             implementation("app.cash.sqldelight:native-driver:2.0.2")
         }
-//        jsMain.dependencies {
-//
-//        }
+        jsMain.dependencies {
+            implementation(npm("sql.js", "1.6.2"))
+            implementation(devNpm("copy-webpack-plugin", "9.1.0"))
+//            implementation(libs.koin.core.js)
+//            implementation(libs.koin.core.coroutines.js)
+            implementation("app.cash.sqldelight:sqljs-driver:2.0.2")
+        }
         // KSP Common sourceSet
         sourceSets.named("commonMain").configure {
             kotlin.srcDir("build/generated/ksp/metadata/commonMain/kotlin")
@@ -74,6 +83,7 @@ sqldelight {
     databases {
         create("Database") {
             packageName.set("com.isao.yfoo3.data")
+//            generateAsync.set(true)
         }
     }
 }

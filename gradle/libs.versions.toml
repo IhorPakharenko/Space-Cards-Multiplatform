@@ -33,7 +33,6 @@ material3 = "1.2.1"
 material = "1.6.8"
 coil = "3.0.0-rc01"
 timber = "5.0.1"
-room = "2.7.0-alpha10"
 serializationJson = "1.7.1"
 retrofitConverter = "1.0.0"
 okhttp = "4.12.0"
@@ -99,9 +98,6 @@ kotest-runner-android = { module = "br.com.colman:kotest-runner-android", versio
 compose-material-icons-extended = { group = "androidx.compose.material", name = "material-icons-extended", version.ref = "compose" }
 kotlinx-datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version.ref = "kotlinxDatetime" }
 timber = { group = "com.jakewharton.timber", name = "timber", version.ref = "timber" }
-room-runtime = { group = "androidx.room", name = "room-runtime", version.ref = "room" }
-room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "room" }
-room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = "room" }
 kotlinx-serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "serializationJson" }
 retrofit-kotlinx-serialization-converter = { group = "com.jakewharton.retrofit", name = "retrofit2-kotlinx-serialization-converter", version.ref = "retrofitConverter" }
 okhttp-logging-interceptor = { group = "com.squareup.okhttp3", name = "logging-interceptor", version.ref = "okhttp" }
@@ -121,6 +117,8 @@ koin-core-coroutines = { group = "io.insert-koin", name = "koin-core-coroutines"
 koin-test = { group = "io.insert-koin", name = "koin-test", version.ref = "koin" }
 koin-test-junit5 = { group = "io.insert-koin", name = "koin-test-junit5", version.ref = "koin" }
 koin-android = { group = "io.insert-koin", name = "koin-android", version.ref = "koin" }
+koin-core-js = { group = "io.insert-koin", name = "koin-core-js", version.ref = "koin" }
+koin-core-coroutines-js = { group = "io.insert-koin", name = "koin-core-coroutines-js", version.ref = "koin" }
 koin-compose-viewmodel = { group = "io.insert-koin", name = "koin-compose-viewmodel", version.ref = "koinCompose" }
 koin-compose = { group = "io.insert-koin", name = "koin-compose", version.ref = "koin" }
 koin-compose-navigation = { group = "io.insert-koin", name = "koin-androidx-compose-navigation", version.ref = "koin" }
@@ -148,6 +146,7 @@ androidx-ui-tooling-preview-android = { group = "androidx.compose.ui", name = "u
 ktor-client-core = { module = "io.ktor:ktor-client-core", version.ref = "ktor" }
 ktor-client-okhttp = { module = "io.ktor:ktor-client-okhttp", version.ref = "ktor" }
 ktor-client-darwin = { module = "io.ktor:ktor-client-darwin", version.ref = "ktor" }
+ktor-client-js = { module = "io.ktor:ktor-client-js", version.ref = "ktor" }
 #ktor-client-cio= {module ="io.ktor:ktor-client-cio", version.ref = "ktor"}
 ktor-client-android = { module = "io.ktor:ktor-client-android", version.ref = "ktor" }
 ktor-client-json = { group = "io.ktor", name = "ktor-client-json", version.ref = "ktor" }
@@ -185,7 +184,6 @@ kotlin = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 kotlin-parcelize = { id = "org.jetbrains.kotlin.plugin.parcelize", version.ref = "kotlin" }
 screenshot = { id = "com.android.compose.screenshot", version.ref = "screenshot" }
-room = { id = "androidx.room", version.ref = "room" }
 kotest-multiplatform = { id = "io.kotest.multiplatform", version.ref = "kotest" }
 sqldelight = { id = "app.cash.sqldelight", version.ref = "sqldelight" }
 jetbrains-kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "jetbrainsKotlinJvm" }

@@ -3,6 +3,9 @@ plugins {
 }
 
 kotlin {
+    wasmJs {
+
+    }
     listOf(
         iosX64(),
         iosArm64(),
