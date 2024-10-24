@@ -1,6 +1,6 @@
 package com.isao.yfoo3.presentation.liked.mapper
 
-import com.isao.yfoo3.domain.model.ImageSource
+import com.isao.yfoo3.data.model.ImageSource
 import com.isao.yfoo3.domain.model.LikedImage
 import com.isao.yfoo3.presentation.liked.model.LikedImageDisplayable
 import io.kotest.core.spec.style.FunSpec

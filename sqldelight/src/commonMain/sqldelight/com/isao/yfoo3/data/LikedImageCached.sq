@@ -1,0 +1,22 @@
+CREATE TABLE LikedImageCached (
+    id TEXT PRIMARY KEY NOT NULL,
+    imageId TEXT NOT NULL,
+    source TEXT NOT NULL,
+    dateAdded INTEGER NOT NULL
+);
+
+selectAllLikedImages:
+SELECT * FROM LikedImageCached;
+
+selectLikedImages:
+SELECT * FROM LikedImageCached
+ORDER BY
+    CASE WHEN :shouldSortAscending = 1 THEN dateAdded END ASC,
+    CASE WHEN :shouldSortAscending = 0 THEN dateAdded END DESC
+LIMIT :limit OFFSET :offset;
+
+upsertLikedImage:
+INSERT OR REPLACE INTO LikedImageCached (id, imageId, source, dateAdded) VALUES (?, ?, ?, ?);
+
+deleteLikedImage:
+DELETE FROM LikedImageCached WHERE id = ?;

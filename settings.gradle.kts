@@ -2,6 +2,7 @@ rootProject.name = "YfooMultiplatform"
 enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 
 pluginManagement {
+    includeBuild("build-logic")
     repositories {
         google {
             mavenContent {
@@ -29,3 +30,7 @@ dependencyResolutionManagement {
 }
 
 include(":composeApp")
+include(":sqldelight")
+//include(":build-logic")
+//include(":build-logic:convention")
+include(":db")

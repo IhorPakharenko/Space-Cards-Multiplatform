@@ -1,7 +1,7 @@
 package com.isao.yfoo3.data.testdoubles
 
-import com.isao.yfoo3.data.local.dao.FeedImageDao
-import com.isao.yfoo3.data.local.model.FeedImageCached
+import com.isao.yfoo3.data.dao.FeedImageDao
+import com.isao.yfoo3.data.model.FeedImageCached
 import kotlinx.coroutines.flow.Flow
 
 class FakeFeedImageDao : FeedImageDao {

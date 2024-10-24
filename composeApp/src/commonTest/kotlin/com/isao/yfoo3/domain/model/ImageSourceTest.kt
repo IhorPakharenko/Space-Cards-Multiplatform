@@ -1,5 +1,6 @@
 package com.isao.yfoo3.domain.model
 
+import com.isao.yfoo3.data.model.ImageSource
 import com.isao.yfoo3.utils.FakeRandom
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe

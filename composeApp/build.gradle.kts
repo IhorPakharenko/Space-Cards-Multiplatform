@@ -1,6 +1,5 @@
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
-import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSetTree
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask
 
@@ -47,10 +46,10 @@ kotlin {
 //    }
     
     androidTarget {
-        @OptIn(ExperimentalKotlinGradlePluginApi::class)
-        compilerOptions {
-            jvmTarget.set(JvmTarget.JVM_11)
-        }
+//        @OptIn(ExperimentalKotlinGradlePluginApi::class)
+//        compilerOptions {
+//            jvmTarget.set(JvmTarget.JVM_11)
+//        }
         @OptIn(ExperimentalKotlinGradlePluginApi::class)
         instrumentedTestVariant.sourceSetTree.set(KotlinSourceSetTree.test)
     }
@@ -78,10 +77,12 @@ kotlin {
             implementation(libs.koin.android)
             implementation(libs.androidx.core.splashscreen)
             implementation(libs.ktor.client.android)
-
+            implementation("com.squareup.sqldelight:android-driver:1.5.5")
 //            screenshotTestImplementation(libs.compose.ui.tooling)
         }
         commonMain.dependencies {
+            implementation(projects.sqldelight)
+
             implementation(compose.runtime)
             implementation(compose.foundation)
             implementation(compose.material)
@@ -117,7 +118,9 @@ kotlin {
             implementation(libs.ktor.client.core)
             implementation(libs.coil.network.ktor)
             implementation(libs.koin.compose)
-            implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.6.1")
+            implementation(libs.kotlinx.datetime)
+
+            implementation("com.squareup.sqldelight:runtime:1.5.5")
         }
         desktopMain.dependencies {
             implementation(compose.desktop.currentOs)
@@ -127,7 +130,11 @@ kotlin {
         }
         iosMain.dependencies {
             implementation(libs.ktor.client.darwin)
+            implementation("com.squareup.sqldelight:native-driver:1.5.5")
         }
+//        jsMain.dependencies {
+//            implementation("com.squareup.sqldelight:sqljs-driver:1.5.5")
+//        }
 
         commonTest.dependencies {
             implementation(libs.kotest.assertions.core)
@@ -263,6 +270,14 @@ configurations.named("desktopMainApi") {
 room {
     schemaDirectory("$projectDir/schemas")
 }
+
+//sqldelight {
+//    databases {
+//        create("Database") {
+//            packageName.set("com.isao.yfoo3.data")
+//        }
+//    }
+//}
 
 // Use KoinViewModel annotation with multiplatform support
 ksp {

@@ -2,8 +2,8 @@ package com.isao.yfoo3.data.testdoubles
 
 import androidx.room.InvalidationTracker
 import com.isao.yfoo3.core.database.AppDatabase
-import com.isao.yfoo3.data.local.dao.FeedImageDao
-import com.isao.yfoo3.data.local.dao.LikedImageDao
+import com.isao.yfoo3.data.dao.FeedImageDao
+import com.isao.yfoo3.data.dao.LikedImageDao
 import org.koin.core.annotation.Single
 
 @Single(binds = [AppDatabase::class])

@@ -1,10 +1,10 @@
 package com.isao.yfoo3.data.repository
 
-import com.isao.yfoo3.data.local.dao.FeedImageDao
+import com.isao.yfoo3.data.dao.FeedImageDao
 import com.isao.yfoo3.data.local.mapper.toDomainModel
 import com.isao.yfoo3.data.local.mapper.toEntityModel
+import com.isao.yfoo3.data.model.ImageSource
 import com.isao.yfoo3.domain.model.FeedImage
-import com.isao.yfoo3.domain.model.ImageSource
 import com.isao.yfoo3.domain.repository.FeedImageRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map

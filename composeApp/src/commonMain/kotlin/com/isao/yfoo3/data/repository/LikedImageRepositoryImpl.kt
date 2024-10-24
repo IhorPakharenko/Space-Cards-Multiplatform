@@ -1,6 +1,6 @@
 package com.isao.yfoo3.data.repository
 
-import com.isao.yfoo3.data.local.dao.LikedImageDao
+import com.isao.yfoo3.data.dao.LikedImageDao
 import com.isao.yfoo3.data.local.mapper.toDomainModel
 import com.isao.yfoo3.data.local.mapper.toEntityModel
 import com.isao.yfoo3.domain.model.LikedImage

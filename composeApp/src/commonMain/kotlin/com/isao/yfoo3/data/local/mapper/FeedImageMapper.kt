@@ -1,6 +1,6 @@
 package com.isao.yfoo3.data.local.mapper
 
-import com.isao.yfoo3.data.local.model.FeedImageCached
+import com.isao.yfoo3.data.model.FeedImageCached
 import com.isao.yfoo3.domain.model.FeedImage
 import com.isao.yfoo3.domain.model.LikedImage
 import kotlinx.datetime.Clock

@@ -1,7 +1,7 @@
 package com.isao.yfoo3.data.local.mapper
 
-import com.isao.yfoo3.data.local.model.LikedImageCached
-import com.isao.yfoo3.domain.model.ImageSource
+import com.isao.yfoo3.data.model.ImageSource
+import com.isao.yfoo3.data.model.LikedImageCached
 import com.isao.yfoo3.domain.model.LikedImage
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe

@@ -5,7 +5,7 @@ package com.isao.yfoo3.presentation.liked
 import app.cash.turbine.test
 import com.isao.yfoo3.core.di.appModule
 import com.isao.yfoo3.data.local.mapper.toEntityModel
-import com.isao.yfoo3.data.local.model.LikedImageCached
+import com.isao.yfoo3.data.model.LikedImageCached
 import com.isao.yfoo3.data.testdoubles.FakeLikedImageDao
 import com.isao.yfoo3.domain.model.dummy.LikedImageDummies.LikedImage1
 import com.isao.yfoo3.domain.model.dummy.LikedImageDummies.LikedImage2

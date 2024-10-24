@@ -18,7 +18,7 @@ package com.isao.yfoo3.presentation.liked
 //import com.isao.yfoo3.R
 //import com.isao.yfoo3.core.di.appModule
 //import com.isao.yfoo3.core.utils.robolectricContextModule
-//import com.isao.yfoo3.data.local.dao.LikedImageDao
+//import com.isao.yfoo3.data.dao.LikedImageDao
 //import com.isao.yfoo3.data.local.mapper.toEntityModel
 //import com.isao.yfoo3.domain.model.LikedImage
 //import com.isao.yfoo3.domain.model.dummy.LikedImageDummies

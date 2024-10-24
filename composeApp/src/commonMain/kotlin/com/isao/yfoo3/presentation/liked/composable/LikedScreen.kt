@@ -55,7 +55,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.isao.yfoo3.core.extensions.collectWithLifecycle
 import com.isao.yfoo3.core.theme.Yfoo2Theme
 import com.isao.yfoo3.core.utils.PreviewLightDark
-import com.isao.yfoo3.domain.model.ImageSource
+import com.isao.yfoo3.data.model.ImageSource
 import com.isao.yfoo3.presentation.liked.LikedEvent
 import com.isao.yfoo3.presentation.liked.LikedIntent
 import com.isao.yfoo3.presentation.liked.LikedUiState

@@ -1,6 +1,6 @@
 package com.isao.yfoo3.presentation.liked.model
 
-import com.isao.yfoo3.domain.model.ImageSource
+import com.isao.yfoo3.data.model.ImageSource
 
 object LikedImageDisplayableDummies {
     fun generateLikedImageDisplayables(size: Int) = List(size) { index ->

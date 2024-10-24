@@ -1,0 +1,17 @@
+CREATE TABLE FeedImageCached (
+    id TEXT PRIMARY KEY NOT NULL,
+    imageId TEXT NOT NULL,
+    source TEXT NOT NULL
+);
+
+selectAllFeedImages:
+SELECT * FROM FeedImageCached;
+
+selectFeedImage:
+SELECT * FROM FeedImageCached WHERE id = ?;
+
+upsertFeedImage:
+INSERT OR REPLACE INTO FeedImageCached (id, imageId, source) VALUES (?, ?, ?);
+
+deleteFeedImage:
+DELETE FROM FeedImageCached WHERE id = ?;
