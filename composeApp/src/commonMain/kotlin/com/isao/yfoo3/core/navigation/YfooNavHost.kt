@@ -4,12 +4,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
-import com.isao.yfoo3.BottomNavigationScreen
+import com.isao.yfoo3.core.designsystem.BottomNavigationScreen
+import com.isao.yfoo3.feature.feed.navigation.addFeedScreen
+import com.isao.yfoo3.liked.navigation.addLikedScreen
 
 @Composable
 fun YfooNavHost(
     navController: NavHostController,
-    factories: List<NavigationFactory>,
     modifier: Modifier = Modifier,
 ) {
     NavHost(
@@ -17,8 +18,7 @@ fun YfooNavHost(
         startDestination = BottomNavigationScreen.Feed.route,
         modifier = modifier,
     ) {
-        factories.forEach {
-            it.create(this)
-        }
+        addFeedScreen()
+        addLikedScreen()
     }
 }

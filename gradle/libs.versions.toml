@@ -13,6 +13,8 @@ androidx-material = "1.12.0"
 androidx-test-junit = "1.2.1"
 compose-plugin = "1.6.11"
 junit = "4.13.2"
+kermit = "2.0.4"
+kermitKoin = "2.0.4"
 kotlin = "2.0.21"
 kotlinx-coroutines = "1.9.0"
 
@@ -32,6 +34,8 @@ compose = "1.7.4"
 material3 = "1.2.1"
 material = "1.6.8"
 coil = "3.0.0-rc01"
+navigationComposeVersion = "2.7.0-alpha07"
+sqljsDriver = "1.5.5"
 timber = "5.0.1"
 serializationJson = "1.7.1"
 retrofitConverter = "1.0.0"
@@ -61,9 +65,16 @@ sqlite = "2.5.0-alpha10"
 ktor = "3.0.0-rc-2"
 sqldelight = "2.0.2"
 jetbrainsKotlinJvm = "1.9.24"
+navigationRuntimeKtx = "2.8.3"
 
 
 [libraries]
+androidx-ui-test-junit4-android = { module = "androidx.compose.ui:ui-test-junit4-android", version.ref = "compose" }
+sqldelight-android-driver = { module = "com.squareup.sqldelight:android-driver", version.ref = "sqljsDriver" }
+jetbrains-navigation-compose = { module = "org.jetbrains.androidx.navigation:navigation-compose", version.ref = "navigationComposeVersion" }
+kermit-koin = { module = "co.touchlab:kermit-koin", version.ref = "kermitKoin" }
+kermit = { module = "co.touchlab:kermit", version.ref = "kermit" }
+kermit-koin-js = { module = "co.touchlab:kermit-koin-js", version.ref = "kermit" }
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
 kotlin-test-junit = { module = "org.jetbrains.kotlin:kotlin-test-junit", version.ref = "kotlin" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
@@ -97,6 +108,8 @@ kotest-runner-android = { module = "br.com.colman:kotest-runner-android", versio
 #coil-compose = { group = "io.coil-kt", name = "coil-compose", version.ref = "coil" }
 compose-material-icons-extended = { group = "androidx.compose.material", name = "material-icons-extended", version.ref = "compose" }
 kotlinx-datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version.ref = "kotlinxDatetime" }
+sqldelight-native-driver = { module = "com.squareup.sqldelight:native-driver", version.ref = "sqljsDriver" }
+sqldelight-sqljs-driver = { module = "com.squareup.sqldelight:sqljs-driver", version.ref = "sqljsDriver" }
 timber = { group = "com.jakewharton.timber", name = "timber", version.ref = "timber" }
 kotlinx-serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "serializationJson" }
 retrofit-kotlinx-serialization-converter = { group = "com.jakewharton.retrofit", name = "retrofit2-kotlinx-serialization-converter", version.ref = "retrofitConverter" }
@@ -165,6 +178,7 @@ sqldelight-native = { module = "app.cash.sqldelight:native-driver", version.ref 
 sqldelight-sqlite = { module = "app.cash.sqldelight:sqlite-driver", version.ref = "sqldelight" }
 sqldelight-coroutines = { module = "app.cash.sqldelight:coroutines-extensions", version.ref = "sqldelight" }
 sqldelight-primitive = { module = "app.cash.sqldelight:primitive-adapters", version.ref = "sqldelight" }
+androidx-navigation-runtime-ktx = { group = "androidx.navigation", name = "navigation-runtime-ktx", version.ref = "navigationRuntimeKtx" }
 
 
 [bundles]

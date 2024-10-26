@@ -5,9 +5,6 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Text
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Explore
-import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
@@ -19,34 +16,19 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import com.isao.yfoo3.core.navigation.NavigationFactories
-import com.isao.yfoo3.core.navigation.Screen
+import com.isao.yfoo3.core.designsystem.BottomNavigationScreen
+import com.isao.yfoo3.core.designsystem.theme.LightColorScheme
+import com.isao.yfoo3.core.designsystem.theme.Typography
+import com.isao.yfoo3.core.designsystem.theme.Yfoo2Theme
 import com.isao.yfoo3.core.navigation.YfooNavHost
-import com.isao.yfoo3.core.theme.LightColorScheme
-import com.isao.yfoo3.core.theme.Typography
-import com.isao.yfoo3.core.theme.Yfoo2Theme
-import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.koin.compose.KoinContext
-import org.koin.compose.koinInject
-import yfoomultiplatform.composeapp.generated.resources.Res
-import yfoomultiplatform.composeapp.generated.resources.feed
-import yfoomultiplatform.composeapp.generated.resources.liked
 
-enum class BottomNavigationScreen(
-    val route: String,
-    val nameRes: StringResource,
-    val icon: ImageVector
-) {
-    Feed(Screen.Feed.route, Res.string.feed, Icons.Filled.Explore),
-    Liked(Screen.Liked.route, Res.string.liked, Icons.Filled.Favorite),
-}
 
 @Composable
 @Preview
@@ -55,19 +37,6 @@ fun App(
     typography: Typography = Typography
 ) {
     Yfoo2Theme(colorScheme, typography) {
-//        var showContent by remember { mutableStateOf(false) }
-//        Column(Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
-//            Button(onClick = { showContent = !showContent }) {
-//                Text("Click me!")
-//            }
-//            AnimatedVisibility(showContent) {
-//                val greeting = remember { Greeting().greet() }
-//                Column(Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
-//                    Image(painterResource(Res.drawable.compose_multiplatform), null)
-//                    Text("Compose: $greeting")
-//                }
-//            }
-//        }
         Yfoo2Theme {
             Surface(
                 modifier = Modifier.fillMaxSize(),
@@ -125,15 +94,11 @@ fun App(
                     KoinContext {
                         YfooNavHost(
                             navController = navController,
-                            factories = koinInject<NavigationFactories>().list,
                             modifier = Modifier
                                 .fillMaxHeight()
                                 .padding(padding),
                         )
                     }
-//                    KoinAndroidContext {
-
-//                    }
                 }
             }
         }

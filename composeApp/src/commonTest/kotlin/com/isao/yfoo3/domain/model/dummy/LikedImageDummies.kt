@@ -1,6 +1,6 @@
 package com.isao.yfoo3.domain.model.dummy
 
-import com.isao.yfoo3.data.model.ImageSource
+import com.isao.yfoo3.core.db.model.ImageSource
 import com.isao.yfoo3.domain.model.LikedImage
 import kotlinx.datetime.Instant
 

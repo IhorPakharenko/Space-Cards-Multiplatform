@@ -8,8 +8,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.WindowCompat
 import com.isao.yfoo3.App
+import com.isao.yfoo3.core.designsystem.SplashScreenHost
 import com.isao.yfoo3.core.theme.Yfoo2ThemeAndroid
-import com.isao.yfoo3.core.utils.SplashScreenHost
 
 class MainActivity : ComponentActivity(), SplashScreenHost {
 

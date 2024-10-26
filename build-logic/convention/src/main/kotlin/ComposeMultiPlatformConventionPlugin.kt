@@ -27,6 +27,12 @@ class ComposeMultiplatformConventionPlugin : Plugin<Project> {
                         implementation(composeDeps.ui)
                         implementation(composeDeps.components.resources)
                         implementation(composeDeps.components.uiToolingPreview)
+
+                        implementation(libs.findLibrary("androidx.lifecycle.viewmodel").get())
+                        implementation(libs.findLibrary("androidx.lifecycle.runtime.compose").get())
+                        implementation(libs.findLibrary("jetbrains.navigation.compose").get())
+                        implementation(libs.findLibrary("koin.compose.viewmodel").get())
+                        implementation(libs.findLibrary("koin.compose").get())
                     }
                 }
             }

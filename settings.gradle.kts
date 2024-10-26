@@ -30,7 +30,16 @@ dependencyResolutionManagement {
 }
 
 include(":composeApp")
-include(":sqldelight")
 //include(":build-logic")
 //include(":build-logic:convention")
-include(":db")
+include(":core")
+include(":core:model")
+include(":core:db")
+include(":core:sqldelight")
+include(":core:domain")
+include(":core:common")
+include(":core:data")
+include(":core:designsystem")
+include(":feature")
+include(":feature:feed")
+include(":feature:liked")

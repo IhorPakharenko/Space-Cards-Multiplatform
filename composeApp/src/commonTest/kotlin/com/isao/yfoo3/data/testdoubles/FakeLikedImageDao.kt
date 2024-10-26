@@ -1,7 +1,7 @@
 package com.isao.yfoo3.data.testdoubles
 
-import com.isao.yfoo3.data.dao.LikedImageDao
-import com.isao.yfoo3.data.model.LikedImageCached
+import com.isao.yfoo3.core.db.dao.LikedImageDao
+import com.isao.yfoo3.core.db.model.LikedImageCached
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.map

@@ -12,6 +12,9 @@ import androidx.compose.runtime.SideEffect
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
+import com.isao.yfoo3.core.designsystem.theme.DarkColorScheme
+import com.isao.yfoo3.core.designsystem.theme.LightColorScheme
+import com.isao.yfoo3.core.designsystem.theme.Typography
 
 @Composable
 fun Yfoo2ThemeAndroid(

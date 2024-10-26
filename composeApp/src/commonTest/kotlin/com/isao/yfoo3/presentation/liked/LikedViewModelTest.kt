@@ -2,13 +2,15 @@
 
 package com.isao.yfoo3.presentation.liked
 
+//import com.isao.yfoo3.utils.TimberConsoleExtension
 import app.cash.turbine.test
+import com.isao.yfoo3.core.db.model.LikedImageCached
 import com.isao.yfoo3.core.di.appModule
 import com.isao.yfoo3.data.local.mapper.toEntityModel
-import com.isao.yfoo3.data.model.LikedImageCached
 import com.isao.yfoo3.data.testdoubles.FakeLikedImageDao
 import com.isao.yfoo3.domain.model.dummy.LikedImageDummies.LikedImage1
 import com.isao.yfoo3.domain.model.dummy.LikedImageDummies.LikedImage2
+import com.isao.yfoo3.liked.LikedViewModel
 import com.isao.yfoo3.presentation.liked.LikedEvent.OpenWebBrowser
 import com.isao.yfoo3.presentation.liked.LikedIntent.DeleteImageClicked
 import com.isao.yfoo3.presentation.liked.LikedIntent.ImageClicked
@@ -16,7 +18,6 @@ import com.isao.yfoo3.presentation.liked.LikedIntent.SetSorting
 import com.isao.yfoo3.presentation.liked.LikedIntent.ViewImageSourceClicked
 import com.isao.yfoo3.presentation.liked.mapper.toPresentationModel
 import com.isao.yfoo3.utils.MainDispatcherExtension
-//import com.isao.yfoo3.utils.TimberConsoleExtension
 import com.isao.yfoo3.utils.WhenWithData
 import com.isao.yfoo3.utils.awaitItemMatching
 import com.isao.yfoo3.utils.consumeNonFinalStates

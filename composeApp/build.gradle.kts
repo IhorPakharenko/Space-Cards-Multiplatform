@@ -1,10 +1,7 @@
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
-import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSetTree
-import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask
 
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
@@ -28,25 +25,25 @@ plugins {
 }
 
 kotlin {
-    @OptIn(ExperimentalWasmDsl::class)
-    wasmJs {
-        moduleName = "composeApp"
-        browser {
-            val rootDirPath = project.rootDir.path
-            val projectDirPath = project.projectDir.path
-            commonWebpackConfig {
-                outputFileName = "composeApp.js"
-                devServer = (devServer ?: KotlinWebpackConfig.DevServer()).apply {
-                    static = (static ?: mutableListOf()).apply {
-                        // Serve sources to debug inside browser
-                        add(rootDirPath)
-                        add(projectDirPath)
-                    }
-                }
-            }
-        }
-        binaries.executable()
-    }
+//    @OptIn(ExperimentalWasmDsl::class)
+//    wasmJs {
+//        moduleName = "composeApp"
+//        browser {
+//            val rootDirPath = project.rootDir.path
+//            val projectDirPath = project.projectDir.path
+//            commonWebpackConfig {
+//                outputFileName = "composeApp.js"
+//                devServer = (devServer ?: KotlinWebpackConfig.DevServer()).apply {
+//                    static = (static ?: mutableListOf()).apply {
+//                        // Serve sources to debug inside browser
+//                        add(rootDirPath)
+//                        add(projectDirPath)
+//                    }
+//                }
+//            }
+//        }
+//        binaries.executable()
+//    }
     
     androidTarget {
         @OptIn(ExperimentalKotlinGradlePluginApi::class)
@@ -73,18 +70,13 @@ kotlin {
     sourceSets {
         val desktopMain by getting
         val desktopTest by getting
-        
-        androidMain.dependencies {
-            implementation(compose.preview)
-            implementation(libs.androidx.activity.compose)
-            implementation(libs.koin.android)
-            implementation(libs.androidx.core.splashscreen)
-            implementation(libs.ktor.client.android)
-            implementation("com.squareup.sqldelight:android-driver:1.5.5")
-//            screenshotTestImplementation(libs.compose.ui.tooling)
-        }
+
         commonMain.dependencies {
-            implementation(projects.sqldelight)
+            implementation(projects.core.common)
+            implementation(projects.core.designsystem)
+            implementation(projects.core.sqldelight)
+            implementation(projects.feature.feed)
+            implementation(projects.feature.liked)
 
             implementation(compose.runtime)
             implementation(compose.foundation)
@@ -93,37 +85,32 @@ kotlin {
             implementation(compose.ui)
             implementation(compose.components.resources)
             implementation(compose.components.uiToolingPreview)
-            implementation(libs.androidx.lifecycle.viewmodel)
-            implementation(libs.androidx.lifecycle.runtime.compose)
+//            implementation(libs.androidx.lifecycle.viewmodel)
+//            implementation(libs.androidx.lifecycle.runtime.compose)
             implementation(libs.ktor.client.core)
             implementation(libs.coil.compose)
             implementation(libs.coil.network.ktor)
-//            implementation(libs.accompanist.placeholder.material)
-//            implementation(libs.accompanist.drawablepainter)
-
-            //// Room Libraries
-//            implementation(libs.room.runtime)
-//            implementation(libs.room.runtime)
-//            implementation(libs.sqlite.bundled)
-
-            //// Koin Libraries
-            implementation(libs.koin.core)
-            implementation(libs.koin.core.coroutines)
-            implementation(libs.koin.compose.viewmodel)
-            implementation("org.jetbrains.androidx.navigation:navigation-compose:2.7.0-alpha07")
-            api(libs.koin.annotations)
 
             //// Other Libraries
-            implementation(libs.kotlinx.serialization.json)
-            implementation("co.touchlab:kermit:2.0.4")
-            implementation("co.touchlab:kermit-koin:2.0.4")
-            implementation(compose.materialIconsExtended)
+            implementation(libs.kermit)
             implementation(libs.ktor.client.core)
             implementation(libs.coil.network.ktor)
-            implementation(libs.koin.compose)
             implementation(libs.kotlinx.datetime)
 
-//            implementation("com.squareup.sqldelight:runtime:1.5.5")
+            implementation(libs.jetbrains.navigation.compose)
+            implementation(libs.koin.compose)
+            implementation(libs.kermit)
+            implementation(libs.kermit.koin)
+            api(libs.koin.core)
+        }
+        androidMain.dependencies {
+            implementation(compose.preview)
+            implementation(libs.androidx.activity.compose)
+            implementation(libs.koin.android)
+            implementation(libs.androidx.core.splashscreen)
+            implementation(libs.ktor.client.android)
+            implementation(libs.sqldelight.android.driver)
+//            screenshotTestImplementation(libs.compose.ui.tooling)
         }
         desktopMain.dependencies {
             implementation(compose.desktop.currentOs)
@@ -133,14 +120,12 @@ kotlin {
         }
         iosMain.dependencies {
             implementation(libs.ktor.client.darwin)
-            implementation("com.squareup.sqldelight:native-driver:1.5.5")
+            implementation(libs.sqldelight.native.driver)
         }
         jsMain.dependencies {
             implementation(libs.ktor.client.js)
-//            implementation(libs.koin.core.js)
-//            implementation(libs.koin.core.coroutines.js)
-            implementation("com.squareup.sqldelight:sqljs-driver:1.5.5")
-            implementation("co.touchlab:kermit-koin-js:2.0.4")
+            implementation(libs.sqldelight.sqljs.driver)
+            implementation(libs.kermit.koin.js)
         }
 
         commonTest.dependencies {
@@ -155,7 +140,7 @@ kotlin {
             @OptIn(org.jetbrains.compose.ExperimentalComposeLibrary::class)
             implementation(compose.uiTest)
         }
-        desktopTest.dependencies { //TODO is this the same as desktopTest?
+        desktopTest.dependencies {
             implementation(libs.mockk)
             implementation(libs.koin.test.junit5)
             implementation(libs.kotest.runner.junit5)
@@ -170,8 +155,6 @@ kotlin {
         androidInstrumentedTest.dependencies {
             implementation(libs.kotest.runner.android)
             implementation(libs.koin.test)
-//            implementation(libs.androidx.test.ext.junit)
-//            implementation(libs.androidx.test.espresso.core)
             implementation(libs.kotest.assertions.android)
             implementation(libs.compose.ui.test.junit4)
         }
@@ -211,6 +194,7 @@ android {
         targetCompatibility = JavaVersion.VERSION_17
     }
 
+    @Suppress("UnstableApiUsage")
     experimentalProperties["android.experimental.enableScreenshotTest"] = true
 
     dependencies { //TODO is this needed?
@@ -220,6 +204,7 @@ android {
     sourceSets.all {
         java.srcDirs("src/$name/kotlin")
     }
+    @Suppress("UnstableApiUsage")
     testOptions {
         unitTests {
             isIncludeAndroidResources = true
@@ -240,56 +225,33 @@ dependencies {
     implementation(libs.androidx.ui.tooling.preview.android)
     debugImplementation(compose.uiTooling)
 
-    androidTestImplementation("androidx.compose.ui:ui-test-junit4-android:1.7.4")
-    debugImplementation("androidx.compose.ui:ui-test-manifest:1.7.4")
-//    debugImplementation(libs.compose.ui.tooling) obsolete?
-//    debugImplementation(libs.compose.ui.test.manifest) do these work?
-//    androidTestImplementation(libs.compose.ui.test.junit4) do these work?
-//    add("kspCommonMainMetadata", project(":composeApp"))
-//    add("kspJvm", project(":composeApp"))
+    androidTestImplementation(libs.androidx.ui.test.junit4.android)
+    debugImplementation(libs.compose.ui.test.manifest)
 
-    add("kspCommonMainMetadata", libs.koin.ksp.compiler)
-    add("kspAndroid", libs.koin.ksp.compiler)
-    add("kspDesktop", libs.koin.ksp.compiler)
-    add("kspIosX64", libs.koin.ksp.compiler)
-    add("kspIosArm64", libs.koin.ksp.compiler)
-    add("kspIosSimulatorArm64", libs.koin.ksp.compiler)
-
-//    add("kspAndroid", libs.room.compiler)
-//    add("kspDesktop", libs.room.compiler)
-//    add("kspIosSimulatorArm64", libs.room.compiler)
-//    add("kspIosX64", libs.room.compiler)
-//    add("kspIosArm64", libs.room.compiler)
+//    add("kspCommonMainMetadata", libs.koin.ksp.compiler)
+//    add("kspAndroid", libs.koin.ksp.compiler)
+//    add("kspDesktop", libs.koin.ksp.compiler)
+//    add("kspIosX64", libs.koin.ksp.compiler)
+//    add("kspIosArm64", libs.koin.ksp.compiler)
+//    add("kspIosSimulatorArm64", libs.koin.ksp.compiler)
 }
-
-// Trigger Common Metadata Generation from Native tasks
-project.tasks.withType(KotlinCompilationTask::class.java).configureEach {
-    if(name != "kspCommonMainKotlinMetadata") {
-        dependsOn("kspCommonMainKotlinMetadata")
-    }
-}
-
-// Desktop depends on Android Coroutines and crashes otherwise
-configurations.named("desktopMainApi") {
-    exclude(group = "org.jetbrains.kotlinx", module = "kotlinx-coroutines-android")
-}
-
-//room {
-//    schemaDirectory("$projectDir/schemas")
-//}
-
-//sqldelight {
-//    databases {
-//        create("Database") {
-//            packageName.set("com.isao.yfoo3.data")
-//        }
+//
+//// Trigger Common Metadata Generation from Native tasks
+//project.tasks.withType(KotlinCompilationTask::class.java).configureEach {
+//    if(name != "kspCommonMainKotlinMetadata") {
+//        dependsOn("kspCommonMainKotlinMetadata")
 //    }
 //}
-
-// Use KoinViewModel annotation with multiplatform support
-ksp {
-    arg("KOIN_USE_COMPOSE_VIEWMODEL","true")
-}
+//
+//// Desktop depends on Android Coroutines and crashes otherwise
+//configurations.named("desktopMainApi") {
+//    exclude(group = "org.jetbrains.kotlinx", module = "kotlinx-coroutines-android")
+//}
+//
+//// Use KoinViewModel annotation with multiplatform support
+//ksp {
+//    arg("KOIN_USE_COMPOSE_VIEWMODEL","true")
+//}
 
 compose.desktop {
     application {
