@@ -2,6 +2,7 @@ import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSetTree
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask
 
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
@@ -101,7 +102,8 @@ kotlin {
             implementation(libs.koin.compose)
             implementation(libs.kermit)
             implementation(libs.kermit.koin)
-            api(libs.koin.core)
+            implementation(libs.koin.core)
+            api(libs.koin.annotations)
         }
         androidMain.dependencies {
             implementation(compose.preview)
@@ -228,30 +230,30 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4.android)
     debugImplementation(libs.compose.ui.test.manifest)
 
-//    add("kspCommonMainMetadata", libs.koin.ksp.compiler)
-//    add("kspAndroid", libs.koin.ksp.compiler)
-//    add("kspDesktop", libs.koin.ksp.compiler)
-//    add("kspIosX64", libs.koin.ksp.compiler)
-//    add("kspIosArm64", libs.koin.ksp.compiler)
-//    add("kspIosSimulatorArm64", libs.koin.ksp.compiler)
+    add("kspCommonMainMetadata", libs.koin.ksp.compiler)
+    add("kspAndroid", libs.koin.ksp.compiler)
+    add("kspDesktop", libs.koin.ksp.compiler)
+    add("kspIosX64", libs.koin.ksp.compiler)
+    add("kspIosArm64", libs.koin.ksp.compiler)
+    add("kspIosSimulatorArm64", libs.koin.ksp.compiler)
 }
 //
 //// Trigger Common Metadata Generation from Native tasks
-//project.tasks.withType(KotlinCompilationTask::class.java).configureEach {
-//    if(name != "kspCommonMainKotlinMetadata") {
-//        dependsOn("kspCommonMainKotlinMetadata")
-//    }
-//}
+project.tasks.withType(KotlinCompilationTask::class.java).configureEach {
+    if (name != "kspCommonMainKotlinMetadata") {
+        dependsOn("kspCommonMainKotlinMetadata")
+    }
+}
 //
 //// Desktop depends on Android Coroutines and crashes otherwise
 //configurations.named("desktopMainApi") {
 //    exclude(group = "org.jetbrains.kotlinx", module = "kotlinx-coroutines-android")
 //}
 //
-//// Use KoinViewModel annotation with multiplatform support
-//ksp {
-//    arg("KOIN_USE_COMPOSE_VIEWMODEL","true")
-//}
+// Use KoinViewModel annotation with multiplatform support
+ksp {
+    arg("KOIN_USE_COMPOSE_VIEWMODEL", "true")
+}
 
 compose.desktop {
     application {

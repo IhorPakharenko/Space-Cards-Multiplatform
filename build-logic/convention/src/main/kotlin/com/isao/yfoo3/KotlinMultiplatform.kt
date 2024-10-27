@@ -49,6 +49,10 @@ internal fun Project.configureKotlinMultiplatform(
 
 
             }
+            // Apparently makes ksp-generated code visible
+            commonMain.configure {
+                kotlin.srcDir("build/generated/ksp/metadata/commonMain/kotlin")
+            }
 
             androidMain {
                 dependencies {
@@ -81,20 +85,15 @@ internal fun Project.configureKotlinMultiplatform(
         arg("KOIN_USE_COMPOSE_VIEWMODEL", "true")
     }
 
-// Trigger Common Metadata Generation from Native tasks
+    // Trigger Common Metadata Generation from Native tasks
     project.tasks.withType(KotlinCompilationTask::class.java).configureEach {
         if (name != "kspCommonMainKotlinMetadata") {
             dependsOn("kspCommonMainKotlinMetadata")
         }
     }
 
-// Desktop depends on Android Coroutines and crashes otherwise
+    // Desktop depends on Android Coroutines and crashes otherwise
     configurations.named("desktopMainApi") {
         exclude(group = "org.jetbrains.kotlinx", module = "kotlinx-coroutines-android")
     }
-
-// Use KoinViewModel annotation with multiplatform support
-//    ksp {
-//        arg("KOIN_USE_COMPOSE_VIEWMODEL","true")
-//    }
 }
