@@ -102,12 +102,83 @@ fun FeedCard(
     )
 }
 
+@Composable
+fun FeedCard(
+    item: FeedItemDisplayable?,
+    modifier: Modifier = Modifier
+) {
+    FeedCard(
+        painter = if (item?.imageUrl != null) {
+            FeedCardDefaults.rememberRetryingAsyncImagePainter(
+                item = item
+            )
+        } else {
+            null
+        },
+        modifier = modifier
+    )
+}
+
 private object EmptyPainter : Painter() {
     override val intrinsicSize: Size get() = Size.Unspecified
     override fun DrawScope.onDraw() {}
 }
 
 object FeedCardDefaults {
+    @Composable
+    fun rememberRetryingAsyncImagePainter(
+        item: FeedItemDisplayable,
+        error: Painter? = null,
+        fallback: Painter? = error,
+        onLoading: ((AsyncImagePainter.State.Loading) -> Unit)? = null,
+        onSuccess: ((AsyncImagePainter.State.Success) -> Unit)? = null,
+        onError: ((AsyncImagePainter.State.Error) -> Unit)? = null,
+        contentScale: ContentScale = ContentScale.Crop,
+        filterQuality: FilterQuality = DrawScope.DefaultFilterQuality,
+    ): AsyncImagePainter {
+        // Reloading the image on failure the ugly way. Open issue in Coil since 2021:
+        // https://github.com/coil-kt/coil/issues/884#issuecomment-975932886
+        var retryHash by remember(item.imageUrl) { mutableIntStateOf(0) }
+        val painter = rememberAsyncImagePainter(
+            model = ImageRequest.Builder(LocalPlatformContext.current)
+                .data(item.imageUrl)
+//                .extras.set(Extras.Key("retryHash"), retryHash)
+//                .setParameter("retryHash", retryHash)
+                // By default retryHash is also included in keys.
+                // This results in a bit longer loading if the same image is requested
+                // with retryHash == 0 next time.
+                // Set our own cache keys to avoid it.
+                //TODO not the case anymore?
+                .diskCacheKey(item.imageUrl)
+                .memoryCacheKey(item.imageUrl)
+                //TODO transformations are not supported for Desktop and iOS. Does Kamel support them?
+//                .transformations(BitmapTransformations.getFor(item.source))
+                .build(),
+            placeholder = debugPlaceholder(Color.Magenta),
+            contentScale = contentScale,
+            error = error,
+            fallback = fallback,
+            onLoading = onLoading,
+            onSuccess = onSuccess,
+            onError = onError,
+            filterQuality = filterQuality
+        )
+
+        val lifecycleState by LocalLifecycleOwner.current.lifecycle.currentStateAsState()
+        val isAtLeastResumed = lifecycleState.isAtLeast(Lifecycle.State.RESUMED)
+        val hasImageRequestFailed =
+            painter.state.collectAsState().value is AsyncImagePainter.State.Error
+        LaunchedEffect(isAtLeastResumed, hasImageRequestFailed) {
+            if (isAtLeastResumed && hasImageRequestFailed) {
+                delay(if (retryHash <= 2) 2.seconds else 5.seconds)
+                painter.restart()
+                retryHash++
+            }
+        }
+
+        return painter
+    }
+
     @Composable
     fun rememberRetryingAsyncImagePainter(
         item: FeedItemDisplayable,

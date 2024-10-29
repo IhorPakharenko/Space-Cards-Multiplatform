@@ -1,6 +1,9 @@
 package com.isao.yfoo3.feature.feed.composable
 
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.ExperimentalMaterialApi
@@ -10,13 +13,17 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
+import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.isao.yfoo3.core.common.util.PreviewLightDark
+import com.isao.yfoo3.core.designsystem.LocalWindowSizeClass
+import com.isao.yfoo3.core.designsystem.composable.dismissible.DismissibleStack
 import com.isao.yfoo3.core.designsystem.theme.Yfoo2Theme
 import com.isao.yfoo3.core.model.ImageSource
 import com.isao.yfoo3.feature.feed.FeedIntent
@@ -46,36 +53,52 @@ fun FeedScreen(
 ) {
     val snackbarHostState = remember { SnackbarHostState() }
 
-    //TODO display the card above the app bar
     Scaffold(
-        topBar = {
-            CenterAlignedTopAppBar(
-                title = {
-                    Text(stringResource(Res.string.app_name))
-                }
-            )
-        },
         snackbarHost = { SnackbarHost(snackbarHostState) },
         // Let the content take up all available space.
         // Material3 components handle the insets themselves
         contentWindowInsets = WindowInsets(0, 0, 0, 0)
     ) { padding ->
-        if (uiState.isError) {
-            val errorMessage = stringResource(Res.string.something_went_wrong)
+        Column {
+            // Let the card be drawn above the app bar
+            CenterAlignedTopAppBar(
+                title = {
+                    Text(stringResource(Res.string.app_name))
+                }
+            )
 
-            LaunchedEffect(snackbarHostState) {
-                snackbarHostState.showSnackbar(
-                    message = errorMessage,
-                )
+            if (uiState.isError) {
+                val errorMessage = stringResource(Res.string.something_went_wrong)
+
+                LaunchedEffect(snackbarHostState) {
+                    snackbarHostState.showSnackbar(
+                        message = errorMessage,
+                    )
+                }
             }
+//        FeedScreenContent(
+//            uiState,
+//            onIntent,
+//            modifier
+//                .padding(padding)
+//                .fillMaxSize()
+//        )
+            val cardSizeModifier =
+                if (LocalWindowSizeClass.current.widthSizeClass != WindowWidthSizeClass.Compact) {
+                    Modifier.fillMaxHeight().aspectRatio(0.7f)
+                } else {
+                    Modifier.fillMaxSize()
+                }
+            DismissibleStack(
+                uiState.items,
+                content = {
+                    FeedCard(item = it, Modifier.then(cardSizeModifier).padding(16.dp))
+                },
+                modifier = modifier
+                    .padding(padding)
+                    .fillMaxSize()
+            )
         }
-        FeedScreenContent(
-            uiState,
-            onIntent,
-            modifier
-                .padding(padding)
-                .fillMaxSize()
-        )
     }
 }
 

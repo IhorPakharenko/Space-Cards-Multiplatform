@@ -33,6 +33,10 @@ class ComposeMultiplatformConventionPlugin : Plugin<Project> {
                         implementation(libs.findLibrary("jetbrains.navigation.compose").get())
                         implementation(libs.findLibrary("koin.compose.viewmodel").get())
                         implementation(libs.findLibrary("koin.compose").get())
+
+                        implementation(
+                            libs.findLibrary("multiplatform.material3.window.size").get()
+                        )
                     }
                 }
             }

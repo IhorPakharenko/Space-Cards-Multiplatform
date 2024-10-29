@@ -9,7 +9,7 @@ import com.isao.yfoo3.resources.feed
 import com.isao.yfoo3.resources.liked
 import org.jetbrains.compose.resources.StringResource
 
-enum class BottomNavigationScreen(
+enum class TopLevelScreen(
     val route: String,
     val nameRes: StringResource,
     val icon: ImageVector

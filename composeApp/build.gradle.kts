@@ -104,6 +104,7 @@ kotlin {
             implementation(libs.kermit.koin)
             implementation(libs.koin.core)
             api(libs.koin.annotations)
+            implementation(libs.multiplatform.material3.window.size)
         }
         androidMain.dependencies {
             implementation(compose.preview)
