@@ -19,3 +19,8 @@ kotlin {
 dependencies {
 
 }
+
+// TODO extract to a common place
+ksp {
+    arg("KOIN_USE_COMPOSE_VIEWMODEL", "true")
+}
