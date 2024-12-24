@@ -1,8 +1,6 @@
 package com.isao.yfoo3
 
-import com.google.devtools.ksp.gradle.KspExtension
 import org.gradle.api.Project
-import org.gradle.kotlin.dsl.configure
 import org.gradle.kotlin.dsl.dependencies
 import org.gradle.kotlin.dsl.exclude
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
@@ -80,10 +78,10 @@ internal fun Project.configureKotlinMultiplatform(
         add("kspIosSimulatorArm64", libs.findLibrary("koin.ksp.compiler").get())
     }
 
-    extensions.configure<KspExtension> {
-        // Use KoinViewModel annotation with multiplatform support
-        arg("KOIN_USE_COMPOSE_VIEWMODEL", "true")
-    }
+//    extensions.configure<KspExtension> {
+//        // Use KoinViewModel annotation with multiplatform support
+//        arg("KOIN_USE_COMPOSE_VIEWMODEL", "true")
+//    }
 
     // Trigger Common Metadata Generation from Native tasks
     project.tasks.withType(KotlinCompilationTask::class.java).configureEach {
