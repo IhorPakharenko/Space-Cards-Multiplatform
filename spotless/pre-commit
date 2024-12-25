@@ -1,0 +1,13 @@
+# Runs spotlessApply on staged changes. This script is intended to be used as a pre-commit hook.
+# To use it, copy this script to .git/hooks/pre-commit and make it executable.
+# For more samples / inspiration check:
+# https://github.com/diffplug/spotless/issues/178
+# https://github.com/diffplug/spotless/issues/623
+
+#!/usr/bin/env bash
+set -euo pipefail
+
+RATCHET_REF="${HEAD^}"
+echo "Running spotlessApply on files changed since ${RATCHET_REF}"
+
+./gradlew --no-daemon --console=plain :spotlessApply -PratchetFrom="${RATCHET_REF}"

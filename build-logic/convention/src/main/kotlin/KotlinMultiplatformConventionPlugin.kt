@@ -13,6 +13,7 @@ class KotlinMultiplatformConventionPlugin : Plugin<Project> {
             apply(libs.findPlugin("kotlinMultiplatform").get().get().pluginId)
             apply(libs.findPlugin("androidLibrary").get().get().pluginId)
             apply(libs.findPlugin("ksp").get().get().pluginId)
+//            apply("com.diffplug.spotless")
 //            apply(libs.findPlugin("kotlin.serialization").get().get().pluginId)
         }
 

@@ -13,7 +13,7 @@ plugins {
 
     id("com.github.ben-manes.versions") version "0.41.0"
     id("nl.littlerobots.version-catalog-update") version "0.8.5"
-    alias(libs.plugins.ktlint)
+    id("com.diffplug.spotless") version "7.0.0.BETA4"
 }
 
 tasks.withType<DependencyUpdatesTask> {
