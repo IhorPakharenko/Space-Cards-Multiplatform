@@ -1,5 +1,6 @@
 package com.isao.yfoo3
 
+import configureSpotless
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.dependencies
 import org.gradle.kotlin.dsl.exclude
@@ -94,4 +95,6 @@ internal fun Project.configureKotlinMultiplatform(
     configurations.named("desktopMainApi") {
         exclude(group = "org.jetbrains.kotlinx", module = "kotlinx-coroutines-android")
     }
+
+    configureSpotless()
 }

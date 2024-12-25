@@ -17,10 +17,12 @@ inline fun <reified T> Flow<T>.collectWithLifecycle(
     minActiveState: Lifecycle.State = Lifecycle.State.STARTED,
     noinline action: suspend (T) -> Unit,
 ) {
+    "s"
+
     val lifecycleAwareFlow = remember(this, lifecycleOwner) {
         flowWithLifecycle(
             lifecycle = lifecycleOwner.lifecycle,
-            minActiveState = minActiveState,
+            minActiveState = minActiveState
         )
     }
 
@@ -28,3 +30,4 @@ inline fun <reified T> Flow<T>.collectWithLifecycle(
         lifecycleAwareFlow.collect { action(it) }
     }
 }
+// TODO todo
