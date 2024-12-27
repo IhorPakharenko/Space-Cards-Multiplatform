@@ -1,30 +1,32 @@
 import com.github.benmanes.gradle.versions.updates.DependencyUpdatesTask
 
 plugins {
-    // this is necessary to avoid the plugins to be loaded multiple times
-    // in each subproject's classloader
-    alias(libs.plugins.androidApplication) apply false
-    alias(libs.plugins.androidLibrary) apply false
-    alias(libs.plugins.jetbrainsCompose) apply false
-    alias(libs.plugins.compose.compiler) apply false
-    alias(libs.plugins.kotlinMultiplatform) apply false
-    alias(libs.plugins.jetbrains.kotlin.jvm) apply false
-    alias(libs.plugins.ksp) apply false
-
-    id("com.github.ben-manes.versions") version "0.41.0"
-    id("nl.littlerobots.version-catalog-update") version "0.8.5"
-    id("com.diffplug.spotless") version "7.0.0.BETA4"
+  //TODO uncommenting this line causes an extremely cryptic error:
+  // Error resolving plugin [id: 'com.isao.spacecards.kotlinMultiplatform', version: 'unspecified']
+  // > The request for this plugin could not be satisfied because the plugin is already on the classpath with an unknown version, so compatibility cannot be checked.
+  // The only thing that this plugin does is formatting this single file with Spotless, so it's not a big deal.
+//  alias(libs.plugins.spacecards.root)
+  alias(libs.plugins.androidApplication) apply false
+  alias(libs.plugins.androidLibrary) apply false
+  alias(libs.plugins.jetbrainsCompose) apply false
+  alias(libs.plugins.compose.compiler) apply false
+  alias(libs.plugins.kotlinMultiplatform) apply false
+  alias(libs.plugins.jetbrains.kotlin.jvm) apply false
+  alias(libs.plugins.ksp) apply false
+  alias(libs.plugins.versions)
+  alias(libs.plugins.versionCatalogUpdate)
+  alias(libs.plugins.spotless)
 }
 
 tasks.withType<DependencyUpdatesTask> {
-    rejectVersionIf {
-        isNonStable(candidate.version) && !isNonStable(currentVersion)
-    }
+  rejectVersionIf {
+    isNonStable(candidate.version) && !isNonStable(currentVersion)
+  }
 }
 
 private fun isNonStable(version: String): Boolean {
-    val stableKeyword = listOf("RELEASE", "FINAL", "GA").any { version.uppercase().contains(it) }
-    val regex = "^[0-9,.v-]+(-r)?$".toRegex()
-    val isStable = stableKeyword || regex.matches(version)
-    return isStable.not()
+  val stableKeyword = listOf("RELEASE", "FINAL", "GA").any { version.uppercase().contains(it) }
+  val regex = "^[0-9,.v-]+(-r)?$".toRegex()
+  val isStable = stableKeyword || regex.matches(version)
+  return isStable.not()
 }

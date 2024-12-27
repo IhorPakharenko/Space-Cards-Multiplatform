@@ -7,11 +7,5 @@ kotlin {
     commonMain.dependencies {
       implementation(projects.core.model)
     }
-    androidMain.dependencies {
-    }
-    desktopMain.dependencies {
-    }
-    iosMain.dependencies {
-    }
   }
 }

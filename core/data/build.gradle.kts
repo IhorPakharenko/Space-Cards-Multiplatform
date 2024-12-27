@@ -5,11 +5,9 @@ plugins {
 kotlin {
   sourceSets {
     commonMain.dependencies {
-      api(projects.core.model)
-      implementation(projects.core.sqldelight)
+      implementation(projects.core.model)
+      implementation(projects.core.db)
+      implementation(projects.core.network)
     }
   }
-}
-
-dependencies {
 }

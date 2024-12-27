@@ -1,96 +1,60 @@
 package com.isao.spacecards
 
-import configureSpotless
 import org.gradle.api.Project
-import org.gradle.kotlin.dsl.dependencies
 import org.gradle.kotlin.dsl.exclude
-import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
-import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask
 
 @OptIn(org.jetbrains.kotlin.gradle.ExperimentalWasmDsl::class)
-internal fun Project.configureKotlinMultiplatform(extension: KotlinMultiplatformExtension) =
-  extension.apply {
+internal fun Project.configureKotlinMultiplatform() {
+  with(pluginManager) {
+    apply(libs.findPlugin("kotlinMultiplatform").get().get().pluginId)
+  }
+
+  kotlinMultiplatform {
     jvmToolchain(17)
 
     androidTarget {
-      @OptIn(ExperimentalKotlinGradlePluginApi::class)
       compilerOptions {
         jvmTarget.set(JvmTarget.JVM_17)
       }
     }
 
-    jvm("desktop")
-
-//    wasmJs { browser() }
+    jvm()
 
     listOf(iosX64(), iosArm64(), iosSimulatorArm64())
 
     applyDefaultHierarchyTemplate()
 
     sourceSets.apply {
-      commonMain {
-        dependencies {
-          implementation(libs.findLibrary("kotlinx.coroutines.core").get())
-          implementation(libs.findLibrary("kotlinx.datetime").get())
-          implementation(libs.findLibrary("kermit").get())
+      commonMain.dependencies {
+        implementation(libs.findLibrary("kotlinx.coroutines.core").get())
+        implementation(libs.findLibrary("kotlinx.datetime").get())
+        implementation(libs.findLibrary("kotlinx.serialization.json").get())
 
-          // // Koin Libraries
-          implementation(libs.findLibrary("koin.core").get())
-          implementation(libs.findLibrary("koin.core.coroutines").get())
-          api(libs.findLibrary("koin.annotations").get())
+        implementation(libs.findLibrary("koin.core").get())
+        implementation(libs.findLibrary("koin.core.coroutines").get())
+        api(libs.findLibrary("koin.annotations").get())
 
-          implementation(libs.findLibrary("kermit.koin").get())
-
-          implementation(libs.findLibrary("kotlinx.serialization.json").get())
-        }
-        // Apparently makes ksp-generated code visible
-        commonMain.configure {
-          kotlin.srcDir("build/generated/ksp/metadata/commonMain/kotlin")
-        }
-
-        androidMain {
-          dependencies {
-//                    implementation(libs.findLibrary("koin.android").get())
-            implementation(libs.findLibrary("kotlinx.coroutines.android").get())
-          }
-        }
-
-        jvmMain.dependencies {
-          implementation(libs.findLibrary("kotlinx.coroutines.swing").get())
-        }
-
-        jsMain.dependencies {
-        }
+        implementation(libs.findLibrary("kermit").get())
+        implementation(libs.findLibrary("kermit.koin").get())
       }
-    }
-
-    dependencies {
-      add("kspCommonMainMetadata", libs.findLibrary("koin.ksp.compiler").get())
-      add("kspAndroid", libs.findLibrary("koin.ksp.compiler").get())
-      add("kspDesktop", libs.findLibrary("koin.ksp.compiler").get())
-      add("kspIosX64", libs.findLibrary("koin.ksp.compiler").get())
-      add("kspIosArm64", libs.findLibrary("koin.ksp.compiler").get())
-      add("kspIosSimulatorArm64", libs.findLibrary("koin.ksp.compiler").get())
-    }
-
-//    extensions.configure<KspExtension> {
-//        // Use KoinViewModel annotation with multiplatform support
-//        arg("KOIN_USE_COMPOSE_VIEWMODEL", "true")
-//    }
-
-    // Trigger Common Metadata Generation from Native tasks
-    project.tasks.withType(KotlinCompilationTask::class.java).configureEach {
-      if (name != "kspCommonMainKotlinMetadata") {
-        dependsOn("kspCommonMainKotlinMetadata")
+      androidMain.dependencies {
+        implementation(libs.findLibrary("koin.android").get())
+        implementation(libs.findLibrary("kotlinx.coroutines.android").get())
+        implementation(libs.findLibrary("ktor.client.android").get())
+      }
+      jvmMain.dependencies {
+        implementation(libs.findLibrary("kotlinx.coroutines.swing").get())
+        implementation(libs.findLibrary("ktor.client.java").get())
+      }
+      iosMain.dependencies {
+        implementation(libs.findLibrary("ktor.client.darwin").get())
       }
     }
 
     // Desktop depends on Android Coroutines and crashes otherwise
-    configurations.named("desktopMainApi") {
+    configurations.named("jvmMainApi") {
       exclude(group = "org.jetbrains.kotlinx", module = "kotlinx-coroutines-android")
     }
-
-    configureSpotless()
   }
+}

@@ -43,6 +43,8 @@ sqldelight = "2.0.2"
 sqljsDriver = "1.5.5"
 turbine = "1.2.0"
 uiToolingPreviewAndroid = "1.7.6"
+versions = "0.41.0"
+versionCatalogUpdate = "0.8.5"
 
 [libraries]
 androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "androidx-activityCompose" }
@@ -124,9 +126,13 @@ ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 screenshot = { id = "com.android.compose.screenshot", version.ref = "screenshot" }
 sqldelight = { id = "app.cash.sqldelight", version.ref = "sqldelight" }
 spotless = { id = "com.diffplug.spotless", version.ref = "spotless" }
+versions = { id = "com.github.ben-manes.versions", version.ref = "versions" }
+versionCatalogUpdate = { id = "nl.littlerobots.version-catalog-update", version.ref = "versionCatalogUpdate" }
 
 # Plugins defined by this project
 # @keep
 spacecards-composeMultiplatform = { id = "com.isao.spacecards.composeMultiplatform", version = "unspecified" }
 # @keep
 spacecards-kotlinMultiplatform = { id = "com.isao.spacecards.kotlinMultiplatform", version = "unspecified" }
+# @keep
+spacecards-root = { id = "com.isao.spacecards.root", version = "unspecified" }

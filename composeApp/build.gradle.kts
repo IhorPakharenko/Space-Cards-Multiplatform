@@ -1,137 +1,27 @@
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
-import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
-import org.jetbrains.kotlin.gradle.dsl.JvmTarget
-import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSetTree
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask
 
 plugins {
-    alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.androidApplication)
-    alias(libs.plugins.jetbrainsCompose)
-    alias(libs.plugins.compose.compiler)
-
-    alias(libs.plugins.junit)
-//    alias(libs.plugins.kotlin)
-    alias(libs.plugins.ksp)
-//    alias(libs.plugins.kotlin.parcelize)
-    id("kotlin-parcelize") // add this
-//    id("kotlin-kapt") // add this
-//    alias(libs.plugins.room)
-
-    alias(libs.plugins.screenshot)
-    alias(libs.plugins.kotest.multiplatform)
-
-//    id("com.google.devtools.ksp")
-//    alias(libs.plugins.screenshot)
+  alias(libs.plugins.spacecards.kotlinMultiplatform)
+  alias(libs.plugins.spacecards.composeMultiplatform)
 }
 
 kotlin {
-//    @OptIn(ExperimentalWasmDsl::class)
-//    wasmJs {
-//        moduleName = "composeApp"
-//        browser {
-//            val rootDirPath = project.rootDir.path
-//            val projectDirPath = project.projectDir.path
-//            commonWebpackConfig {
-//                outputFileName = "composeApp.js"
-//                devServer = (devServer ?: KotlinWebpackConfig.DevServer()).apply {
-//                    static = (static ?: mutableListOf()).apply {
-//                        // Serve sources to debug inside browser
-//                        add(rootDirPath)
-//                        add(projectDirPath)
-//                    }
-//                }
-//            }
-//        }
-//        binaries.executable()
-//    }
-    
-    androidTarget {
-        @OptIn(ExperimentalKotlinGradlePluginApi::class)
-        compilerOptions {
-            jvmTarget.set(JvmTarget.JVM_17)
-        }
-        @OptIn(ExperimentalKotlinGradlePluginApi::class)
-        instrumentedTestVariant.sourceSetTree.set(KotlinSourceSetTree.test)
-    }
-    
-    jvm("desktop")
-    
-    listOf(
-        iosX64(),
-        iosArm64(),
-        iosSimulatorArm64()
-    ).forEach { iosTarget ->
-        iosTarget.binaries.framework {
-            baseName = "ComposeApp"
-            isStatic = true
-        }
-    }
-    
     sourceSets {
-        val desktopMain by getting
-        val desktopTest by getting
-
-        commonMain.dependencies {
+    commonMain.dependencies {
             implementation(projects.core.common)
             implementation(projects.core.designsystem)
             implementation(projects.core.sqldelight)
             implementation(projects.feature.feed)
             implementation(projects.feature.liked)
-
-            implementation(compose.runtime)
-            implementation(compose.foundation)
-            implementation(compose.material)
-            implementation(compose.material3)
-            implementation(compose.ui)
-            implementation(compose.components.resources)
-            implementation(compose.components.uiToolingPreview)
-//            implementation(libs.androidx.lifecycle.viewmodel)
-//            implementation(libs.androidx.lifecycle.runtime.compose)
-            implementation(libs.ktor.client.core)
-            implementation(libs.coil.compose)
-            implementation(libs.coil.network.ktor)
-
-            //// Other Libraries
-            implementation(libs.kermit)
-            implementation(libs.ktor.client.core)
-            implementation(libs.coil.network.ktor)
-            implementation(libs.kotlinx.datetime)
-
-            implementation(libs.jetbrains.navigation.compose)
-            implementation(libs.koin.compose)
-            implementation(libs.kermit)
-            implementation(libs.kermit.koin)
-            implementation(libs.koin.core)
-            api(libs.koin.annotations)
-            implementation(libs.multiplatform.material3.window.size)
         }
         androidMain.dependencies {
-            implementation(compose.preview)
-            implementation(libs.androidx.activity.compose)
-            implementation(libs.koin.android)
-            implementation(libs.androidx.core.splashscreen)
-            implementation(libs.ktor.client.android)
-            implementation(libs.sqldelight.android.driver)
-//            screenshotTestImplementation(libs.compose.ui.tooling)
-        }
-        desktopMain.dependencies {
-            implementation(compose.desktop.currentOs)
-            implementation(libs.kotlinx.coroutines.swing)
-            implementation(libs.ktor.client.java)
+      implementation(libs.androidx.core.splashscreen)
+    }
 
-        }
-        iosMain.dependencies {
-            implementation(libs.ktor.client.darwin)
-            implementation(libs.sqldelight.native.driver)
-        }
-        jsMain.dependencies {
-            implementation(libs.ktor.client.js)
-            implementation(libs.sqldelight.sqljs.driver)
-            implementation(libs.kermit.koin.js)
-        }
-
-        commonTest.dependencies {
+    // TODO tests for a multi module project.
+    // TODO These dependencies need to be filtered and added to the correct module.
+    commonTest.dependencies {
             implementation(libs.kotest.assertions.core)
             implementation(libs.kotest.framework.engine)
             implementation(libs.kotest.framework.datatest)
@@ -143,7 +33,7 @@ kotlin {
             @OptIn(org.jetbrains.compose.ExperimentalComposeLibrary::class)
             implementation(compose.uiTest)
         }
-        desktopTest.dependencies {
+      jvmTest.dependencies {
             implementation(libs.mockk)
             implementation(libs.koin.test.junit5)
             implementation(libs.kotest.runner.junit5)
@@ -161,99 +51,7 @@ kotlin {
             implementation(libs.kotest.assertions.android)
             implementation(libs.compose.ui.test.junit4)
         }
-
-        // KSP Common sourceSet
-        sourceSets.named("commonMain").configure {
-            kotlin.srcDir("build/generated/ksp/metadata/commonMain/kotlin")
-        }
     }
-}
-
-android {
-  namespace = "com.isao.spacecards"
-    compileSdk = libs.versions.android.compileSdk.get().toInt()
-
-    defaultConfig {
-      applicationId = "com.isao.spacecards"
-        minSdk = libs.versions.android.minSdk.get().toInt()
-        targetSdk = libs.versions.android.targetSdk.get().toInt()
-        versionCode = 1
-        versionName = "1.0"
-
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-    }
-    packaging {
-        resources {
-            excludes += "/META-INF/{AL2.0,LGPL2.1}"
-        }
-    }
-    buildTypes {
-        getByName("release") {
-            isMinifyEnabled = false
-        }
-    }
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_17
-        targetCompatibility = JavaVersion.VERSION_17
-    }
-
-    @Suppress("UnstableApiUsage")
-    experimentalProperties["android.experimental.enableScreenshotTest"] = true
-
-    dependencies { //TODO is this needed?
-        screenshotTestImplementation(libs.compose.ui.tooling)
-    }
-
-    sourceSets.all {
-        java.srcDirs("src/$name/kotlin")
-    }
-    @Suppress("UnstableApiUsage")
-    testOptions {
-        unitTests {
-            isIncludeAndroidResources = true
-        }
-    }
-    tasks.withType<Test> {
-        testLogging { // Enables println() in unit tests
-            events("standardOut")
-        }
-    }
-}
-
-composeCompiler {
-    stabilityConfigurationFile = File(projectDir, "compose_stability.conf") //TODO check if it works
-}
-
-dependencies {
-    implementation(libs.androidx.ui.tooling.preview.android)
-    debugImplementation(compose.uiTooling)
-
-    androidTestImplementation(libs.androidx.ui.test.junit4.android)
-    debugImplementation(libs.compose.ui.test.manifest)
-
-    add("kspCommonMainMetadata", libs.koin.ksp.compiler)
-    add("kspAndroid", libs.koin.ksp.compiler)
-    add("kspDesktop", libs.koin.ksp.compiler)
-    add("kspIosX64", libs.koin.ksp.compiler)
-    add("kspIosArm64", libs.koin.ksp.compiler)
-    add("kspIosSimulatorArm64", libs.koin.ksp.compiler)
-}
-//
-//// Trigger Common Metadata Generation from Native tasks
-project.tasks.withType(KotlinCompilationTask::class.java).configureEach {
-    if (name != "kspCommonMainKotlinMetadata") {
-        dependsOn("kspCommonMainKotlinMetadata")
-    }
-}
-//
-//// Desktop depends on Android Coroutines and crashes otherwise
-//configurations.named("desktopMainApi") {
-//    exclude(group = "org.jetbrains.kotlinx", module = "kotlinx-coroutines-android")
-//}
-//
-// Use KoinViewModel annotation with multiplatform support
-ksp {
-    arg("KOIN_USE_COMPOSE_VIEWMODEL", "true")
 }
 
 compose.desktop {
@@ -268,11 +66,8 @@ compose.desktop {
     }
 }
 
-tasks.named<Test>("desktopTest") {
+tasks.named<Test>("jvmTest") {
     useJUnitPlatform()
-//    filter {
-//        isFailOnNoMatchingTests = false
-//    }
     testLogging {
         showExceptions = true
         showStandardStreams = true
