@@ -1,7 +1,7 @@
 import com.android.build.api.dsl.LibraryExtension
-import com.isao.yfoo3.configureKotlinAndroid
-import com.isao.yfoo3.configureKotlinMultiplatform
-import com.isao.yfoo3.libs
+import com.isao.spacecards.configureKotlinAndroid
+import com.isao.spacecards.configureKotlinMultiplatform
+import com.isao.spacecards.libs
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.configure

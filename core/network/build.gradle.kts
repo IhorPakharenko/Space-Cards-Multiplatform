@@ -1,3 +1,3 @@
 plugins {
-  alias(libs.plugins.yfoo3.kotlinMultiplatform)
+  alias(libs.plugins.spacecards.kotlinMultiplatform)
 }

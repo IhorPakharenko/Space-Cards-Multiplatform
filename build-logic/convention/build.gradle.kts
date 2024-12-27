@@ -3,7 +3,7 @@ plugins {
     alias(libs.plugins.spotless)
 }
 
-group = "com.isao.yfoo3.buildlogic"
+group = "com.isao.spacecards.buildlogic"
 
 dependencies {
     compileOnly(libs.plugins.androidApplication.toDep())
@@ -35,11 +35,11 @@ spotless {
 gradlePlugin {
     plugins {
         register("kotlinMultiplatform") {
-            id = "com.isao.yfoo3.kotlinMultiplatform"
+          id = "com.isao.spacecards.kotlinMultiplatform"
             implementationClass = "KotlinMultiplatformConventionPlugin"
         }
         register("composeMultiplatform") {
-            id = "com.isao.yfoo3.composeMultiplatform"
+          id = "com.isao.spacecards.composeMultiplatform"
             implementationClass = "ComposeMultiplatformConventionPlugin"
         }
     }

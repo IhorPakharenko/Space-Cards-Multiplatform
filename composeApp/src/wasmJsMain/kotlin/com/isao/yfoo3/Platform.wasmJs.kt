@@ -1,4 +1,4 @@
-package com.isao.yfoo3
+package com.isao.spacecards
 
 class WasmPlatform: Platform {
     override val name: String = "Web with Kotlin/Wasm"

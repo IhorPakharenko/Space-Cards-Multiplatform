@@ -1,4 +1,4 @@
-rootProject.name = "YfooMultiplatform"
+rootProject.name = "SpaceCards"
 enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 
 pluginManagement {

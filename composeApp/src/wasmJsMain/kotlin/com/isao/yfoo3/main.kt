@@ -1,4 +1,4 @@
-package com.isao.yfoo3
+package com.isao.spacecards
 
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.window.ComposeViewport

@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Allows us to override night specific attributes in the values-night folder -->
-    <style name="NightAdjusted.Theme.Yfoo" parent="android:Theme.Material.Light.NoActionBar" />
+    <style name="NightAdjusted.Theme.SpaceCards" parent="android:Theme.Material.Light.NoActionBar" />
 
     <!-- The final theme we use -->
-    <style name="Theme.Yfoo2" parent="NightAdjusted.Theme.Yfoo">
+    <style name="Theme.SpaceCards" parent="NightAdjusted.Theme.SpaceCards">
         <item name="android:statusBarColor">@android:color/transparent</item>
         <item name="android:navigationBarColor">@android:color/transparent</item>
     </style>
@@ -14,8 +14,8 @@
         <item name="android:windowLightNavigationBar" tools:targetApi="27">true</item>
     </style>
 
-    <style name="Theme.Yfoo2.Splash" parent="NightAdjusted.Theme.Splash">
+    <style name="Theme.SpaceCards.Splash" parent="NightAdjusted.Theme.Splash">
         <item name="windowSplashScreenAnimatedIcon">@drawable/ic_splash</item>
-        <item name="postSplashScreenTheme">@style/Theme.Yfoo2</item>
+        <item name="postSplashScreenTheme">@style/Theme.SpaceCards</item>
     </style>
 </resources>

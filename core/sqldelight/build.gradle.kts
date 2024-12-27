@@ -3,7 +3,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask
 plugins {
 //    id("java-library")
 //    alias(libs.plugins.jetbrains.kotlin.jvm)
-  alias(libs.plugins.yfoo3.kotlinMultiplatform)
+  alias(libs.plugins.spacecards.kotlinMultiplatform)
   alias(libs.plugins.sqldelight)
 }
 
@@ -83,7 +83,7 @@ project.tasks.withType(KotlinCompilationTask::class.java).configureEach {
 sqldelight {
   databases {
     create("Database") {
-      packageName.set("com.isao.yfoo3.core.data")
+      packageName.set("com.isao.spacecards.core.data")
 //            generateAsync.set(true)
     }
   }

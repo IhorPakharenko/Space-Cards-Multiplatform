@@ -170,11 +170,11 @@ kotlin {
 }
 
 android {
-    namespace = "com.isao.yfoo3"
+  namespace = "com.isao.spacecards"
     compileSdk = libs.versions.android.compileSdk.get().toInt()
 
     defaultConfig {
-        applicationId = "com.isao.yfoo3"
+      applicationId = "com.isao.spacecards"
         minSdk = libs.versions.android.minSdk.get().toInt()
         targetSdk = libs.versions.android.targetSdk.get().toInt()
         versionCode = 1
@@ -258,11 +258,11 @@ ksp {
 
 compose.desktop {
     application {
-        mainClass = "com.isao.yfoo3.MainKt"
+      mainClass = "com.isao.spacecards.MainKt"
 
         nativeDistributions {
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
-            packageName = "com.isao.yfoo3"
+          packageName = "com.isao.spacecards"
             packageVersion = "1.0.0"
         }
     }

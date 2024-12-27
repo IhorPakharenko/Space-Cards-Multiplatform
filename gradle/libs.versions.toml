@@ -127,6 +127,6 @@ spotless = { id = "com.diffplug.spotless", version.ref = "spotless" }
 
 # Plugins defined by this project
 # @keep
-yfoo3-composeMultiplatform = { id = "com.isao.yfoo3.composeMultiplatform", version = "unspecified" }
+spacecards-composeMultiplatform = { id = "com.isao.spacecards.composeMultiplatform", version = "unspecified" }
 # @keep
-yfoo3-kotlinMultiplatform = { id = "com.isao.yfoo3.kotlinMultiplatform", version = "unspecified" }
+spacecards-kotlinMultiplatform = { id = "com.isao.spacecards.kotlinMultiplatform", version = "unspecified" }

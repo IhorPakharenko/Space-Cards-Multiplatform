@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import com.diffplug.gradle.spotless.SpotlessExtension
-import com.isao.yfoo3.libs
+import com.isao.spacecards.libs
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.configure
 
