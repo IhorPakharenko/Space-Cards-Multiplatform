@@ -1,0 +1,6 @@
+# Makes blame ignore certain commits. Useful for large scale formatting changes
+# To apply to your machine, use
+# git config --local blame.ignoreRevsFile .git-blame-ignore-revs
+
+# Format everything with ktlint
+89c2ad8dde74af200602fbf83912e94355400b62
