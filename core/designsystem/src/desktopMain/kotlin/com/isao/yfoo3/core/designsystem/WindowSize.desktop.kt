@@ -8,6 +8,4 @@ import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
 import androidx.compose.runtime.Composable
 
 @Composable
-actual fun getWindowSizeClass(): WindowSizeClass {
-    return calculateWindowSizeClass()
-}
+actual fun getWindowSizeClass(): WindowSizeClass = calculateWindowSizeClass()

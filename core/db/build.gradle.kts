@@ -1,20 +1,17 @@
 plugins {
-    alias(libs.plugins.yfoo3.kotlinMultiplatform)
+  alias(libs.plugins.yfoo3.kotlinMultiplatform)
 }
 
 kotlin {
-    sourceSets {
-        commonMain.dependencies {
-            implementation(projects.core.model)
-        }
-        androidMain.dependencies {
-
-        }
-        desktopMain.dependencies {
-
-        }
-        iosMain.dependencies {
-
-        }
+  sourceSets {
+    commonMain.dependencies {
+      implementation(projects.core.model)
     }
+    androidMain.dependencies {
+    }
+    desktopMain.dependencies {
+    }
+    iosMain.dependencies {
+    }
+  }
 }

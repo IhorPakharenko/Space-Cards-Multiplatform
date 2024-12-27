@@ -11,6 +11,6 @@ import com.isao.yfoo3.core.common.extension.findActivity
 
 @Composable
 actual fun getWindowSizeClass(): WindowSizeClass {
-    // Must not be called outside the context of activity
-    return calculateWindowSizeClass(LocalContext.current.findActivity()!!)
+  // Must not be called outside the context of activity
+  return calculateWindowSizeClass(LocalContext.current.findActivity()!!)
 }

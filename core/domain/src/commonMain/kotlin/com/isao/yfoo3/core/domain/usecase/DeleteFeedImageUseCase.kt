@@ -5,12 +5,8 @@ import com.isao.yfoo3.core.data.repository.FeedImageRepository
 import org.koin.core.annotation.Single
 
 @Single
-class DeleteFeedImageUseCase(
-    private val feedImageRepository: FeedImageRepository,
-) {
-    suspend operator fun invoke(id: String): Result<Unit> {
-        return resultOf {
-            feedImageRepository.deleteImage(id)
-        }
-    }
+class DeleteFeedImageUseCase(private val feedImageRepository: FeedImageRepository) {
+  suspend operator fun invoke(id: String): Result<Unit> = resultOf {
+    feedImageRepository.deleteImage(id)
+  }
 }

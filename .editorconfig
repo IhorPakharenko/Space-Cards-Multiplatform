@@ -11,7 +11,6 @@ ktlint_standard_string-template-indent = disabled
 ktlint_standard_trailing-comma-on-call-site = enabled
 ktlint_argument_list_wrapping_ignore_when_parameter_count_greater_or_equal_than = 3
 ktlint_function_signature_body_expression_wrapping = default
-# ktlint_standard_class-signature = disabled
 compose_allowed_composition_locals = LocalWindowSizeClass
 ktlint_class_signature_rule_force_multiline_when_parameter_count_greater_or_equal_than = 3
 

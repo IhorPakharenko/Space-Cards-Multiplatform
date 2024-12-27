@@ -9,14 +9,12 @@ import org.koin.core.annotation.Single
 
 @Single
 class LikeImageUseCase(
-    private val feedImageRepository: FeedImageRepository,
-    private val likedImageRepository: LikedImageRepository,
+  private val feedImageRepository: FeedImageRepository,
+  private val likedImageRepository: LikedImageRepository,
 ) {
-    suspend operator fun invoke(id: String): Result<Unit> {
-        return resultOf {
-            val feedImage = feedImageRepository.getImage(id).first()
-            likedImageRepository.saveImage(feedImage.toLikedImage())
-            feedImageRepository.deleteImage(feedImage.id)
-        }
-    }
+  suspend operator fun invoke(id: String): Result<Unit> = resultOf {
+    val feedImage = feedImageRepository.getImage(id).first()
+    likedImageRepository.saveImage(feedImage.toLikedImage())
+    feedImageRepository.deleteImage(feedImage.id)
+  }
 }

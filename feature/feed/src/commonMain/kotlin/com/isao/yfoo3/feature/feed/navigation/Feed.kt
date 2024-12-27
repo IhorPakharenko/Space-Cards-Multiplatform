@@ -6,7 +6,7 @@ import com.isao.yfoo3.core.designsystem.TopLevelScreen
 import com.isao.yfoo3.feature.feed.composable.FeedRoute
 
 fun NavGraphBuilder.addFeedScreen() {
-    composable(TopLevelScreen.Feed.route) {
-        FeedRoute()
-    }
+  composable(TopLevelScreen.Feed.route) {
+    FeedRoute()
+  }
 }

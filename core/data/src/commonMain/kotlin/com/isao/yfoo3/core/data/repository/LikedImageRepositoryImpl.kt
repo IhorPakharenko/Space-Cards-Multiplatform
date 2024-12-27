@@ -9,32 +9,27 @@ import kotlinx.coroutines.flow.map
 import org.koin.core.annotation.Single
 
 @Single(binds = [LikedImageRepository::class])
-class LikedImageRepositoryImpl(
-    private val likedImageDao: LikedImageDao,
-) : LikedImageRepository {
-
-    override fun getImages(): Flow<List<LikedImage>> {
-        return likedImageDao.getLikedImages().map { imagesCached ->
-            imagesCached.map { it.toDomainModel() }
-        }
+class LikedImageRepositoryImpl(private val likedImageDao: LikedImageDao) : LikedImageRepository {
+  override fun getImages(): Flow<List<LikedImage>> =
+    likedImageDao.getLikedImages().map { imagesCached ->
+      imagesCached.map { it.toDomainModel() }
     }
 
-    override fun getImages(
-        shouldSortAscending: Boolean,
-        limit: Int,
-        offset: Int
-    ): Flow<List<LikedImage>> {
-        return likedImageDao.getLikedImages(shouldSortAscending, limit, offset)
-            .map { imagesCached ->
-                imagesCached.map { it.toDomainModel() }
-            }
+  override fun getImages(
+    shouldSortAscending: Boolean,
+    limit: Int,
+    offset: Int,
+  ): Flow<List<LikedImage>> = likedImageDao
+    .getLikedImages(shouldSortAscending, limit, offset)
+    .map { imagesCached ->
+      imagesCached.map { it.toDomainModel() }
     }
 
-    override suspend fun saveImage(item: LikedImage) {
-        likedImageDao.saveLikedImage(item.toEntityModel())
-    }
+  override suspend fun saveImage(item: LikedImage) {
+    likedImageDao.saveLikedImage(item.toEntityModel())
+  }
 
-    override suspend fun deleteImage(id: String) {
-        likedImageDao.deleteLikedImage(id)
-    }
+  override suspend fun deleteImage(id: String) {
+    likedImageDao.deleteLikedImage(id)
+  }
 }

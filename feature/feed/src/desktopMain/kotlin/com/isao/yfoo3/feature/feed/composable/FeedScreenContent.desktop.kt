@@ -5,5 +5,5 @@ import coil3.compose.AsyncImagePainter
 
 @Composable
 actual fun SplashController(painterState: AsyncImagePainter.State) {
-    // No-op
+  // No-op
 }

@@ -22,30 +22,30 @@ import org.jetbrains.compose.resources.stringResource
 
 @Composable
 fun LikedGridSettings(
-    sortAscending: Boolean,
-    setSortAscending: (Boolean) -> Unit,
-    modifier: Modifier = Modifier,
+  sortAscending: Boolean,
+  setSortAscending: (Boolean) -> Unit,
+  modifier: Modifier = Modifier,
 ) = Row(
-    modifier
-        .background(MaterialTheme.colorScheme.background)
-        .padding(horizontal = 8.dp)
+  modifier
+    .background(MaterialTheme.colorScheme.background)
+    .padding(horizontal = 8.dp),
 ) {
-    TextButton(
-        onClick = { setSortAscending(!sortAscending) },
-        colors = ButtonDefaults.textButtonColors(
-            contentColor = MaterialTheme.colorScheme.onBackground
-        )
-    ) {
-        Text(text = stringResource(Res.string.added))
-        Spacer(modifier = Modifier.size(8.dp))
-        Icon(
-            imageVector = if (sortAscending) {
-                Icons.Filled.ArrowUpward
-            } else {
-                Icons.Filled.ArrowDownward
-            },
-            contentDescription = null,
-            modifier = Modifier.padding(vertical = 4.dp)
-        )
-    }
+  TextButton(
+    onClick = { setSortAscending(!sortAscending) },
+    colors = ButtonDefaults.textButtonColors(
+      contentColor = MaterialTheme.colorScheme.onBackground,
+    ),
+  ) {
+    Text(text = stringResource(Res.string.added))
+    Spacer(modifier = Modifier.size(8.dp))
+    Icon(
+      imageVector = if (sortAscending) {
+        Icons.Filled.ArrowUpward
+      } else {
+        Icons.Filled.ArrowDownward
+      },
+      contentDescription = null,
+      modifier = Modifier.padding(vertical = 4.dp),
+    )
+  }
 }

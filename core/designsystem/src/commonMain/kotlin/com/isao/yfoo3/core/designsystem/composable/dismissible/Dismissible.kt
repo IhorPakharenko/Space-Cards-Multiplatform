@@ -28,178 +28,175 @@ import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
 
-
 fun Modifier.dismissible(
-    state: DismissibleState,
-    directions: Set<DismissDirection>,
-    enabled: Boolean = true,
-    maxRotationZ: Float = 15f,
-    dismissThresholds: DismissThresholds = DismissThresholds(),
+  state: DismissibleState,
+  directions: Set<DismissDirection>,
+  enabled: Boolean = true,
+  maxRotationZ: Float = 15f,
+  dismissThresholds: DismissThresholds = DismissThresholds(),
 ) = this then DismissibleElement(
-    state,
-    directions,
-    enabled,
-    maxRotationZ,
-    dismissThresholds,
+  state,
+  directions,
+  enabled,
+  maxRotationZ,
+  dismissThresholds,
 )
 
 data class DismissThresholds(
-    val velocityThreshold: Dp = 500.dp,
-    val minHorizontalProgressThreshold: Float = 0.7f,
-    val minVerticalProgressThreshold: Float = 0.7f,
+  val velocityThreshold: Dp = 500.dp,
+  val minHorizontalProgressThreshold: Float = 0.7f,
+  val minVerticalProgressThreshold: Float = 0.7f,
 )
 
 private data class DismissibleElement(
-    val state: DismissibleState,
-    val directions: Set<DismissDirection>,
-    val enabled: Boolean,
-    val maxRotationZ: Float,
-    val dismissThresholds: DismissThresholds,
+  val state: DismissibleState,
+  val directions: Set<DismissDirection>,
+  val enabled: Boolean,
+  val maxRotationZ: Float,
+  val dismissThresholds: DismissThresholds,
 ) : ModifierNodeElement<DismissibleNode>() {
-    override fun create(): DismissibleNode {
-        state.directions = directions
-        state.maxRotationZ = maxRotationZ
-        state.minHorizontalProgressThreshold = dismissThresholds.minHorizontalProgressThreshold
-        state.minVerticalProgressThreshold = dismissThresholds.minVerticalProgressThreshold
+  override fun create(): DismissibleNode {
+    state.directions = directions
+    state.maxRotationZ = maxRotationZ
+    state.minHorizontalProgressThreshold = dismissThresholds.minHorizontalProgressThreshold
+    state.minVerticalProgressThreshold = dismissThresholds.minVerticalProgressThreshold
 
-        return DismissibleNode(
-            state,
-            directions,
-            enabled,
-            maxRotationZ,
-            dismissThresholds,
-        )
-    }
+    return DismissibleNode(
+      state,
+      directions,
+      enabled,
+      maxRotationZ,
+      dismissThresholds,
+    )
+  }
 
-    override fun update(node: DismissibleNode) {
-        node.state = state
-        node.directions = directions
-        node.enabled = enabled
-        node.maxRotationZ = maxRotationZ
-        node.dismissThresholds = dismissThresholds
+  override fun update(node: DismissibleNode) {
+    node.state = state
+    node.directions = directions
+    node.enabled = enabled
+    node.maxRotationZ = maxRotationZ
+    node.dismissThresholds = dismissThresholds
 
-        state.directions = directions
-        state.maxRotationZ = maxRotationZ
-        state.minHorizontalProgressThreshold = dismissThresholds.minHorizontalProgressThreshold
-        state.minVerticalProgressThreshold = dismissThresholds.minVerticalProgressThreshold
-    }
-
+    state.directions = directions
+    state.maxRotationZ = maxRotationZ
+    state.minHorizontalProgressThreshold = dismissThresholds.minHorizontalProgressThreshold
+    state.minVerticalProgressThreshold = dismissThresholds.minVerticalProgressThreshold
+  }
 }
 
 private class DismissibleNode(
-    var state: DismissibleState,
-    var directions: Set<DismissDirection>,
-    var enabled: Boolean,
-    var maxRotationZ: Float,
-    var dismissThresholds: DismissThresholds,
+  var state: DismissibleState,
+  var directions: Set<DismissDirection>,
+  var enabled: Boolean,
+  var maxRotationZ: Float,
+  var dismissThresholds: DismissThresholds,
 ) : Modifier.Node(),
-    DrawModifierNode,
-    PointerInputModifierNode,
-    LayoutModifierNode,
-    ObserverModifierNode,
-    CompositionLocalConsumerModifierNode {
+  DrawModifierNode,
+  PointerInputModifierNode,
+  LayoutModifierNode,
+  ObserverModifierNode,
+  CompositionLocalConsumerModifierNode {
+  private val velocityTracker = VelocityTracker()
 
-    private val velocityTracker = VelocityTracker()
+  override fun onAttach() {
+    super.onAttach()
 
-    override fun onAttach() {
-        super.onAttach()
-
-        with(dismissThresholds) {
-            check(minHorizontalProgressThreshold > 0f && minHorizontalProgressThreshold <= 1) {
-                "minHorizontalProgressToDismiss must be greater than 0 and less than or equal to 1"
-            }
-            check(minVerticalProgressThreshold > 0f && minVerticalProgressThreshold <= 1) {
-                "minVerticalProgressToDismiss must be greater than 0 and less than or equal to 1"
-            }
-        }
-
-        onObservedReadsChanged()
+    with(dismissThresholds) {
+      check(minHorizontalProgressThreshold > 0f && minHorizontalProgressThreshold <= 1) {
+        "minHorizontalProgressToDismiss must be greater than 0 and less than or equal to 1"
+      }
+      check(minVerticalProgressThreshold > 0f && minVerticalProgressThreshold <= 1) {
+        "minVerticalProgressToDismiss must be greater than 0 and less than or equal to 1"
+      }
     }
 
-    // observeReads does not work for LocalDensity yet:
-    // https://issuetracker.google.com/issues/318434914
-    override fun onObservedReadsChanged() {
-        observeReads {
-            with(currentValueOf(LocalDensity)) {
-                state.velocityThreshold = dismissThresholds.velocityThreshold.toPx()
-            }
-        }
+    onObservedReadsChanged()
+  }
+
+  // observeReads does not work for LocalDensity yet:
+  // https://issuetracker.google.com/issues/318434914
+  override fun onObservedReadsChanged() {
+    observeReads {
+      with(currentValueOf(LocalDensity)) {
+        state.velocityThreshold = dismissThresholds.velocityThreshold.toPx()
+      }
     }
+  }
 
-    override fun MeasureScope.measure(
-        measurable: Measurable,
-        constraints: Constraints
-    ): MeasureResult {
-        val placeable = measurable.measure(constraints)
+  override fun MeasureScope.measure(
+    measurable: Measurable,
+    constraints: Constraints,
+  ): MeasureResult {
+    val placeable = measurable.measure(constraints)
 
-        state.containerWidth = placeable.width.toFloat()
-        state.containerHeight = placeable.height.toFloat()
+    state.containerWidth = placeable.width.toFloat()
+    state.containerHeight = placeable.height.toFloat()
 
-        return layout(placeable.width, placeable.height) {
-            placeable.place(0, 0)
-        }
+    return layout(placeable.width, placeable.height) {
+      placeable.place(0, 0)
     }
+  }
 
-    override fun ContentDrawScope.draw() {
-        translate(left = state.value.x, top = state.value.y) {
-            rotate(state.rotationZ) {
-                this@draw.drawContent()
-            }
-        }
+  override fun ContentDrawScope.draw() {
+    translate(left = state.value.x, top = state.value.y) {
+      rotate(state.rotationZ) {
+        this@draw.drawContent()
+      }
     }
+  }
 
-    override fun onCancelPointerInput() {
-        runCatching {
+  override fun onCancelPointerInput() {
+    runCatching {
+      coroutineScope.launch {
+        state.reset()
+      }
+    }
+  }
+
+  override fun onPointerEvent(
+    pointerEvent: PointerEvent,
+    pass: PointerEventPass,
+    bounds: IntSize,
+  ) {
+    if (!enabled) return
+    if (state.dismissDirection != null) return
+
+    when (pass) {
+      PointerEventPass.Initial -> {
+        // Handle drag start
+        for (change in pointerEvent.changes) {
+          if (change.changedToDown()) {
+            velocityTracker.resetTracking()
+            change.consume()
+          }
+        }
+      }
+
+      PointerEventPass.Main -> {
+        // Handle drag events
+        for (change in pointerEvent.changes) {
+          if (change.pressed) {
+            val dragAmount = change.positionChange()
+            change.consume()
+            velocityTracker.addPosition(change.uptimeMillis, change.position)
             coroutineScope.launch {
-                state.reset()
+              state.performDrag(dragAmount)
             }
+          }
         }
-    }
+      }
 
-    override fun onPointerEvent(
-        pointerEvent: PointerEvent,
-        pass: PointerEventPass,
-        bounds: IntSize
-    ) {
-        if (!enabled) return
-        if (state.dismissDirection != null) return
-
-        when (pass) {
-            PointerEventPass.Initial -> {
-                // Handle drag start
-                for (change in pointerEvent.changes) {
-                    if (change.changedToDown()) {
-                        velocityTracker.resetTracking()
-                        change.consume()
-                    }
-                }
+      PointerEventPass.Final -> {
+        // Handle drag end
+        for (change in pointerEvent.changes) {
+          if (change.changedToUp()) {
+            coroutineScope.launch {
+              state.performFling(velocityTracker.calculateVelocity())
             }
-
-            PointerEventPass.Main -> {
-                // Handle drag events
-                for (change in pointerEvent.changes) {
-                    if (change.pressed) {
-                        val dragAmount = change.positionChange()
-                        change.consume()
-                        velocityTracker.addPosition(change.uptimeMillis, change.position)
-                        coroutineScope.launch {
-                            state.performDrag(dragAmount)
-                        }
-                    }
-                }
-            }
-
-            PointerEventPass.Final -> {
-                // Handle drag end
-                for (change in pointerEvent.changes) {
-                    if (change.changedToUp()) {
-                        coroutineScope.launch {
-                            state.performFling(velocityTracker.calculateVelocity())
-                        }
-                        change.consume()
-                    }
-                }
-            }
+            change.consume()
+          }
         }
+      }
     }
+  }
 }

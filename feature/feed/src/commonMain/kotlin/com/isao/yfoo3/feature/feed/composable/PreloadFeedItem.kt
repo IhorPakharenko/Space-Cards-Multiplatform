@@ -11,25 +11,26 @@ import com.isao.yfoo3.feature.feed.model.FeedItemDisplayable
 
 @Composable
 fun PreloadFeedItem(
-    item: FeedItemDisplayable?,
-    width: Dp,
-    height: Dp,
+  item: FeedItemDisplayable?,
+  width: Dp,
+  height: Dp,
 ) {
-    val context = LocalPlatformContext.current
-    val widthPx = with(LocalDensity.current) { width.roundToPx() }
-    val heightPx = with(LocalDensity.current) { height.roundToPx() }
+  val context = LocalPlatformContext.current
+  val widthPx = with(LocalDensity.current) { width.roundToPx() }
+  val heightPx = with(LocalDensity.current) { height.roundToPx() }
 
-    LaunchedEffect(item) {
-        if (item == null) return@LaunchedEffect
-        SingletonImageLoader.get(context).enqueue(
-            ImageRequest.Builder(context)
-                .data(item.imageUrl)
-                .size(
-                    widthPx,
-                    heightPx
-                )
-//                .transformations(BitmapTransformations.getFor(item.source))
-                .build()
+  LaunchedEffect(item) {
+    if (item == null) return@LaunchedEffect
+    SingletonImageLoader.get(context).enqueue(
+      ImageRequest
+        .Builder(context)
+        .data(item.imageUrl)
+        .size(
+          widthPx,
+          heightPx,
         )
-    }
+//                .transformations(BitmapTransformations.getFor(item.source))
+        .build(),
+    )
+  }
 }
