@@ -10,9 +10,10 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onStart
-import org.koin.android.annotation.KoinViewModel
 
-@KoinViewModel
+// Declare ViewModel in Koin Module until this issue is fixed:
+// https://github.com/InsertKoinIO/koin-annotations/issues/185
+// @KoinViewModel
 class FeedViewModel(
   private val likeImageUseCase: LikeImageUseCase,
   private val deleteFeedImageUseCase: DeleteFeedImageUseCase,

@@ -18,10 +18,11 @@ import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
-import org.koin.android.annotation.KoinViewModel
 
 @OptIn(ExperimentalCoroutinesApi::class)
-@KoinViewModel
+// Declare ViewModel in Koin Module until this issue is fixed:
+// https://github.com/InsertKoinIO/koin-annotations/issues/185
+// @KoinViewModel
 class LikedViewModel(
   private val getLikedImagesUseCase: GetLikedImagesUseCase,
   private val deleteLikedImageUseCase: DeleteLikedImageUseCase,
