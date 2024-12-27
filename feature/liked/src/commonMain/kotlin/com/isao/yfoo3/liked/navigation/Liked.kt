@@ -6,7 +6,7 @@ import com.isao.yfoo3.core.designsystem.TopLevelScreen
 import com.isao.yfoo3.liked.composable.LikedRoute
 
 fun NavGraphBuilder.addLikedScreen() {
-    composable(TopLevelScreen.Liked.route) {
-        LikedRoute()
-    }
+  composable(TopLevelScreen.Liked.route) {
+    LikedRoute()
+  }
 }

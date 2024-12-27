@@ -7,42 +7,42 @@ import org.gradle.api.Project
 import org.gradle.kotlin.dsl.configure
 
 fun Project.configureSpotless() {
-    with(pluginManager) {
-        apply("com.diffplug.spotless")
+  with(pluginManager) {
+    apply("com.diffplug.spotless")
+  }
+
+  spotless {
+    ratchetFrom = (project.properties["ratchetFrom"] as? String)
+      ?.trim()
+      ?.takeIf { it.isNotEmpty() }
+
+    val ktlintVersion = libs.findVersion("ktlint").get().toString()
+    val ktlintComposeVersion = libs.findVersion("ktlintCompose").get().toString()
+
+    kotlin {
+      target("src/**/*.kt")
+      ktlint(ktlintVersion)
+        .customRuleSets(
+          listOf(
+            "io.nlopez.compose.rules:ktlint:$ktlintComposeVersion",
+          ),
+        )
+      // Suppressing non-autofixable lints causes spotless to silently skip files with said lints.
     }
-
-    spotless {
-        ratchetFrom = (project.properties["ratchetFrom"] as? String)
-            ?.trim()
-            ?.takeIf { it.isNotEmpty() }
-
-        val ktlintVersion = libs.findVersion("ktlint").get().toString()
-        val ktlintComposeVersion = libs.findVersion("ktlintCompose").get().toString()
-
-        kotlin {
-            target("src/**/*.kt")
-            ktlint(ktlintVersion)
-                .customRuleSets(
-                    listOf(
-                        "io.nlopez.compose.rules:ktlint:$ktlintComposeVersion",
-                    ),
-                )
-            // Suppressing non-autofixable lints causes spotless to silently skip files with said lints.
-        }
-        kotlinGradle {
-            target("**/*.kts")
-            targetExclude("**/build/**/*.kts")
-            ktlint(ktlintVersion)
-        }
-        format("xml") {
-            target("**/*.xml")
-            targetExclude("**/build/**/*.xml")
-        }
+    kotlinGradle {
+      target("**/*.kts")
+      targetExclude("**/build/**/*.kts")
+      ktlint(ktlintVersion)
     }
+    format("xml") {
+      target("**/*.xml")
+      targetExclude("**/build/**/*.xml")
+    }
+  }
 }
 
 private fun Project.spotless(action: SpotlessExtension.() -> Unit) =
-    extensions.configure<SpotlessExtension>(action)
+  extensions.configure<SpotlessExtension>(action)
 // To run for all files:
 // ./gradlew --no-daemon --continue spotlessApply
 // To run for a specific file:

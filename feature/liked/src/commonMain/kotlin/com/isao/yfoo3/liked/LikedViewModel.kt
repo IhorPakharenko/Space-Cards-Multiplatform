@@ -23,99 +23,98 @@ import org.koin.android.annotation.KoinViewModel
 @OptIn(ExperimentalCoroutinesApi::class)
 @KoinViewModel
 class LikedViewModel(
-    private val getLikedImagesUseCase: GetLikedImagesUseCase,
-    private val deleteLikedImageUseCase: DeleteLikedImageUseCase,
-    savedStateHandle: SavedStateHandle,
+  private val getLikedImagesUseCase: GetLikedImagesUseCase,
+  private val deleteLikedImageUseCase: DeleteLikedImageUseCase,
+  savedStateHandle: SavedStateHandle,
 ) : MviViewModel<LikedUiState, LikedPartialState, LikedEvent, LikedIntent>(
     LikedUiState(
-        shouldSortAscending = savedStateHandle[SHOULD_SORT_ASCENDING] ?: false
+      shouldSortAscending = savedStateHandle[SHOULD_SORT_ASCENDING] ?: false,
+    ),
+  ) {
+  init {
+    observeContinuousChanges(
+      uiStateSnapshot
+        .map { it.shouldSortAscending }
+        .distinctUntilChanged()
+        .flatMapLatest { sortAscending ->
+          getImages(sortAscending)
+        },
     )
-) {
-    init {
-        observeContinuousChanges(
-            uiStateSnapshot
-                .map { it.shouldSortAscending }
-                .distinctUntilChanged()
-                .flatMapLatest { sortAscending ->
-                    getImages(sortAscending)
-                }
-        )
 
-        viewModelScope.launch {
-            uiStateSnapshot.collect { state ->
-                savedStateHandle[SHOULD_SORT_ASCENDING] = state.shouldSortAscending
-            }
-        }
+    viewModelScope.launch {
+      uiStateSnapshot.collect { state ->
+        savedStateHandle[SHOULD_SORT_ASCENDING] = state.shouldSortAscending
+      }
     }
+  }
 
-    override fun mapIntents(intent: LikedIntent): Flow<LikedPartialState> = when (intent) {
-        is LikedIntent.SetSorting -> flowOf(LikedPartialState.Sorted(shouldSortAscending = intent.shouldSortAscending))
-        is LikedIntent.ImageClicked -> itemClicked(intent.item)
-        is LikedIntent.DeleteImageClicked -> deleteImageClicked(intent.item)
-        is LikedIntent.ViewImageSourceClicked -> viewImageSourceClicked(intent.item)
-    }
-
-    override fun reduceUiState(
-        previousState: LikedUiState,
-        partialState: LikedPartialState
-    ): LikedUiState = when (partialState) {
-        LikedPartialState.Loading -> previousState.copy(
-            isLoading = true,
-            isError = false,
-        )
-
-        is LikedPartialState.Fetched -> previousState.copy(
-            items = partialState.items,
-            isLoading = false,
-            isError = false,
-        )
-
-        is LikedPartialState.Error -> previousState.copy(
-            isLoading = false,
-            isError = true,
-        )
-
-        is LikedPartialState.Sorted -> previousState.copy(
-            shouldSortAscending = partialState.shouldSortAscending
-        )
-    }
-
-    private fun getImages(
-        sortAscending: Boolean,
-    ): Flow<LikedPartialState> = getLikedImagesUseCase(
-        shouldSortAscending = sortAscending,
-        limit = -1,
-        offset = 0
+  override fun mapIntents(intent: LikedIntent): Flow<LikedPartialState> = when (intent) {
+    is LikedIntent.SetSorting -> flowOf(
+      LikedPartialState.Sorted(shouldSortAscending = intent.shouldSortAscending),
     )
-        .map { result ->
-            result.fold(
-                onSuccess = { items ->
-                    LikedPartialState.Fetched(items.map { it.toPresentationModel() })
-                },
-                onFailure = {
-                    LikedPartialState.Error(it)
-                }
-            )
-        }
-        .onStart {
-            emit(LikedPartialState.Loading)
-        }
 
-    private fun itemClicked(item: LikedImageDisplayable): Flow<LikedPartialState> {
-        publishEvent(LikedEvent.OpenWebBrowser(item.imageUrl))
-        return emptyFlow()
-    }
+    is LikedIntent.ImageClicked -> itemClicked(intent.item)
+    is LikedIntent.DeleteImageClicked -> deleteImageClicked(intent.item)
+    is LikedIntent.ViewImageSourceClicked -> viewImageSourceClicked(intent.item)
+  }
 
-    private fun deleteImageClicked(item: LikedImageDisplayable): Flow<LikedPartialState> = flow {
-        deleteLikedImageUseCase(item.id)
-    }
+  override fun reduceUiState(
+    previousState: LikedUiState,
+    partialState: LikedPartialState,
+  ): LikedUiState = when (partialState) {
+    LikedPartialState.Loading -> previousState.copy(
+      isLoading = true,
+      isError = false,
+    )
 
-    private fun viewImageSourceClicked(item: LikedImageDisplayable): Flow<LikedPartialState> {
-        publishEvent(LikedEvent.OpenWebBrowser(item.source.websiteUrl))
-        return emptyFlow()
-    }
+    is LikedPartialState.Fetched -> previousState.copy(
+      items = partialState.items,
+      isLoading = false,
+      isError = false,
+    )
 
-    object Keys {
-        const val SHOULD_SORT_ASCENDING = "shouldSortAscending"
-    }
+    is LikedPartialState.Error -> previousState.copy(
+      isLoading = false,
+      isError = true,
+    )
+
+    is LikedPartialState.Sorted -> previousState.copy(
+      shouldSortAscending = partialState.shouldSortAscending,
+    )
+  }
+
+  private fun getImages(sortAscending: Boolean): Flow<LikedPartialState> = getLikedImagesUseCase(
+    shouldSortAscending = sortAscending,
+    limit = -1,
+    offset = 0,
+  ).map { result ->
+    result.fold(
+      onSuccess = { items ->
+        LikedPartialState.Fetched(items.map { it.toPresentationModel() })
+      },
+      onFailure = {
+        LikedPartialState.Error(it)
+      },
+    )
+  }.onStart {
+    emit(LikedPartialState.Loading)
+  }
+
+  private fun itemClicked(item: LikedImageDisplayable): Flow<LikedPartialState> {
+    publishEvent(LikedEvent.OpenWebBrowser(item.imageUrl))
+    return emptyFlow()
+  }
+
+  private fun deleteImageClicked(item: LikedImageDisplayable): Flow<LikedPartialState> = flow {
+    deleteLikedImageUseCase(item.id)
+  }
+
+  private fun viewImageSourceClicked(item: LikedImageDisplayable): Flow<LikedPartialState> {
+    publishEvent(LikedEvent.OpenWebBrowser(item.source.websiteUrl))
+    return emptyFlow()
+  }
+
+  object Keys {
+    const val SHOULD_SORT_ASCENDING = "shouldSortAscending"
+  }
 }

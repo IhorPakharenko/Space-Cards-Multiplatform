@@ -73,80 +73,81 @@ import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
-fun LikedRoute(
-    viewModel: LikedViewModel = koinViewModel()
-) {
-    HandleEvents(viewModel.event)
-    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+fun LikedRoute(viewModel: LikedViewModel = koinViewModel()) {
+  HandleEvents(viewModel.event)
+  val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
-    LikedScreen(uiState = uiState, onIntent = viewModel::acceptIntent)
+  LikedScreen(uiState = uiState, onIntent = viewModel::acceptIntent)
 }
 
 @Composable
 private fun HandleEvents(events: Flow<LikedEvent>) {
-    val uriHandler = LocalUriHandler.current
+  val uriHandler = LocalUriHandler.current
 
-    events.collectWithLifecycle {
-        when (it) {
-            is LikedEvent.OpenWebBrowser -> {
-                uriHandler.openUri(it.uri)
-            }
-        }
+  events.collectWithLifecycle {
+    when (it) {
+      is LikedEvent.OpenWebBrowser -> {
+        uriHandler.openUri(it.uri)
+      }
     }
+  }
 }
 
 private enum class ScreenContent {
-    ITEMS, NO_ITEMS, LOADING, ERROR
+  ITEMS,
+  NO_ITEMS,
+  LOADING,
+  ERROR,
 }
 
 private val LikedUiState.screenContent
-    get() = when {
-        isLoading -> ScreenContent.LOADING
-        isError -> ScreenContent.ERROR
-        items.isEmpty() -> ScreenContent.NO_ITEMS
-        else -> ScreenContent.ITEMS
-    }
+  get() = when {
+    isLoading -> ScreenContent.LOADING
+    isError -> ScreenContent.ERROR
+    items.isEmpty() -> ScreenContent.NO_ITEMS
+    else -> ScreenContent.ITEMS
+  }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LikedScreen(
-    uiState: LikedUiState,
-    onIntent: (LikedIntent) -> Unit,
-    modifier: Modifier = Modifier
+  uiState: LikedUiState,
+  onIntent: (LikedIntent) -> Unit,
+  modifier: Modifier = Modifier,
 ) {
-    val topBarState = rememberTopAppBarState()
-    val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(topBarState)
+  val topBarState = rememberTopAppBarState()
+  val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(topBarState)
 
-    Scaffold(
-        modifier = modifier,
-        topBar = {
-            CenterAlignedTopAppBar(
-                title = {
-                    Text(stringResource(Res.string.app_name))
-                },
-                scrollBehavior = scrollBehavior
-            )
+  Scaffold(
+    modifier = modifier,
+    topBar = {
+      CenterAlignedTopAppBar(
+        title = {
+          Text(stringResource(Res.string.app_name))
         },
-        // Let the content take up all available space.
-        // Material3 components handle the insets themselves
-        contentWindowInsets = WindowInsets(0, 0, 0, 0),
-    ) { padding ->
-        Crossfade(uiState.screenContent) { screenContent ->
-            when (screenContent) {
-                ScreenContent.LOADING -> LoadingPlaceholder()
-                ScreenContent.ERROR -> ErrorPlaceholder()
-                ScreenContent.NO_ITEMS -> NoItemsPlaceholder()
-                ScreenContent.ITEMS -> ItemsAvailableContent(
-                    uiState = uiState,
-                    onIntent = onIntent,
-                    modifier = Modifier
-                        .padding(padding)
-                        .fillMaxSize()
-                        .nestedScroll(scrollBehavior.nestedScrollConnection)
-                )
-            }
-        }
+        scrollBehavior = scrollBehavior,
+      )
+    },
+    // Let the content take up all available space.
+    // Material3 components handle the insets themselves
+    contentWindowInsets = WindowInsets(0, 0, 0, 0),
+  ) { padding ->
+    Crossfade(uiState.screenContent) { screenContent ->
+      when (screenContent) {
+        ScreenContent.LOADING -> LoadingPlaceholder()
+        ScreenContent.ERROR -> ErrorPlaceholder()
+        ScreenContent.NO_ITEMS -> NoItemsPlaceholder()
+        ScreenContent.ITEMS -> ItemsAvailableContent(
+          uiState = uiState,
+          onIntent = onIntent,
+          modifier = Modifier
+            .padding(padding)
+            .fillMaxSize()
+            .nestedScroll(scrollBehavior.nestedScrollConnection),
+        )
+      }
     }
+  }
 }
 
 // Restarting the image request after regaining network connectivity is an open issue
@@ -154,231 +155,233 @@ fun LikedScreen(
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun ItemsAvailableContent(
-    uiState: LikedUiState,
-    onIntent: (LikedIntent) -> Unit,
-    modifier: Modifier = Modifier
+  uiState: LikedUiState,
+  onIntent: (LikedIntent) -> Unit,
+  modifier: Modifier = Modifier,
 ) {
-    var selectedItem by rememberSaveable { mutableStateOf<LikedImageDisplayable?>(null) }
+  var selectedItem by rememberSaveable { mutableStateOf<LikedImageDisplayable?>(null) }
 
-    val itemSize = 100.dp
+  val itemSize = 100.dp
 
-    LazyVerticalGrid(
-        columns = GridCells.Adaptive(itemSize),
-        modifier = modifier,
-        verticalArrangement = Arrangement.spacedBy(2.dp),
-        horizontalArrangement = Arrangement.spacedBy(2.dp)
+  LazyVerticalGrid(
+    columns = GridCells.Adaptive(itemSize),
+    modifier = modifier,
+    verticalArrangement = Arrangement.spacedBy(2.dp),
+    horizontalArrangement = Arrangement.spacedBy(2.dp),
+  ) {
+    item(
+      span = {
+        GridItemSpan(this.maxLineSpan)
+      },
     ) {
-        item(span = {
-            GridItemSpan(this.maxLineSpan)
-        }) {
-            LikedGridSettings(
-                sortAscending = uiState.shouldSortAscending,
-                setSortAscending = { onIntent(LikedIntent.SetSorting(it)) }
-            )
-        }
-        items(uiState.items, key = { it.id }) { item ->
-            Box(
-                Modifier
-                    .fillMaxWidth()
-                    .aspectRatio(1f)
-                    .animateItemPlacement()
-            ) {
-                val isSelected by remember { derivedStateOf { selectedItem == item } }
-                val sizeFraction by animateFloatAsState(if (isSelected) 0.85f else 1f)
-                LikedItem(
-                    item = item,
-                    width = itemSize,
-                    height = itemSize,
-                    onClick = { onIntent(LikedIntent.ImageClicked(item)) },
-                    onLongClick = { selectedItem = item },
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .align(Alignment.Center)
-                        .graphicsLayer {
-                            scaleX = sizeFraction
-                            scaleY = sizeFraction
-                        }
-                )
-                ImageActionsPopup(
-                    expanded = isSelected,
-                    item = item,
-                    onDismissRequest = { selectedItem = null },
-                    onSourceClick = { onIntent(LikedIntent.ViewImageSourceClicked(item)) },
-                    onDeleteClick = { onIntent(LikedIntent.DeleteImageClicked(item)) },
-                )
-            }
-        }
+      LikedGridSettings(
+        sortAscending = uiState.shouldSortAscending,
+        setSortAscending = { onIntent(LikedIntent.SetSorting(it)) },
+      )
     }
+    items(uiState.items, key = { it.id }) { item ->
+      Box(
+        Modifier
+          .fillMaxWidth()
+          .aspectRatio(1f)
+          .animateItemPlacement(),
+      ) {
+        val isSelected by remember { derivedStateOf { selectedItem == item } }
+        val sizeFraction by animateFloatAsState(if (isSelected) 0.85f else 1f)
+        LikedItem(
+          item = item,
+          width = itemSize,
+          height = itemSize,
+          onClick = { onIntent(LikedIntent.ImageClicked(item)) },
+          onLongClick = { selectedItem = item },
+          modifier = Modifier
+            .fillMaxSize()
+            .align(Alignment.Center)
+            .graphicsLayer {
+              scaleX = sizeFraction
+              scaleY = sizeFraction
+            },
+        )
+        ImageActionsPopup(
+          expanded = isSelected,
+          item = item,
+          onDismissRequest = { selectedItem = null },
+          onSourceClick = { onIntent(LikedIntent.ViewImageSourceClicked(item)) },
+          onDeleteClick = { onIntent(LikedIntent.DeleteImageClicked(item)) },
+        )
+      }
+    }
+  }
 }
 
 @Composable
 private fun ImageActionsPopup(
-    expanded: Boolean,
-    item: LikedImageDisplayable,
-    onDismissRequest: () -> Unit,
-    onSourceClick: () -> Unit,
-    onDeleteClick: () -> Unit
+  expanded: Boolean,
+  item: LikedImageDisplayable,
+  onDismissRequest: () -> Unit,
+  onSourceClick: () -> Unit,
+  onDeleteClick: () -> Unit,
 ) {
-    DropdownMenu(
-        expanded = expanded,
-        onDismissRequest = onDismissRequest,
-        modifier = Modifier.background(MaterialTheme.colorScheme.surface)
-    ) {
-        ClickableText(
-            text = buildAnnotatedString {
-                val websiteName = item.source.websiteName
-                val fullString =
-                    stringResource(Res.string.image_by, item.source.websiteName)
-                val websiteStart = fullString.indexOf(websiteName)
-                val websiteEnd = websiteStart + websiteName.length
+  DropdownMenu(
+    expanded = expanded,
+    onDismissRequest = onDismissRequest,
+    modifier = Modifier.background(MaterialTheme.colorScheme.surface),
+  ) {
+    ClickableText(
+      text = buildAnnotatedString {
+        val websiteName = item.source.websiteName
+        val fullString =
+          stringResource(Res.string.image_by, item.source.websiteName)
+        val websiteStart = fullString.indexOf(websiteName)
+        val websiteEnd = websiteStart + websiteName.length
 
-                append(fullString)
+        append(fullString)
 
-                addStyle(
-                    style = SpanStyle(
-                        color = MaterialTheme.colorScheme.onSurface
-                    ),
-                    start = 0,
-                    end = fullString.length
-                )
-                addStyle(
-                    style = SpanStyle(
-                        color = MaterialTheme.colorScheme.primary
-                    ),
-                    start = websiteStart,
-                    end = websiteEnd
-                )
-            },
-            modifier = Modifier.padding(16.dp),
-            style = MaterialTheme.typography.titleMedium,
-            onClick = {
-                onSourceClick()
-                onDismissRequest()
-            }
+        addStyle(
+          style = SpanStyle(
+            color = MaterialTheme.colorScheme.onSurface,
+          ),
+          start = 0,
+          end = fullString.length,
         )
-        Spacer(Modifier.height(24.dp))
-        DropdownMenuItem(
-            text = {
-                Text(text = stringResource(Res.string.delete))
-            },
-            onClick = {
-                onDeleteClick()
-                onDismissRequest()
-            },
-            leadingIcon = {
-                Icon(
-                    imageVector = Icons.Outlined.Delete,
-                    contentDescription = null,
-                    tint = MaterialTheme.colorScheme.onSurface
-                )
-            }
+        addStyle(
+          style = SpanStyle(
+            color = MaterialTheme.colorScheme.primary,
+          ),
+          start = websiteStart,
+          end = websiteEnd,
         )
-    }
+      },
+      modifier = Modifier.padding(16.dp),
+      style = MaterialTheme.typography.titleMedium,
+      onClick = {
+        onSourceClick()
+        onDismissRequest()
+      },
+    )
+    Spacer(Modifier.height(24.dp))
+    DropdownMenuItem(
+      text = {
+        Text(text = stringResource(Res.string.delete))
+      },
+      onClick = {
+        onDeleteClick()
+        onDismissRequest()
+      },
+      leadingIcon = {
+        Icon(
+          imageVector = Icons.Outlined.Delete,
+          contentDescription = null,
+          tint = MaterialTheme.colorScheme.onSurface,
+        )
+      },
+    )
+  }
 }
 
 @Composable
 private fun NoItemsPlaceholder(modifier: Modifier = Modifier) {
-    Box(
-        modifier
-            .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background),
-        contentAlignment = Alignment.Center
-    ) {
-        Text(
-            stringResource(Res.string.nothing_is_there_yet),
-            style = MaterialTheme.typography.headlineMedium,
-            textAlign = TextAlign.Center
-        )
-    }
+  Box(
+    modifier
+      .fillMaxSize()
+      .background(MaterialTheme.colorScheme.background),
+    contentAlignment = Alignment.Center,
+  ) {
+    Text(
+      stringResource(Res.string.nothing_is_there_yet),
+      style = MaterialTheme.typography.headlineMedium,
+      textAlign = TextAlign.Center,
+    )
+  }
 }
 
 @Composable
 private fun ErrorPlaceholder(modifier: Modifier = Modifier) {
-    Box(
-        modifier
-            .fillMaxSize()
-            .background(MaterialTheme.colorScheme.errorContainer),
-        contentAlignment = Alignment.Center
-    ) {
-        Text(
-            stringResource(Res.string.something_went_wrong),
-            color = MaterialTheme.colorScheme.onErrorContainer,
-            fontSize = 28.sp,
-            textAlign = TextAlign.Center
-        )
-    }
+  Box(
+    modifier
+      .fillMaxSize()
+      .background(MaterialTheme.colorScheme.errorContainer),
+    contentAlignment = Alignment.Center,
+  ) {
+    Text(
+      stringResource(Res.string.something_went_wrong),
+      color = MaterialTheme.colorScheme.onErrorContainer,
+      fontSize = 28.sp,
+      textAlign = TextAlign.Center,
+    )
+  }
 }
 
 @Composable
 private fun LoadingPlaceholder(modifier: Modifier = Modifier) {
-    val loadingContentDescription = stringResource(Res.string.loading)
-    Box(
-        modifier
-            .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background)
-            .semantics { contentDescription = loadingContentDescription },
-        contentAlignment = Alignment.Center
-    ) {
-        CircularProgressIndicator(
-            Modifier
-                .padding(16.dp)
-                .requiredSize(40.dp)
-        )
-    }
+  val loadingContentDescription = stringResource(Res.string.loading)
+  Box(
+    modifier
+      .fillMaxSize()
+      .background(MaterialTheme.colorScheme.background)
+      .semantics { contentDescription = loadingContentDescription },
+    contentAlignment = Alignment.Center,
+  ) {
+    CircularProgressIndicator(
+      Modifier
+        .padding(16.dp)
+        .requiredSize(40.dp),
+    )
+  }
 }
 
 @PreviewLightDark
 @Composable
 private fun LikedScreenPreview() {
-    Yfoo2Theme {
-        LikedScreen(
-            uiState = LikedUiState(
-                items = List(50) {
-                    LikedImageDisplayable(
-                        id = it.toString(),
-                        imageUrl = "",
-                        source = ImageSource.THIS_WAIFU_DOES_NOT_EXIST
-                    )
-                }
-            ),
-            onIntent = {}
-        )
-    }
+  Yfoo2Theme {
+    LikedScreen(
+      uiState = LikedUiState(
+        items = List(50) {
+          LikedImageDisplayable(
+            id = it.toString(),
+            imageUrl = "",
+            source = ImageSource.THIS_WAIFU_DOES_NOT_EXIST,
+          )
+        },
+      ),
+      onIntent = {},
+    )
+  }
 }
 
 @PreviewLightDark
 @Composable
 private fun LikedScreenLoadingPreview() {
-    Yfoo2Theme {
-        LikedScreen(
-            uiState = LikedUiState(
-                isLoading = true
-            ),
-            onIntent = {}
-        )
-    }
+  Yfoo2Theme {
+    LikedScreen(
+      uiState = LikedUiState(
+        isLoading = true,
+      ),
+      onIntent = {},
+    )
+  }
 }
 
 @PreviewLightDark
 @Composable
 private fun LikedScreenNoItemsPreview() {
-    Yfoo2Theme {
-        LikedScreen(
-            uiState = LikedUiState(),
-            onIntent = {}
-        )
-    }
+  Yfoo2Theme {
+    LikedScreen(
+      uiState = LikedUiState(),
+      onIntent = {},
+    )
+  }
 }
 
 @PreviewLightDark
 @Composable
 private fun LikedScreenErrorPreview() {
-    Yfoo2Theme {
-        LikedScreen(
-            uiState = LikedUiState(
-                isError = true,
-            ),
-            onIntent = {}
-        )
-    }
+  Yfoo2Theme {
+    LikedScreen(
+      uiState = LikedUiState(
+        isError = true,
+      ),
+      onIntent = {},
+    )
+  }
 }

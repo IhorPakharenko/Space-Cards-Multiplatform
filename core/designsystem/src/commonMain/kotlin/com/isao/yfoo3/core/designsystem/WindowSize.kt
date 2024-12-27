@@ -8,5 +8,5 @@ import androidx.compose.runtime.compositionLocalOf
 expect fun getWindowSizeClass(): WindowSizeClass
 
 val LocalWindowSizeClass = compositionLocalOf<WindowSizeClass> {
-    error("LocalWindowSizeClass must be provided as early as possible")
+  error("LocalWindowSizeClass must be provided as early as possible")
 }

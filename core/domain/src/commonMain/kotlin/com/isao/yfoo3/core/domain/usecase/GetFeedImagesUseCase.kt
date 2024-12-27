@@ -7,12 +7,8 @@ import kotlinx.coroutines.flow.Flow
 import org.koin.core.annotation.Single
 
 @Single
-class GetFeedImagesUseCase(
-    private val feedImageRepository: FeedImageRepository
-) {
-    operator fun invoke(): Flow<Result<List<FeedImage>>> {
-        return feedImageRepository
-            .getImages()
-            .asResult()
-    }
+class GetFeedImagesUseCase(private val feedImageRepository: FeedImageRepository) {
+  operator fun invoke(): Flow<Result<List<FeedImage>>> = feedImageRepository
+    .getImages()
+    .asResult()
 }

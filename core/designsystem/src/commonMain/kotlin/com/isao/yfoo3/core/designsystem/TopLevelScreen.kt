@@ -10,10 +10,10 @@ import com.isao.yfoo3.resources.liked
 import org.jetbrains.compose.resources.StringResource
 
 enum class TopLevelScreen(
-    val route: String,
-    val nameRes: StringResource,
-    val icon: ImageVector
+  val route: String,
+  val nameRes: StringResource,
+  val icon: ImageVector,
 ) {
-    Feed(Screen.Feed.route, Res.string.feed, Icons.Filled.Explore),
-    Liked(Screen.Liked.route, Res.string.liked, Icons.Filled.Favorite),
+  Feed(Screen.Feed.route, Res.string.feed, Icons.Filled.Explore),
+  Liked(Screen.Liked.route, Res.string.liked, Icons.Filled.Favorite),
 }

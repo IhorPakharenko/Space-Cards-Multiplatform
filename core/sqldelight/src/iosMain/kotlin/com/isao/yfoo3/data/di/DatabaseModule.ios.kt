@@ -5,6 +5,5 @@ import app.cash.sqldelight.driver.native.NativeSqliteDriver
 import com.isao.yfoo3.data.Database
 import org.koin.core.scope.Scope
 
-actual fun Scope.provideSqlDelightDriver(): SqlDriver {
-    return NativeSqliteDriver(Database.Schema, "test.db")
-}
+actual fun Scope.provideSqlDelightDriver(): SqlDriver =
+  NativeSqliteDriver(Database.Schema, "test.db")

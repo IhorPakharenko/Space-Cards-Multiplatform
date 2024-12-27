@@ -45,214 +45,216 @@ import kotlin.time.Duration.Companion.seconds
 
 @Composable
 fun FeedCard(
-    painter: AsyncImagePainter?,
-    modifier: Modifier = Modifier
+  painter: AsyncImagePainter?,
+  modifier: Modifier = Modifier,
 ) = Card(modifier) {
-    if (LocalInspectionMode.current) {
-        CatPreviewPlaceholder(Modifier.fillMaxSize())
-        return@Card
-    }
+  if (LocalInspectionMode.current) {
+    CatPreviewPlaceholder(Modifier.fillMaxSize())
+    return@Card
+  }
 
-    val painterState = painter?.state?.collectAsState()?.value
-    val isAnyErrorExceptBadInternet = painterState?.let {
-        it is AsyncImagePainter.State.Error
-                && it.result.throwable !is SocketTimeoutException
-                // TODO what is the new type for this? && it.result.throwable !is UnknownHostException
-    }
-    AnimatedVisibility(
-        visible = isAnyErrorExceptBadInternet == true,
-        enter = fadeIn(),
-        exit = fadeOut()
-    ) {
-        ErrorPlaceholder()
-    }
-    //TODO placeholder
-    Image(
-        painter = painter ?: EmptyPainter,
-        contentDescription = null,
-        modifier = Modifier
-            .fillMaxSize()
+  val painterState = painter?.state?.collectAsState()?.value
+  val isAnyErrorExceptBadInternet = painterState?.let {
+    it is AsyncImagePainter.State.Error &&
+      it.result.throwable !is SocketTimeoutException
+    // TODO what is the new type for this? && it.result.throwable !is UnknownHostException
+  }
+  AnimatedVisibility(
+    visible = isAnyErrorExceptBadInternet == true,
+    enter = fadeIn(),
+    exit = fadeOut(),
+  ) {
+    ErrorPlaceholder()
+  }
+  // TODO placeholder
+  Image(
+    painter = painter ?: EmptyPainter,
+    contentDescription = null,
+    modifier = Modifier
+      .fillMaxSize(),
 //            .placeholder(
 //                visible = painterState !is AsyncImagePainter.State.Success,
 //                highlight = PlaceholderHighlight.shimmer()
 //            )
-    ,
-        contentScale = ContentScale.Crop
-    )
+    contentScale = ContentScale.Crop,
+  )
 }
 
 @Composable
 fun FeedCard(
-    item: FeedItemDisplayable?,
-    width: Dp,
-    height: Dp,
-    modifier: Modifier = Modifier
+  item: FeedItemDisplayable?,
+  width: Dp,
+  height: Dp,
+  modifier: Modifier = Modifier,
 ) {
-    FeedCard(
-        painter = if (item?.imageUrl != null) {
-            FeedCardDefaults.rememberRetryingAsyncImagePainter(
-                item = item,
-                width = width,
-                height = height
-            )
-        } else {
-            null
-        },
-        modifier = modifier
-    )
+  FeedCard(
+    painter = if (item?.imageUrl != null) {
+      FeedCardDefaults.rememberRetryingAsyncImagePainter(
+        item = item,
+        width = width,
+        height = height,
+      )
+    } else {
+      null
+    },
+    modifier = modifier,
+  )
 }
 
 @Composable
 fun FeedCard(
-    item: FeedItemDisplayable?,
-    modifier: Modifier = Modifier
+  item: FeedItemDisplayable?,
+  modifier: Modifier = Modifier,
 ) {
-    FeedCard(
-        painter = if (item?.imageUrl != null) {
-            FeedCardDefaults.rememberRetryingAsyncImagePainter(
-                item = item
-            )
-        } else {
-            null
-        },
-        modifier = modifier
-    )
+  FeedCard(
+    painter = if (item?.imageUrl != null) {
+      FeedCardDefaults.rememberRetryingAsyncImagePainter(
+        item = item,
+      )
+    } else {
+      null
+    },
+    modifier = modifier,
+  )
 }
 
 private object EmptyPainter : Painter() {
-    override val intrinsicSize: Size get() = Size.Unspecified
-    override fun DrawScope.onDraw() {}
+  override val intrinsicSize: Size get() = Size.Unspecified
+
+  override fun DrawScope.onDraw() {}
 }
 
 object FeedCardDefaults {
-    @Composable
-    fun rememberRetryingAsyncImagePainter(
-        item: FeedItemDisplayable,
-        error: Painter? = null,
-        fallback: Painter? = error,
-        onLoading: ((AsyncImagePainter.State.Loading) -> Unit)? = null,
-        onSuccess: ((AsyncImagePainter.State.Success) -> Unit)? = null,
-        onError: ((AsyncImagePainter.State.Error) -> Unit)? = null,
-        contentScale: ContentScale = ContentScale.Crop,
-        filterQuality: FilterQuality = DrawScope.DefaultFilterQuality,
-    ): AsyncImagePainter {
-        // Reloading the image on failure the ugly way. Open issue in Coil since 2021:
-        // https://github.com/coil-kt/coil/issues/884#issuecomment-975932886
-        var retryHash by remember(item.imageUrl) { mutableIntStateOf(0) }
-        val painter = rememberAsyncImagePainter(
-            model = ImageRequest.Builder(LocalPlatformContext.current)
-                .data(item.imageUrl)
+  @Composable
+  fun rememberRetryingAsyncImagePainter(
+    item: FeedItemDisplayable,
+    error: Painter? = null,
+    fallback: Painter? = error,
+    onLoading: ((AsyncImagePainter.State.Loading) -> Unit)? = null,
+    onSuccess: ((AsyncImagePainter.State.Success) -> Unit)? = null,
+    onError: ((AsyncImagePainter.State.Error) -> Unit)? = null,
+    contentScale: ContentScale = ContentScale.Crop,
+    filterQuality: FilterQuality = DrawScope.DefaultFilterQuality,
+  ): AsyncImagePainter {
+    // Reloading the image on failure the ugly way. Open issue in Coil since 2021:
+    // https://github.com/coil-kt/coil/issues/884#issuecomment-975932886
+    var retryHash by remember(item.imageUrl) { mutableIntStateOf(0) }
+    val painter = rememberAsyncImagePainter(
+      model = ImageRequest
+        .Builder(LocalPlatformContext.current)
+        .data(item.imageUrl)
 //                .extras.set(Extras.Key("retryHash"), retryHash)
 //                .setParameter("retryHash", retryHash)
-                // By default retryHash is also included in keys.
-                // This results in a bit longer loading if the same image is requested
-                // with retryHash == 0 next time.
-                // Set our own cache keys to avoid it.
-                //TODO not the case anymore?
-                .diskCacheKey(item.imageUrl)
-                .memoryCacheKey(item.imageUrl)
-                //TODO transformations are not supported for Desktop and iOS. Does Kamel support them?
+        // By default retryHash is also included in keys.
+        // This results in a bit longer loading if the same image is requested
+        // with retryHash == 0 next time.
+        // Set our own cache keys to avoid it.
+        // TODO not the case anymore?
+        .diskCacheKey(item.imageUrl)
+        .memoryCacheKey(item.imageUrl)
+        // TODO transformations are not supported for Desktop and iOS. Does Kamel support them?
 //                .transformations(BitmapTransformations.getFor(item.source))
-                .build(),
-            placeholder = debugPlaceholder(Color.Magenta),
-            contentScale = contentScale,
-            error = error,
-            fallback = fallback,
-            onLoading = onLoading,
-            onSuccess = onSuccess,
-            onError = onError,
-            filterQuality = filterQuality
-        )
+        .build(),
+      placeholder = debugPlaceholder(Color.Magenta),
+      contentScale = contentScale,
+      error = error,
+      fallback = fallback,
+      onLoading = onLoading,
+      onSuccess = onSuccess,
+      onError = onError,
+      filterQuality = filterQuality,
+    )
 
-        val lifecycleState by LocalLifecycleOwner.current.lifecycle.currentStateAsState()
-        val isAtLeastResumed = lifecycleState.isAtLeast(Lifecycle.State.RESUMED)
-        val hasImageRequestFailed =
-            painter.state.collectAsState().value is AsyncImagePainter.State.Error
-        LaunchedEffect(isAtLeastResumed, hasImageRequestFailed) {
-            if (isAtLeastResumed && hasImageRequestFailed) {
-                delay(if (retryHash <= 2) 2.seconds else 5.seconds)
-                painter.restart()
-                retryHash++
-            }
-        }
-
-        return painter
+    val lifecycleState by LocalLifecycleOwner.current.lifecycle.currentStateAsState()
+    val isAtLeastResumed = lifecycleState.isAtLeast(Lifecycle.State.RESUMED)
+    val hasImageRequestFailed =
+      painter.state.collectAsState().value is AsyncImagePainter.State.Error
+    LaunchedEffect(isAtLeastResumed, hasImageRequestFailed) {
+      if (isAtLeastResumed && hasImageRequestFailed) {
+        delay(if (retryHash <= 2) 2.seconds else 5.seconds)
+        painter.restart()
+        retryHash++
+      }
     }
 
-    @Composable
-    fun rememberRetryingAsyncImagePainter(
-        item: FeedItemDisplayable,
-        width: Dp,
-        height: Dp,
-        error: Painter? = null,
-        fallback: Painter? = error,
-        onLoading: ((AsyncImagePainter.State.Loading) -> Unit)? = null,
-        onSuccess: ((AsyncImagePainter.State.Success) -> Unit)? = null,
-        onError: ((AsyncImagePainter.State.Error) -> Unit)? = null,
-        contentScale: ContentScale = ContentScale.Crop,
-        filterQuality: FilterQuality = DrawScope.DefaultFilterQuality,
-    ): AsyncImagePainter {
-        // Reloading the image on failure the ugly way. Open issue in Coil since 2021:
-        // https://github.com/coil-kt/coil/issues/884#issuecomment-975932886
-        var retryHash by remember(item.imageUrl) { mutableIntStateOf(0) }
-        val painter = rememberAsyncImagePainter(
-            model = ImageRequest.Builder(LocalPlatformContext.current)
-                .data(item.imageUrl)
+    return painter
+  }
+
+  @Composable
+  fun rememberRetryingAsyncImagePainter(
+    item: FeedItemDisplayable,
+    width: Dp,
+    height: Dp,
+    error: Painter? = null,
+    fallback: Painter? = error,
+    onLoading: ((AsyncImagePainter.State.Loading) -> Unit)? = null,
+    onSuccess: ((AsyncImagePainter.State.Success) -> Unit)? = null,
+    onError: ((AsyncImagePainter.State.Error) -> Unit)? = null,
+    contentScale: ContentScale = ContentScale.Crop,
+    filterQuality: FilterQuality = DrawScope.DefaultFilterQuality,
+  ): AsyncImagePainter {
+    // Reloading the image on failure the ugly way. Open issue in Coil since 2021:
+    // https://github.com/coil-kt/coil/issues/884#issuecomment-975932886
+    var retryHash by remember(item.imageUrl) { mutableIntStateOf(0) }
+    val painter = rememberAsyncImagePainter(
+      model = ImageRequest
+        .Builder(LocalPlatformContext.current)
+        .data(item.imageUrl)
 //                .extras.set(Extras.Key("retryHash"), retryHash)
 //                .setParameter("retryHash", retryHash)
-                // The size has to be provided since we rely on AsyncImagePager.state for the placeholder
-                // https://coil-kt.github.io/coil/compose/#observing-asyncimagepainterstate
-                .size(
-                    with(LocalDensity.current) { width.roundToPx() },
-                    with(LocalDensity.current) { height.roundToPx() }
-                )
-                // By default retryHash is also included in keys.
-                // This results in a bit longer loading if the same image is requested
-                // with retryHash == 0 next time.
-                // Set our own cache keys to avoid it.
-                //TODO not the case anymore?
-                .diskCacheKey(item.imageUrl)
-                .memoryCacheKey(item.imageUrl)
-                //TODO transformations are not supported for Desktop and iOS. Does Kamel support them?
-//                .transformations(BitmapTransformations.getFor(item.source))
-                .build(),
-            placeholder = debugPlaceholder(Color.Magenta),
-            contentScale = contentScale,
-            error = error,
-            fallback = fallback,
-            onLoading = onLoading,
-            onSuccess = onSuccess,
-            onError = onError,
-            filterQuality = filterQuality
+        // The size has to be provided since we rely on AsyncImagePager.state for the placeholder
+        // https://coil-kt.github.io/coil/compose/#observing-asyncimagepainterstate
+        .size(
+          with(LocalDensity.current) { width.roundToPx() },
+          with(LocalDensity.current) { height.roundToPx() },
         )
+        // By default retryHash is also included in keys.
+        // This results in a bit longer loading if the same image is requested
+        // with retryHash == 0 next time.
+        // Set our own cache keys to avoid it.
+        // TODO not the case anymore?
+        .diskCacheKey(item.imageUrl)
+        .memoryCacheKey(item.imageUrl)
+        // TODO transformations are not supported for Desktop and iOS. Does Kamel support them?
+//                .transformations(BitmapTransformations.getFor(item.source))
+        .build(),
+      placeholder = debugPlaceholder(Color.Magenta),
+      contentScale = contentScale,
+      error = error,
+      fallback = fallback,
+      onLoading = onLoading,
+      onSuccess = onSuccess,
+      onError = onError,
+      filterQuality = filterQuality,
+    )
 
-        val lifecycleState by LocalLifecycleOwner.current.lifecycle.currentStateAsState()
-        val isAtLeastResumed = lifecycleState.isAtLeast(Lifecycle.State.RESUMED)
-        val hasImageRequestFailed =
-            painter.state.collectAsState().value is AsyncImagePainter.State.Error
-        LaunchedEffect(isAtLeastResumed, hasImageRequestFailed) {
-            if (isAtLeastResumed && hasImageRequestFailed) {
-                delay(if (retryHash <= 2) 2.seconds else 5.seconds)
-                painter.restart()
-                retryHash++
-            }
-        }
-
-        return painter
+    val lifecycleState by LocalLifecycleOwner.current.lifecycle.currentStateAsState()
+    val isAtLeastResumed = lifecycleState.isAtLeast(Lifecycle.State.RESUMED)
+    val hasImageRequestFailed =
+      painter.state.collectAsState().value is AsyncImagePainter.State.Error
+    LaunchedEffect(isAtLeastResumed, hasImageRequestFailed) {
+      if (isAtLeastResumed && hasImageRequestFailed) {
+        delay(if (retryHash <= 2) 2.seconds else 5.seconds)
+        painter.restart()
+        retryHash++
+      }
     }
+
+    return painter
+  }
 }
 
 @Composable
 private fun ErrorPlaceholder() {
-    Box(
-        modifier = Modifier.fillMaxSize(),
-        contentAlignment = Alignment.Center
-    ) {
-        Icon(
-            imageVector = Icons.Default.ErrorOutline,
-            contentDescription = null,
-            modifier = Modifier.fillMaxSize(0.2f),
-            tint = MaterialTheme.colorScheme.error
-        )
-    }
+  Box(
+    modifier = Modifier.fillMaxSize(),
+    contentAlignment = Alignment.Center,
+  ) {
+    Icon(
+      imageVector = Icons.Default.ErrorOutline,
+      contentDescription = null,
+      modifier = Modifier.fillMaxSize(0.2f),
+      tint = MaterialTheme.colorScheme.error,
+    )
+  }
 }

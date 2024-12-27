@@ -5,8 +5,8 @@ import com.isao.yfoo3.liked.model.LikedImageDisplayable
 
 @Immutable
 data class LikedUiState(
-    val items: List<LikedImageDisplayable> = emptyList(),
-    val shouldSortAscending: Boolean = false,
-    val isLoading: Boolean = false,
-    val isError: Boolean = false
+  val items: List<LikedImageDisplayable> = emptyList(),
+  val shouldSortAscending: Boolean = false,
+  val isLoading: Boolean = false,
+  val isError: Boolean = false,
 )

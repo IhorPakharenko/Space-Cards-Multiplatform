@@ -5,6 +5,6 @@ import org.koin.dsl.module
 import org.koin.ksp.generated.defaultModule
 
 val likedModule = module {
-    includes(defaultModule)
-    includes(domainModule)
+  includes(defaultModule)
+  includes(domainModule)
 }

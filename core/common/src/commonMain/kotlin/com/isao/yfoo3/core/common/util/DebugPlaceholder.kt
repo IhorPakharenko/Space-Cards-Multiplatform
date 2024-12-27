@@ -8,17 +8,15 @@ import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.painterResource
 
 @Composable
-fun debugPlaceholder(debugPreview: DrawableResource) =
-    if (LocalInspectionMode.current) {
-        painterResource(debugPreview)
-    } else {
-        null
-    }
+fun debugPlaceholder(debugPreview: DrawableResource) = if (LocalInspectionMode.current) {
+  painterResource(debugPreview)
+} else {
+  null
+}
 
 @Composable
-fun debugPlaceholder(color: Color) =
-    if (LocalInspectionMode.current) {
-        ColorPainter(color)
-    } else {
-        null
-    }
+fun debugPlaceholder(color: Color) = if (LocalInspectionMode.current) {
+  ColorPainter(color)
+} else {
+  null
+}

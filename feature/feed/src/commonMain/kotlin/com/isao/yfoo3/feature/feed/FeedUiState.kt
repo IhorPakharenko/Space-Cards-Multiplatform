@@ -5,7 +5,7 @@ import com.isao.yfoo3.feature.feed.model.FeedItemDisplayable
 
 @Immutable
 data class FeedUiState(
-    val items: List<FeedItemDisplayable> = emptyList(),
-    val isLoading: Boolean = false,
-    val isError: Boolean = false
+  val items: List<FeedItemDisplayable> = emptyList(),
+  val isLoading: Boolean = false,
+  val isError: Boolean = false,
 )

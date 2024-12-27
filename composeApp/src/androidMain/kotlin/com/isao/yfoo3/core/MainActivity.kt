@@ -11,33 +11,33 @@ import com.isao.yfoo3.App
 import com.isao.yfoo3.core.designsystem.SplashScreenHost
 import com.isao.yfoo3.core.theme.Yfoo2ThemeAndroid
 
-class MainActivity : ComponentActivity(), SplashScreenHost {
+class MainActivity :
+  ComponentActivity(),
+  SplashScreenHost {
+  override var shouldKeepSplashScreen = true
 
-    override var shouldKeepSplashScreen = true
+  override fun onCreate(savedInstanceState: Bundle?) {
+    val splashScreen = installSplashScreen()
+    splashScreen.setKeepOnScreenCondition { shouldKeepSplashScreen }
 
+    super.onCreate(savedInstanceState)
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        val splashScreen = installSplashScreen()
-        splashScreen.setKeepOnScreenCondition { shouldKeepSplashScreen }
+    // Let the app take up all screen space, including system bars
+    WindowCompat.setDecorFitsSystemWindows(window, false)
 
-        super.onCreate(savedInstanceState)
-
-        // Let the app take up all screen space, including system bars
-        WindowCompat.setDecorFitsSystemWindows(window, false)
-
-        setContent {
-            Yfoo2ThemeAndroid { colorScheme, typography ->
-                App(
-                    colorScheme = colorScheme,
-                    typography = typography
-                )
-            }
-        }
+    setContent {
+      Yfoo2ThemeAndroid { colorScheme, typography ->
+        App(
+          colorScheme = colorScheme,
+          typography = typography,
+        )
+      }
     }
+  }
 }
 
 @Preview
 @Composable
-fun AppAndroidPreview() {
-    App()
+private fun AppAndroidPreview() {
+  App()
 }

@@ -37,45 +37,44 @@ import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
-fun FeedRoute(
-    viewModel: FeedViewModel = koinViewModel()
-) {
-    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-    FeedScreen(uiState = uiState, onIntent = viewModel::acceptIntent)
+fun FeedRoute(viewModel: FeedViewModel = koinViewModel()) {
+  val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+  FeedScreen(uiState = uiState, onIntent = viewModel::acceptIntent)
 }
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
 @Composable
 fun FeedScreen(
-    uiState: FeedUiState,
-    onIntent: (FeedIntent) -> Unit,
-    modifier: Modifier = Modifier
+  uiState: FeedUiState,
+  onIntent: (FeedIntent) -> Unit,
+  modifier: Modifier = Modifier,
 ) {
-    val snackbarHostState = remember { SnackbarHostState() }
+  val snackbarHostState = remember { SnackbarHostState() }
 
-    Scaffold(
-        snackbarHost = { SnackbarHost(snackbarHostState) },
-        // Let the content take up all available space.
-        // Material3 components handle the insets themselves
-        contentWindowInsets = WindowInsets(0, 0, 0, 0)
-    ) { padding ->
-        Column {
-            // Let the card be drawn above the app bar
-            CenterAlignedTopAppBar(
-                title = {
-                    Text(stringResource(Res.string.app_name))
-                }
-            )
+  Scaffold(
+    snackbarHost = { SnackbarHost(snackbarHostState) },
+    // Let the content take up all available space.
+    // Material3 components handle the insets themselves
+    contentWindowInsets = WindowInsets(0, 0, 0, 0),
+    modifier = modifier,
+  ) { padding ->
+    Column {
+      // Let the card be drawn above the app bar
+      CenterAlignedTopAppBar(
+        title = {
+          Text(stringResource(Res.string.app_name))
+        },
+      )
 
-            if (uiState.isError) {
-                val errorMessage = stringResource(Res.string.something_went_wrong)
+      if (uiState.isError) {
+        val errorMessage = stringResource(Res.string.something_went_wrong)
 
-                LaunchedEffect(snackbarHostState) {
-                    snackbarHostState.showSnackbar(
-                        message = errorMessage,
-                    )
-                }
-            }
+        LaunchedEffect(snackbarHostState) {
+          snackbarHostState.showSnackbar(
+            message = errorMessage,
+          )
+        }
+      }
 //        FeedScreenContent(
 //            uiState,
 //            onIntent,
@@ -83,79 +82,79 @@ fun FeedScreen(
 //                .padding(padding)
 //                .fillMaxSize()
 //        )
-            val cardSizeModifier =
-                if (LocalWindowSizeClass.current.widthSizeClass != WindowWidthSizeClass.Compact) {
-                    Modifier.fillMaxHeight().aspectRatio(0.7f)
-                } else {
-                    Modifier.fillMaxSize()
-                }
-            DismissibleStack(
-                uiState.items,
-                content = {
-                    FeedCard(item = it, Modifier.then(cardSizeModifier).padding(16.dp))
-                },
-                modifier = modifier
-                    .padding(padding)
-                    .fillMaxSize()
-            )
+      val cardSizeModifier =
+        if (LocalWindowSizeClass.current.widthSizeClass != WindowWidthSizeClass.Compact) {
+          Modifier.fillMaxHeight().aspectRatio(0.7f)
+        } else {
+          Modifier.fillMaxSize()
         }
+      DismissibleStack(
+        uiState.items,
+        content = {
+          FeedCard(item = it, Modifier.then(cardSizeModifier).padding(16.dp))
+        },
+        modifier = Modifier
+          .padding(padding)
+          .fillMaxSize(),
+      )
     }
+  }
 }
 
 @PreviewLightDark
 @Composable
 private fun FeedScreenPreview() {
-    Yfoo2Theme {
-        FeedScreen(
-            uiState = FeedUiState(
-                items = List(2) {
-                    FeedItemDisplayable(
-                        id = it.toString(),
-                        imageId = "",
-                        source = ImageSource.THIS_WAIFU_DOES_NOT_EXIST,
-                        imageUrl = "",
-                        sourceUrl = ""
-                    )
-                }
-            ),
-            onIntent = {}
-        )
-    }
+  Yfoo2Theme {
+    FeedScreen(
+      uiState = FeedUiState(
+        items = List(2) {
+          FeedItemDisplayable(
+            id = it.toString(),
+            imageId = "",
+            source = ImageSource.THIS_WAIFU_DOES_NOT_EXIST,
+            imageUrl = "",
+            sourceUrl = "",
+          )
+        },
+      ),
+      onIntent = {},
+    )
+  }
 }
 
 @PreviewLightDark
 @Composable
 private fun FeedScreenLoadingPreview() {
-    Yfoo2Theme {
-        FeedScreen(
-            uiState = FeedUiState(
-                isLoading = true
-            ),
-            onIntent = {}
-        )
-    }
+  Yfoo2Theme {
+    FeedScreen(
+      uiState = FeedUiState(
+        isLoading = true,
+      ),
+      onIntent = {},
+    )
+  }
 }
 
 @PreviewLightDark
 @Composable
 private fun FeedScreenNoItemsPreview() {
-    Yfoo2Theme {
-        FeedScreen(
-            uiState = FeedUiState(),
-            onIntent = {}
-        )
-    }
+  Yfoo2Theme {
+    FeedScreen(
+      uiState = FeedUiState(),
+      onIntent = {},
+    )
+  }
 }
 
 @PreviewLightDark
 @Composable
 private fun FeedScreenErrorPreview() {
-    Yfoo2Theme {
-        FeedScreen(
-            uiState = FeedUiState(
-                isError = true
-            ),
-            onIntent = {}
-        )
-    }
+  Yfoo2Theme {
+    FeedScreen(
+      uiState = FeedUiState(
+        isError = true,
+      ),
+      onIntent = {},
+    )
+  }
 }

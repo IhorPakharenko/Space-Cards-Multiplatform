@@ -10,8 +10,8 @@ import org.jetbrains.compose.resources.painterResource
 
 @Composable
 fun CatPreviewPlaceholder(modifier: Modifier = Modifier) = Image(
-    painter = painterResource(Res.drawable.placeholder_cat),
-    contentDescription = null,
-    modifier = modifier,
-    contentScale = ContentScale.Crop
+  painter = painterResource(Res.drawable.placeholder_cat),
+  contentDescription = null,
+  modifier = modifier,
+  contentScale = ContentScale.Crop,
 )

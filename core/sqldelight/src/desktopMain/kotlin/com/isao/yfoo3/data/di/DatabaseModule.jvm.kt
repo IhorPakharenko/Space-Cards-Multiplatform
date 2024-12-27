@@ -6,7 +6,7 @@ import com.isao.yfoo3.core.data.Database
 import org.koin.core.scope.Scope
 
 actual fun Scope.provideSqlDelightDriver(): SqlDriver {
-    val driver: SqlDriver = JdbcSqliteDriver(JdbcSqliteDriver.IN_MEMORY)
-    Database.Schema.create(driver)
-    return driver
+  val driver: SqlDriver = JdbcSqliteDriver(JdbcSqliteDriver.IN_MEMORY)
+  Database.Schema.create(driver)
+  return driver
 }
