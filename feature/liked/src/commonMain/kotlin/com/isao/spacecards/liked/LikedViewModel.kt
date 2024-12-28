@@ -19,10 +19,10 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalCoroutinesApi::class)
 // Declare ViewModel in Koin Module until this issue is fixed:
 // https://github.com/InsertKoinIO/koin-annotations/issues/185
 // @KoinViewModel
+@OptIn(ExperimentalCoroutinesApi::class)
 class LikedViewModel(
   private val getLikedImagesUseCase: GetLikedImagesUseCase,
   private val deleteLikedImageUseCase: DeleteLikedImageUseCase,

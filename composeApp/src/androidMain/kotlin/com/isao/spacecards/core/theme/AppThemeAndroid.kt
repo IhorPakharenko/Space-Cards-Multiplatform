@@ -23,21 +23,22 @@ fun AppThemeAndroid(
   dynamicColor: Boolean = true,
   content: @Composable (colorScheme: ColorScheme, typography: Typography) -> Unit,
 ) {
-    val colorScheme = when {
-        dynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
-            val context = LocalContext.current
-            if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
-        }
-        darkTheme -> DarkColorScheme
-        else -> LightColorScheme
-    }
-    val view = LocalView.current
-    if (!view.isInEditMode) {
-        SideEffect {
-            val window = (view.context as Activity).window
-            WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = !darkTheme
-        }
+  val colorScheme = when {
+    dynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
+      val context = LocalContext.current
+      if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
     }
 
-    content(colorScheme, Typography)
+    darkTheme -> DarkColorScheme
+    else -> LightColorScheme
+  }
+  val view = LocalView.current
+  if (!view.isInEditMode) {
+    SideEffect {
+      val window = (view.context as Activity).window
+      WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = !darkTheme
+    }
+  }
+
+  content(colorScheme, Typography)
 }

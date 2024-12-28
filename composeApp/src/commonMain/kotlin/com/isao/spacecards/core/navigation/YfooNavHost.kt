@@ -10,15 +10,15 @@ import com.isao.spacecards.liked.navigation.addLikedScreen
 
 @Composable
 fun SpaceCardsNavHost(
-    navController: NavHostController,
-    modifier: Modifier = Modifier,
+  navController: NavHostController,
+  modifier: Modifier = Modifier,
 ) {
-    NavHost(
-        navController = navController,
-        startDestination = TopLevelScreen.Feed.route,
-        modifier = modifier,
-    ) {
-        addFeedScreen()
-        addLikedScreen()
-    }
+  NavHost(
+    navController = navController,
+    startDestination = TopLevelScreen.Feed.route,
+    modifier = modifier,
+  ) {
+    addFeedScreen()
+    addLikedScreen()
+  }
 }

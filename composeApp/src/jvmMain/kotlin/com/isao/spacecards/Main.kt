@@ -8,16 +8,16 @@ import com.isao.spacecards.core.di.appModule
 import org.koin.core.context.startKoin
 
 fun main() {
-    startKoin {
-        logger(KermitKoinLogger(Logger.withTag("koin")))
-        modules(appModule)
+  startKoin {
+    logger(KermitKoinLogger(Logger.withTag("koin")))
+    modules(appModule)
+  }
+  application {
+    Window(
+      onCloseRequest = ::exitApplication,
+      title = "Space Cards",
+    ) {
+      App()
     }
-    application {
-        Window(
-            onCloseRequest = ::exitApplication,
-            title = "Space Cards",
-        ) {
-            App()
-        }
-    }
+  }
 }

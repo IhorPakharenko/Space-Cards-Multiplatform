@@ -6,9 +6,9 @@ import com.isao.spacecards.liked.di.likedModule
 import org.koin.dsl.module
 
 val appModule = module {
-    includes(
-        databaseModule,
-        feedModule,
-        likedModule,
-    )
+  includes(
+    databaseModule,
+    feedModule,
+    likedModule,
+  )
 }
