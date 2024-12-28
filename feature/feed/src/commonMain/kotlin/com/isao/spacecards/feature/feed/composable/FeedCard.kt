@@ -32,6 +32,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.currentStateAsState
+import co.touchlab.kermit.Logger
 import coil3.compose.AsyncImagePainter
 import coil3.compose.LocalPlatformContext
 import coil3.compose.rememberAsyncImagePainter
@@ -165,12 +166,13 @@ object FeedCardDefaults {
       filterQuality = filterQuality,
     )
 
+    val painterState = painter.state.collectAsState().value
     val lifecycleState by LocalLifecycleOwner.current.lifecycle.currentStateAsState()
     val isAtLeastResumed = lifecycleState.isAtLeast(Lifecycle.State.RESUMED)
-    val hasImageRequestFailed =
-      painter.state.collectAsState().value is AsyncImagePainter.State.Error
-    LaunchedEffect(isAtLeastResumed, hasImageRequestFailed) {
-      if (isAtLeastResumed && hasImageRequestFailed) {
+    val imageRequestFailure = (painterState as? AsyncImagePainter.State.Error)?.result?.throwable
+    LaunchedEffect(isAtLeastResumed, imageRequestFailure) {
+      if (isAtLeastResumed && imageRequestFailure != null) {
+        Logger.e("Feed image request failed", imageRequestFailure)
         delay(if (retryHash <= 2) 2.seconds else 5.seconds)
         painter.restart()
         retryHash++
