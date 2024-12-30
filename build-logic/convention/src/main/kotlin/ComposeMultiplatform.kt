@@ -1,6 +1,3 @@
-import com.isao.spacecards.composeCompiler
-import com.isao.spacecards.ksp
-import com.isao.spacecards.libs
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.assign
 import org.gradle.kotlin.dsl.configure

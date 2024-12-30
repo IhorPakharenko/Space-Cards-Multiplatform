@@ -1,5 +1,3 @@
-import com.isao.spacecards.kotlinMultiplatform
-import com.isao.spacecards.libs
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.dependencies
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask

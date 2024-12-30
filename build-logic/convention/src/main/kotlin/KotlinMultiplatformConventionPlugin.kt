@@ -1,5 +1,3 @@
-import com.isao.spacecards.configureKotlinAndroid
-import com.isao.spacecards.configureKotlinMultiplatform
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 

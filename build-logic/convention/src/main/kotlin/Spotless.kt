@@ -1,5 +1,4 @@
 import com.diffplug.gradle.spotless.SpotlessExtension
-import com.isao.spacecards.libs
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.configure
 
