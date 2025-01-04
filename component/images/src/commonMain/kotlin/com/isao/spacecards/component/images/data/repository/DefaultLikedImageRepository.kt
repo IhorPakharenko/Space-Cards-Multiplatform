@@ -10,7 +10,7 @@ import kotlinx.coroutines.flow.map
 import org.koin.core.annotation.Single
 
 @Single(binds = [LikedImageRepository::class])
-internal class LikedImageRepositoryImpl(private val likedImageDao: LikedImageDao) :
+internal class DefaultLikedImageRepository(private val likedImageDao: LikedImageDao) :
   LikedImageRepository {
   override fun getImages(): Flow<List<LikedImage>> =
     likedImageDao.getLikedImages().map { imagesCached ->

@@ -13,7 +13,7 @@ import org.koin.core.annotation.Single
 import kotlin.random.Random
 
 @Single(binds = [FeedImageRepository::class])
-internal class FeedImageRepositoryImpl(private val feedImageDao: FeedImageDao) :
+internal class DefaultFeedImageRepository(private val feedImageDao: FeedImageDao) :
   FeedImageRepository {
   companion object {
     const val MIN_ITEM_COUNT = 20
