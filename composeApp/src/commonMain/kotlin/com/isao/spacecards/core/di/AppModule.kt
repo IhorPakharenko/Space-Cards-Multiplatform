@@ -4,11 +4,13 @@ import com.isao.spacecards.data.di.databaseModule
 import com.isao.spacecards.feature.feed.di.feedModule
 import com.isao.spacecards.liked.di.likedModule
 import org.koin.dsl.module
+import org.koin.ksp.generated.defaultModule
 
 val appModule = module {
   includes(
     databaseModule,
     feedModule,
     likedModule,
+    defaultModule,
   )
 }

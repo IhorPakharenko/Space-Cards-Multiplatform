@@ -14,6 +14,7 @@ kotlin {
       implementation(projects.feature.feed)
       implementation(projects.feature.liked)
       implementation(projects.feature.common)
+      implementation(projects.component.images)
     }
     androidMain.dependencies {
       implementation(libs.androidx.core.splashscreen)
