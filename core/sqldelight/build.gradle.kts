@@ -6,7 +6,6 @@ plugins {
 kotlin {
   sourceSets {
     commonMain.dependencies {
-      implementation(projects.core.model)
       implementation(projects.core.db)
       implementation(libs.sqldelight.coroutines)
     }

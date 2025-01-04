@@ -5,8 +5,8 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.platform.LocalContext
 import coil3.compose.AsyncImagePainter
-import com.isao.spacecards.core.common.extension.findActivity
 import com.isao.spacecards.core.designsystem.SplashScreenHost
+import com.isao.spacecards.feature.common.extension.findActivity
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.filter

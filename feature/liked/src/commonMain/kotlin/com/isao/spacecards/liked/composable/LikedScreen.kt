@@ -52,10 +52,10 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.isao.spacecards.core.common.extension.collectWithLifecycle
-import com.isao.spacecards.core.common.util.PreviewLightDark
+import com.isao.spacecards.component.images.domain.model.ImageSource
 import com.isao.spacecards.core.designsystem.theme.SpaceCardsTheme
-import com.isao.spacecards.core.model.ImageSource
+import com.isao.spacecards.feature.common.extension.collectWithLifecycle
+import com.isao.spacecards.feature.common.util.PreviewLightDark
 import com.isao.spacecards.liked.LikedEvent
 import com.isao.spacecards.liked.LikedIntent
 import com.isao.spacecards.liked.LikedUiState

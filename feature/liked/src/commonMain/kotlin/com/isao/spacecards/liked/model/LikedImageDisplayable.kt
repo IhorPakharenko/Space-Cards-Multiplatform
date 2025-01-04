@@ -1,6 +1,6 @@
 package com.isao.spacecards.liked.model
 
-import com.isao.spacecards.core.model.ImageSource
+import com.isao.spacecards.component.images.domain.model.ImageSource
 
 data class LikedImageDisplayable(
   val id: String,

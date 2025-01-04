@@ -1,9 +1,9 @@
 package com.isao.spacecards.feature.feed
 
+import com.isao.spacecards.component.images.domain.usecase.DeleteFeedImageUseCase
+import com.isao.spacecards.component.images.domain.usecase.GetFeedImagesUseCase
+import com.isao.spacecards.component.images.domain.usecase.LikeImageUseCase
 import com.isao.spacecards.core.designsystem.MviViewModel
-import com.isao.spacecards.core.domain.usecase.DeleteFeedImageUseCase
-import com.isao.spacecards.core.domain.usecase.GetFeedImagesUseCase
-import com.isao.spacecards.core.domain.usecase.LikeImageUseCase
 import com.isao.spacecards.feature.feed.mapper.toPresentationModel
 import com.isao.spacecards.feature.feed.model.FeedItemDisplayable
 import kotlinx.coroutines.flow.Flow

@@ -37,8 +37,8 @@ import coil3.compose.AsyncImagePainter
 import coil3.compose.LocalPlatformContext
 import coil3.compose.rememberAsyncImagePainter
 import coil3.request.ImageRequest
-import com.isao.spacecards.core.common.util.CatPreviewPlaceholder
-import com.isao.spacecards.core.common.util.debugPlaceholder
+import com.isao.spacecards.feature.common.util.CatPreviewPlaceholder
+import com.isao.spacecards.feature.common.util.debugPlaceholder
 import com.isao.spacecards.feature.feed.model.FeedItemDisplayable
 import io.ktor.client.network.sockets.SocketTimeoutException
 import kotlinx.coroutines.delay

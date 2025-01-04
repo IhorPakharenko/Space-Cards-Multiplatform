@@ -6,10 +6,9 @@ plugins {
 kotlin {
   sourceSets {
     commonMain.dependencies {
-      implementation(projects.core.designsystem)
-      implementation(projects.core.model)
-      implementation(projects.core.common)
-      implementation(projects.core.domain)
+      implementation(projects.feature.common)
+      implementation(projects.feature.designsystem)
+      implementation(projects.component.images)
     }
   }
 }

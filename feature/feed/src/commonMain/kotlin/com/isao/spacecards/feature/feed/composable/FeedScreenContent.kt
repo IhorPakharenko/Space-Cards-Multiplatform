@@ -33,11 +33,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImagePainter
-import com.isao.spacecards.core.common.extension.scale
 import com.isao.spacecards.core.designsystem.composable.dismissible.DismissDirection
 import com.isao.spacecards.core.designsystem.composable.dismissible.DismissibleState
 import com.isao.spacecards.core.designsystem.composable.dismissible.dismissible
 import com.isao.spacecards.core.designsystem.composable.dismissible.rememberDismissibleState
+import com.isao.spacecards.feature.common.extension.scale
 import com.isao.spacecards.feature.feed.FeedIntent
 import com.isao.spacecards.feature.feed.FeedUiState
 import com.isao.spacecards.resources.Res

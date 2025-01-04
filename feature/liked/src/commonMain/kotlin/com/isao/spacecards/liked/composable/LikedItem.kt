@@ -22,8 +22,8 @@ import coil3.compose.AsyncImagePainter
 import coil3.compose.LocalPlatformContext
 import coil3.compose.rememberAsyncImagePainter
 import coil3.request.ImageRequest
-import com.isao.spacecards.core.common.util.CatPreviewPlaceholder
-import com.isao.spacecards.core.common.util.debugPlaceholder
+import com.isao.spacecards.feature.common.util.CatPreviewPlaceholder
+import com.isao.spacecards.feature.common.util.debugPlaceholder
 import com.isao.spacecards.liked.model.LikedImageDisplayable
 
 @OptIn(ExperimentalFoundationApi::class)

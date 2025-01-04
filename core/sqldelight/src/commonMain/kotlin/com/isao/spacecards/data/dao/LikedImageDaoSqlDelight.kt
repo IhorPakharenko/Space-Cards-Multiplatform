@@ -4,7 +4,6 @@ import app.cash.sqldelight.coroutines.asFlow
 import app.cash.sqldelight.coroutines.mapToList
 import com.isao.spacecards.core.db.dao.LikedImageDao
 import com.isao.spacecards.core.db.model.LikedImageCached
-import com.isao.spacecards.core.model.ImageSource
 import com.isao.spacecards.data.LikedImageCachedQueries
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
@@ -40,7 +39,7 @@ class LikedImageDaoSqlDelight(private val queries: LikedImageCachedQueries) : Li
       queries.upsertLikedImage(
         id = item.id,
         imageId = item.imageId,
-        source = item.source.name,
+        source = item.source,
         dateAdded = item.dateAdded.toEpochMilliseconds(),
       )
     }
@@ -60,7 +59,7 @@ class LikedImageDaoSqlDelight(private val queries: LikedImageCachedQueries) : Li
   ) = LikedImageCached(
     id = id,
     imageId = imageId,
-    source = ImageSource.valueOf(source),
+    source = source,
     dateAdded = Instant.fromEpochMilliseconds(dateAdded),
   )
 }

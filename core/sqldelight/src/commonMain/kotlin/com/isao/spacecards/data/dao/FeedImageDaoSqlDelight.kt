@@ -5,7 +5,6 @@ import app.cash.sqldelight.coroutines.mapToList
 import app.cash.sqldelight.coroutines.mapToOne
 import com.isao.spacecards.core.db.dao.FeedImageDao
 import com.isao.spacecards.core.db.model.FeedImageCached
-import com.isao.spacecards.core.model.ImageSource
 import com.isao.spacecards.data.FeedImageCachedQueries
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
@@ -24,7 +23,7 @@ class FeedImageDaoSqlDelight(private val queries: FeedImageCachedQueries) : Feed
     .mapToOne(Dispatchers.IO)
 
   override suspend fun saveFeedImage(item: FeedImageCached): Long = withContext(Dispatchers.IO) {
-    queries.upsertFeedImage(item.id, item.imageId, item.source.name)
+    queries.upsertFeedImage(item.id, item.imageId, item.source)
     1L // Returning 1L to indicate success, like Room does
   }
 
@@ -34,6 +33,7 @@ class FeedImageDaoSqlDelight(private val queries: FeedImageCachedQueries) : Feed
     }
   }
 
+  //TODO sqldelight should be able to return a FeedImageCached object directly
   private fun mapToData(
     id: String,
     imageId: String,
@@ -41,6 +41,6 @@ class FeedImageDaoSqlDelight(private val queries: FeedImageCachedQueries) : Feed
   ) = FeedImageCached(
     id,
     imageId,
-    ImageSource.valueOf(source),
+    source,
   )
 }

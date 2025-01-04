@@ -9,11 +9,11 @@ plugins {
 kotlin {
   sourceSets {
     commonMain.dependencies {
-      implementation(projects.core.common)
-      implementation(projects.core.designsystem)
+      implementation(projects.feature.designsystem)
       implementation(projects.core.sqldelight)
       implementation(projects.feature.feed)
       implementation(projects.feature.liked)
+      implementation(projects.feature.common)
     }
     androidMain.dependencies {
       implementation(libs.androidx.core.splashscreen)

@@ -21,11 +21,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.isao.spacecards.core.common.util.PreviewLightDark
+import com.isao.spacecards.component.images.domain.model.ImageSource
 import com.isao.spacecards.core.designsystem.LocalWindowSizeClass
 import com.isao.spacecards.core.designsystem.composable.dismissible.DismissibleStack
 import com.isao.spacecards.core.designsystem.theme.SpaceCardsTheme
-import com.isao.spacecards.core.model.ImageSource
+import com.isao.spacecards.feature.common.util.PreviewLightDark
 import com.isao.spacecards.feature.feed.FeedIntent
 import com.isao.spacecards.feature.feed.FeedUiState
 import com.isao.spacecards.feature.feed.FeedViewModel

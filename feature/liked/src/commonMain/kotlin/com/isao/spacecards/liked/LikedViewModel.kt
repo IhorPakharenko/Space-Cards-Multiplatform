@@ -2,9 +2,9 @@ package com.isao.spacecards.liked
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
+import com.isao.spacecards.component.images.domain.usecase.DeleteLikedImageUseCase
+import com.isao.spacecards.component.images.domain.usecase.GetLikedImagesUseCase
 import com.isao.spacecards.core.designsystem.MviViewModel
-import com.isao.spacecards.core.domain.usecase.DeleteLikedImageUseCase
-import com.isao.spacecards.core.domain.usecase.GetLikedImagesUseCase
 import com.isao.spacecards.liked.LikedViewModel.Keys.SHOULD_SORT_ASCENDING
 import com.isao.spacecards.liked.mapper.toPresentationModel
 import com.isao.spacecards.liked.model.LikedImageDisplayable
