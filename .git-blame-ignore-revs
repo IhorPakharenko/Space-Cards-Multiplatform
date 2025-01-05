@@ -4,3 +4,5 @@
 
 # Format everything with ktlint
 89c2ad8dde74af200602fbf83912e94355400b62
+# Separate project by feature. Switch to Clean Architecture
+544013c9946f011ccda960f983daff268eb4163d
