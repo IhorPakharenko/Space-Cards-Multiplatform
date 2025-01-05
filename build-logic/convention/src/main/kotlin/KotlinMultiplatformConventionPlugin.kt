@@ -5,7 +5,6 @@ class KotlinMultiplatformConventionPlugin : Plugin<Project> {
   override fun apply(target: Project) = with(target) {
     configureKotlinAndroid()
     configureKotlinMultiplatform()
-    configureKsp()
     configureSpotless()
   }
 }

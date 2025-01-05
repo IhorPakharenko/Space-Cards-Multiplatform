@@ -136,3 +136,5 @@ spacecards-composeMultiplatform = { id = "com.isao.spacecards.composeMultiplatfo
 spacecards-kotlinMultiplatform = { id = "com.isao.spacecards.kotlinMultiplatform", version = "unspecified" }
 # @keep
 spacecards-root = { id = "com.isao.spacecards.root", version = "unspecified" }
+# @keep
+spacecards-koinAnnotations = { id = "com.isao.spacecards.koinAnnotations", version = "unspecified" }

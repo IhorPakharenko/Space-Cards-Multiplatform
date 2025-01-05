@@ -46,5 +46,9 @@ gradlePlugin {
       id = "com.isao.spacecards.composeMultiplatform"
       implementationClass = "ComposeMultiplatformConventionPlugin"
     }
+    register("koinAnnotations") {
+      id = "com.isao.spacecards.koinAnnotations"
+      implementationClass = "KoinAnnotationsConventionPlugin"
+    }
   }
 }

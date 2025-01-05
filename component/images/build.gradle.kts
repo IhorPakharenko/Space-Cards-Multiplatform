@@ -1,5 +1,6 @@
 plugins {
   alias(libs.plugins.spacecards.kotlinMultiplatform)
+  alias(libs.plugins.spacecards.koinAnnotations)
 }
 
 kotlin {

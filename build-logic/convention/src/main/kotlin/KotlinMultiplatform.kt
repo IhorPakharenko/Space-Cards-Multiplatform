@@ -31,7 +31,6 @@ internal fun Project.configureKotlinMultiplatform() {
 
         implementation(libs.findLibrary("koin.core").get())
         implementation(libs.findLibrary("koin.core.coroutines").get())
-        api(libs.findLibrary("koin.annotations").get())
 
         implementation(libs.findLibrary("kermit").get())
         implementation(libs.findLibrary("kermit.koin").get())

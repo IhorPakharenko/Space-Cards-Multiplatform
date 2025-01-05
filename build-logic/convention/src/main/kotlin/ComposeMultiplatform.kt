@@ -44,10 +44,6 @@ internal fun Project.configureComposeMultiplatform() {
     }
   }
 
-  ksp {
-    arg("KOIN_USE_COMPOSE_VIEWMODEL", "true")
-  }
-
   composeCompiler {
     stabilityConfigurationFiles = listOf(
       rootProject.layout.projectDirectory.file("compose_stability.conf"),
