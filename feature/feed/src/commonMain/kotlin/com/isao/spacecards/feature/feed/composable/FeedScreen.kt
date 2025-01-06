@@ -2,8 +2,6 @@ package com.isao.spacecards.feature.feed.composable
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.aspectRatio
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.ExperimentalMaterialApi
@@ -13,17 +11,13 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
-import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.isao.spacecards.component.images.domain.model.ImageSource
-import com.isao.spacecards.core.designsystem.LocalWindowSizeClass
-import com.isao.spacecards.core.designsystem.composable.dismissible.DismissibleStack
 import com.isao.spacecards.core.designsystem.theme.SpaceCardsTheme
 import com.isao.spacecards.feature.common.util.PreviewLightDark
 import com.isao.spacecards.feature.feed.FeedIntent
@@ -75,28 +69,29 @@ fun FeedScreen(
           )
         }
       }
-//        FeedScreenContent(
-//            uiState,
-//            onIntent,
-//            modifier
-//                .padding(padding)
-//                .fillMaxSize()
-//        )
-      val cardSizeModifier =
-        if (LocalWindowSizeClass.current.widthSizeClass != WindowWidthSizeClass.Compact) {
-          Modifier.fillMaxHeight().aspectRatio(0.7f)
-        } else {
-          Modifier.fillMaxSize()
-        }
-      DismissibleStack(
-        uiState.items,
-        content = {
-          FeedCard(item = it, Modifier.then(cardSizeModifier).padding(16.dp))
-        },
-        modifier = Modifier
+      FeedScreenContent(
+        uiState,
+        onIntent,
+        Modifier
           .padding(padding)
           .fillMaxSize(),
       )
+      // Experimental new implementation of the feed screen. WIP.
+//      val cardSizeModifier =
+//        if (LocalWindowSizeClass.current.widthSizeClass != WindowWidthSizeClass.Compact) {
+//          Modifier.fillMaxHeight().aspectRatio(0.7f)
+//        } else {
+//          Modifier.fillMaxSize()
+//        }
+//      DismissibleStack(
+//        uiState.items,
+//        content = {
+//          FeedCard(item = it, Modifier.then(cardSizeModifier).padding(16.dp))
+//        },
+//        modifier = Modifier
+//          .padding(padding)
+//          .fillMaxSize(),
+//      )
     }
   }
 }
