@@ -40,6 +40,7 @@ import org.koin.compose.KoinContext
 
 @Composable
 fun App(
+  modifier: Modifier = Modifier,
   colorScheme: ColorScheme = LightColorScheme,
   typography: Typography = Typography,
   windowSizeClass: WindowSizeClass = getWindowSizeClass(),
@@ -47,7 +48,7 @@ fun App(
   SpaceCardsTheme(colorScheme, typography) {
     SpaceCardsTheme {
       Surface(
-        modifier = Modifier.fillMaxSize(),
+        modifier = modifier.fillMaxSize(),
         color = MaterialTheme.colorScheme.background,
       ) {
         // Needed as a workaround for some crashes (mostly in tests)
