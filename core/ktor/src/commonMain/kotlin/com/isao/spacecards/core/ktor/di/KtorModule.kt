@@ -30,6 +30,7 @@ val ktorModule = module {
       install(DefaultRequest) {
         header(HttpHeaders.ContentType, ContentType.Application.Json)
       }
+      //TODO make sure not to log api keys on CI/CD
       install(Logging) {
         logger = object : Logger {
           override fun log(message: String) {

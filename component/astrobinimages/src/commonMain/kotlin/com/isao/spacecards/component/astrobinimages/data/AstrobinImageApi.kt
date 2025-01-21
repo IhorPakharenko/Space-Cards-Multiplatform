@@ -8,8 +8,8 @@ import kotlinx.datetime.Instant
 interface AstrobinImageApi {
   companion object {
     const val CLIENT = "astrobin"
-    const val HOST = "https://www.astrobin.com"
-    const val PATH = "api/v1"
+    const val HOST = "www.astrobin.com"
+    const val PATH = "api/v1/"
     const val API_KEY = "api_key"
     const val API_SECRET = "api_secret"
   }

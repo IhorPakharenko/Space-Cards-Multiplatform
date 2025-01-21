@@ -8,7 +8,6 @@ import com.isao.spacecards.component.astrobinimages.domain.ObservePagedAstrobinI
 import com.isao.spacecards.component.astrobinimages.network.DefaultAstrobinImageApi
 import io.ktor.client.HttpClient
 import io.ktor.client.plugins.DefaultRequest
-import io.ktor.http.parameters
 import io.ktor.http.path
 import org.koin.core.module.dsl.factoryOf
 import org.koin.core.qualifier.named
@@ -19,7 +18,8 @@ import org.koin.dsl.module
 val astrobinImagesModule = module {
   factoryOf(::DefaultAstrobinImageRepository) bind AstrobinImageRepository::class
 
-  factoryOf(::DefaultAstrobinImageApi) bind AstrobinImageApi::class
+  factory { DefaultAstrobinImageApi(get(named(AstrobinImageApi.CLIENT))) } bind
+    AstrobinImageApi::class
 
   factoryOf(::ObservePagedAstrobinImagesUseCase)
 
@@ -32,10 +32,8 @@ val astrobinImagesModule = module {
         url {
           host = AstrobinImageApi.HOST
           path(AstrobinImageApi.PATH)
-          parameters {
-            append(AstrobinImageApi.API_KEY, BuildConfig.ASTROBIN_API_KEY)
-            append(AstrobinImageApi.API_SECRET, BuildConfig.ASTROBIN_API_SECRET)
-          }
+          parameters.append(AstrobinImageApi.API_KEY, BuildConfig.ASTROBIN_API_KEY)
+          parameters.append(AstrobinImageApi.API_SECRET, BuildConfig.ASTROBIN_API_SECRET)
         }
       }
     }
