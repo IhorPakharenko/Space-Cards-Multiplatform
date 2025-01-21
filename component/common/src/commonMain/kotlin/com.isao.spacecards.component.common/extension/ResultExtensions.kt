@@ -11,6 +11,7 @@ import kotlinx.coroutines.TimeoutCancellationException
  *
  * Cancellation exceptions need to be rethrown. See https://github.com/Kotlin/kotlinx.coroutines/issues/1814.
  */
+@Deprecated("Use Either instead")
 inline fun <R> resultOf(block: () -> R): Result<R> = try {
   Result.success(block())
 } catch (t: TimeoutCancellationException) {

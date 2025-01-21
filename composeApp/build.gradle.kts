@@ -4,6 +4,7 @@ plugins {
   alias(libs.plugins.androidApplication)
   alias(libs.plugins.spacecards.kotlinMultiplatform)
   alias(libs.plugins.spacecards.composeMultiplatform)
+  alias(libs.plugins.sqldelight)
 }
 
 kotlin {
@@ -11,13 +12,25 @@ kotlin {
     commonMain.dependencies {
       implementation(projects.feature.designsystem)
       implementation(projects.core.sqldelight)
+      implementation(projects.core.ktor)
       implementation(projects.feature.feed)
       implementation(projects.feature.liked)
       implementation(projects.feature.common)
       implementation(projects.component.images)
+      implementation(projects.core.db)
+      implementation(projects.component.astrobinimages)
+      implementation(libs.sqldelight.coroutines)
+      implementation(libs.sqldelight.primitiveAdapters)
     }
     androidMain.dependencies {
       implementation(libs.androidx.core.splashscreen)
+      implementation(libs.sqldelight.android)
+    }
+    jvmMain.dependencies {
+      implementation(libs.sqldelight.sqlite)
+    }
+    iosMain.dependencies {
+      implementation(libs.sqldelight.native)
     }
 
     // TODO tests for a multi module project.
@@ -63,6 +76,16 @@ compose.desktop {
       targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
       packageName = "com.isao.spacecards"
       packageVersion = "1.0.0"
+    }
+  }
+}
+
+sqldelight {
+  databases {
+    create("Database") {
+      packageName.set("com.isao.spacecards.app.data")
+      dependency(projects.core.sqldelight)
+      dependency(projects.component.astrobinimages)
     }
   }
 }

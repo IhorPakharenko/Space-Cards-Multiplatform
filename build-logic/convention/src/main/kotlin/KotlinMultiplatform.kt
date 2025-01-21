@@ -34,6 +34,8 @@ internal fun Project.configureKotlinMultiplatform() {
 
         implementation(libs.findLibrary("kermit").get())
         implementation(libs.findLibrary("kermit.koin").get())
+
+        implementation(libs.findLibrary("arrow.core").get())
       }
       androidMain.dependencies {
         implementation(libs.findLibrary("koin.android").get())
