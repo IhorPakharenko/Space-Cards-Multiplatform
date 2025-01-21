@@ -1,33 +1,29 @@
 package com.isao.spacecards.feature.feed.composable
 
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.isao.spacecards.component.images.domain.model.ImageSource
+import androidx.paging.LoadState
+import androidx.paging.LoadStates
+import androidx.paging.PagingData
+import com.isao.spacecards.component.astrobinimages.domain.AstrobinImage
 import com.isao.spacecards.core.designsystem.theme.SpaceCardsTheme
 import com.isao.spacecards.feature.common.util.PreviewLightDark
 import com.isao.spacecards.feature.feed.FeedIntent
 import com.isao.spacecards.feature.feed.FeedUiState
 import com.isao.spacecards.feature.feed.FeedViewModel
-import com.isao.spacecards.feature.feed.model.FeedItemDisplayable
-import com.isao.spacecards.resources.Res
-import com.isao.spacecards.resources.app_name
-import com.isao.spacecards.resources.something_went_wrong
-import org.jetbrains.compose.resources.stringResource
+import kotlinx.coroutines.flow.flowOf
+import kotlinx.datetime.Clock
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
@@ -36,6 +32,10 @@ fun FeedRoute(viewModel: FeedViewModel = koinViewModel()) {
   FeedScreen(uiState = uiState, onIntent = viewModel::acceptIntent)
 }
 
+//TODO url for larger image on larger devices (fullSize or something)
+//TODO app window gets cut off on fablets and tablets
+//TODO display author and optional stuff on card
+//TODO relying on db (isSeen) to hide seen items is not ideal
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
 @Composable
 fun FeedScreen(
@@ -52,47 +52,13 @@ fun FeedScreen(
     contentWindowInsets = WindowInsets(0, 0, 0, 0),
     modifier = modifier,
   ) { padding ->
-    Column {
-      // Let the card be drawn above the app bar
-      CenterAlignedTopAppBar(
-        title = {
-          Text(stringResource(Res.string.app_name))
-        },
-      )
-
-      if (uiState.isError) {
-        val errorMessage = stringResource(Res.string.something_went_wrong)
-
-        LaunchedEffect(snackbarHostState) {
-          snackbarHostState.showSnackbar(
-            message = errorMessage,
-          )
-        }
-      }
-      FeedScreenContent(
-        uiState,
-        onIntent,
-        Modifier
-          .padding(padding)
-          .fillMaxSize(),
-      )
-      // Experimental new implementation of the feed screen. WIP.
-//      val cardSizeModifier =
-//        if (LocalWindowSizeClass.current.widthSizeClass != WindowWidthSizeClass.Compact) {
-//          Modifier.fillMaxHeight().aspectRatio(0.7f)
-//        } else {
-//          Modifier.fillMaxSize()
-//        }
-//      DismissibleStack(
-//        uiState.items,
-//        content = {
-//          FeedCard(item = it, Modifier.then(cardSizeModifier).padding(16.dp))
-//        },
-//        modifier = Modifier
-//          .padding(padding)
-//          .fillMaxSize(),
-//      )
-    }
+    FeedScreenContent(
+      uiState,
+      onIntent,
+      Modifier
+        .padding(padding)
+        .fillMaxSize(),
+    )
   }
 }
 
@@ -102,15 +68,36 @@ private fun FeedScreenPreview() {
   SpaceCardsTheme {
     FeedScreen(
       uiState = FeedUiState(
-        items = List(2) {
-          FeedItemDisplayable(
-            id = it.toString(),
-            imageId = "",
-            source = ImageSource.THIS_WAIFU_DOES_NOT_EXIST,
-            imageUrl = "",
-            sourceUrl = "",
-          )
-        },
+        items = flowOf(
+          PagingData.from(
+            List(2) {
+              AstrobinImage(
+                bookmarks = 1662,
+                comments = 9344,
+                dataSource = null,
+                description = null,
+                id = 4310,
+                license = 1207,
+                licenseName = null,
+                likes = 9932,
+                published = Clock.System.now(),
+                title = null,
+                updated = Clock.System.now(),
+                uploaded = Clock.System.now(),
+                urlGallery = null,
+                urlHd = "",
+                urlHistogram = null,
+                urlReal = "",
+                urlRegular = null,
+                urlThumb = null,
+                user = null,
+                views = 4746,
+                bookmarkedAt = null,
+                viewedAt = null,
+              )
+            },
+          ),
+        ),
       ),
       onIntent = {},
     )
@@ -123,7 +110,15 @@ private fun FeedScreenLoadingPreview() {
   SpaceCardsTheme {
     FeedScreen(
       uiState = FeedUiState(
-        isLoading = true,
+        items = flowOf(
+          PagingData.empty(
+            LoadStates(
+              refresh = LoadState.NotLoading(endOfPaginationReached = true),
+              prepend = LoadState.NotLoading(endOfPaginationReached = true),
+              append = LoadState.Loading,
+            ),
+          ),
+        ),
       ),
       onIntent = {},
     )
@@ -135,7 +130,17 @@ private fun FeedScreenLoadingPreview() {
 private fun FeedScreenNoItemsPreview() {
   SpaceCardsTheme {
     FeedScreen(
-      uiState = FeedUiState(),
+      uiState = FeedUiState(
+        items = flowOf(
+          PagingData.empty(
+            LoadStates(
+              refresh = LoadState.NotLoading(endOfPaginationReached = true),
+              prepend = LoadState.NotLoading(endOfPaginationReached = true),
+              append = LoadState.NotLoading(endOfPaginationReached = true),
+            ),
+          ),
+        ),
+      ),
       onIntent = {},
     )
   }
@@ -147,7 +152,15 @@ private fun FeedScreenErrorPreview() {
   SpaceCardsTheme {
     FeedScreen(
       uiState = FeedUiState(
-        isError = true,
+        items = flowOf(
+          PagingData.empty(
+            LoadStates(
+              refresh = LoadState.NotLoading(endOfPaginationReached = true),
+              prepend = LoadState.NotLoading(endOfPaginationReached = true),
+              append = LoadState.Error(Exception()),
+            ),
+          ),
+        ),
       ),
       onIntent = {},
     )

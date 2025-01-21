@@ -1,0 +1,85 @@
+import kotlin.Int;
+import kotlinx.datetime.Instant;
+
+CREATE TABLE AstrobinImageEntity (
+    id INTEGER AS Int NOT NULL PRIMARY KEY,
+    bookmarks INTEGER AS Int NOT NULL,
+    comments INTEGER AS Int NOT NULL,
+    dataSource TEXT,
+    description TEXT,
+    license INTEGER AS Int NOT NULL,
+    licenseName TEXT,
+    likes INTEGER AS Int NOT NULL,
+    published TEXT AS Instant NOT NULL,
+    title TEXT,
+    updated TEXT AS Instant NOT NULL,
+    uploaded TEXT AS Instant NOT NULL,
+    urlGallery TEXT,
+    urlHd TEXT NOT NULL,
+    urlHistogram TEXT,
+    urlReal TEXT NOT NULL,
+    urlRegular TEXT,
+    urlThumb TEXT,
+    user TEXT,
+    views INTEGER AS Int NOT NULL,
+    bookmarkedAt TEXT AS Instant,
+    viewedAt TEXT AS Instant
+);
+
+insertEntity:
+INSERT INTO AstrobinImageEntity VALUES ?;
+
+insert:
+INSERT INTO AstrobinImageEntity (
+    id, bookmarks, comments, dataSource, description,
+    license, licenseName, likes, published, title, updated, uploaded,
+    urlGallery, urlHd, urlHistogram, urlReal, urlRegular, urlThumb,
+    user, views, bookmarkedAt, viewedAt
+) VALUES (
+    ?, ?, ?, ?, ?, ?,
+    ?, ?, ?, ?, ?,
+    ?, ?, ?, ?, ?,
+    ?, ?,?,  ?,?, ?
+);
+
+selectById:
+SELECT * FROM AstrobinImageEntity WHERE id = ? LIMIT 1;
+
+select:
+SELECT * FROM AstrobinImageEntity
+WHERE (bookmarkedAt IS NOT NULL) = :isBookmarked
+AND (viewedAt IS NOT NULL) = :isViewed
+AND (:uploadedEarlierThan IS NULL OR uploaded < :uploadedEarlierThan)
+ORDER BY uploaded DESC
+LIMIT :limit OFFSET :offset;
+
+upsertEntity:
+INSERT OR REPLACE INTO AstrobinImageEntity VALUES ?;
+
+upsert:
+INSERT OR REPLACE INTO AstrobinImageEntity (
+    id, bookmarks, comments, dataSource, description,
+    license, licenseName, likes,published, title, updated, uploaded,
+    urlGallery, urlHd, urlHistogram, urlReal, urlRegular, urlThumb,
+    user, views, bookmarkedAt, viewedAt
+) VALUES (
+    ?, ?, ?, ?, ?, ?,
+    ?, ?, ?, ?, ?,
+    ?, ?, ?, ?, ?,
+    ?, ?,?, ?, ?, ?
+);
+
+setBookmarkedAt:
+UPDATE AstrobinImageEntity SET bookmarkedAt = ? WHERE id = ?;
+
+setViewedAt:
+UPDATE AstrobinImageEntity SET viewedAt = ? WHERE id = ?;
+
+resetViewedAt:
+UPDATE AstrobinImageEntity SET viewedAt = NULL;
+
+delete:
+DELETE FROM AstrobinImageEntity WHERE id = ?;
+
+deleteAll:
+DELETE FROM AstrobinImageEntity WHERE (bookmarkedAt IS NOT NULL) = :isBookmarked;

@@ -13,6 +13,7 @@ agp = "8.7.3"
 androidx-activityCompose = "1.9.3"
 androidx-lifecycle = "2.8.4"
 coil = "3.0.4"
+paging = "3.3.0-alpha02-0.5.1"
 spotless = "7.0.0.BETA4"
 compose = "1.7.6"
 compose-plugin = "1.7.3"
@@ -45,6 +46,9 @@ turbine = "1.2.0"
 uiToolingPreviewAndroid = "1.7.6"
 versions = "0.41.0"
 versionCatalogUpdate = "0.8.5"
+store = "5.1.0-alpha05" #TODO remove store
+arrow = "1.2.4"
+buildConfig = "5.5.0"
 
 [libraries]
 androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "androidx-activityCompose" }
@@ -88,6 +92,7 @@ kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serializa
 #ktor-client-cio= {module ="io.ktor:ktor-client-cio", version.ref = "ktor"}
 ktor-client-android = { module = "io.ktor:ktor-client-android", version.ref = "ktor" }
 ktor-client-content-negotiation = { module = "io.ktor:ktor-client-content-negotiation", version.ref = "ktor" }
+ktor-client-logging = { module = "io.ktor:ktor-client-logging", version.ref = "ktor" }
 ktor-client-core = { module = "io.ktor:ktor-client-core", version.ref = "ktor" }
 ktor-client-darwin = { module = "io.ktor:ktor-client-darwin", version.ref = "ktor" }
 ktor-client-java = { module = "io.ktor:ktor-client-java", version.ref = "ktor" }
@@ -97,7 +102,10 @@ mockk = { module = "io.mockk:mockk", version.ref = "mockk" }
 mockk-agent = { module = "io.mockk:mockk-agent", version.ref = "mockk" }
 mockk-android = { module = "io.mockk:mockk-android", version.ref = "mockk" }
 multiplatform-material3-window-size = { module = "org.jetbrains.compose.material3:material3-window-size-class", version.ref = "multiplatformMaterial3WindowSizeClass" }
+paging-common = { module = "app.cash.paging:paging-common", version.ref = "paging" }
+paging-compose-common = { module = "app.cash.paging:paging-compose-common", version.ref = "paging" }
 sqldelight-android = { module = "app.cash.sqldelight:android-driver", version.ref = "sqldelight" }
+sqldelight-primitiveAdapters = { module = "app.cash.sqldelight:primitive-adapters", version.ref = "sqldelight" }
 sqldelight-android-driver = { module = "com.squareup.sqldelight:android-driver", version.ref = "sqljsDriver" }
 sqldelight-coroutines = { module = "app.cash.sqldelight:coroutines-extensions", version.ref = "sqldelight" }
 sqldelight-native = { module = "app.cash.sqldelight:native-driver", version.ref = "sqldelight" }
@@ -105,6 +113,10 @@ sqldelight-native-driver = { module = "com.squareup.sqldelight:native-driver", v
 sqldelight-sqlite = { module = "app.cash.sqldelight:sqlite-driver", version.ref = "sqldelight" }
 sqldelight-sqljs-driver = { module = "com.squareup.sqldelight:sqljs-driver", version.ref = "sqljsDriver" }
 turbine = { module = "app.cash.turbine:turbine", version.ref = "turbine" }
+store = { module = "org.mobilenativefoundation.store:store5", version.ref = "store" }
+store-paging = { module = "org.mobilenativefoundation.store:paging5", version.ref = "store" }
+arrow-core = { module = "io.arrow-kt:arrow-core", version.ref = "arrow" }
+
 
 [bundles]
 ktor-common = [
@@ -128,6 +140,7 @@ sqldelight = { id = "app.cash.sqldelight", version.ref = "sqldelight" }
 spotless = { id = "com.diffplug.spotless", version.ref = "spotless" }
 versions = { id = "com.github.ben-manes.versions", version.ref = "versions" }
 versionCatalogUpdate = { id = "nl.littlerobots.version-catalog-update", version.ref = "versionCatalogUpdate" }
+buildConfig = { id = "com.github.gmazzo.buildconfig", version.ref = "buildConfig" }
 
 # Plugins defined by this project
 # @keep

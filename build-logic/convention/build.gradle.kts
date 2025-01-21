@@ -13,6 +13,7 @@ dependencies {
   compileOnly(libs.plugins.compose.compiler.toDep())
   compileOnly(libs.plugins.ksp.toDep())
   compileOnly(libs.plugins.spotless.toDep())
+  compileOnly(libs.plugins.buildConfig.toDep())
 }
 
 fun Provider<PluginDependency>.toDep() = map {

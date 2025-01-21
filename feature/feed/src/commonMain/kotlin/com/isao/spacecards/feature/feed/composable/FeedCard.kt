@@ -37,9 +37,9 @@ import coil3.compose.AsyncImagePainter
 import coil3.compose.LocalPlatformContext
 import coil3.compose.rememberAsyncImagePainter
 import coil3.request.ImageRequest
+import com.isao.spacecards.component.astrobinimages.domain.AstrobinImage
 import com.isao.spacecards.feature.common.util.CatPreviewPlaceholder
 import com.isao.spacecards.feature.common.util.debugPlaceholder
-import com.isao.spacecards.feature.feed.model.FeedItemDisplayable
 import io.ktor.client.network.sockets.SocketTimeoutException
 import kotlinx.coroutines.delay
 import kotlin.time.Duration.Companion.seconds
@@ -83,13 +83,13 @@ fun FeedCard(
 
 @Composable
 fun FeedCard(
-  item: FeedItemDisplayable?,
+  item: AstrobinImage?,
   width: Dp,
   height: Dp,
   modifier: Modifier = Modifier,
 ) {
   FeedCard(
-    painter = if (item?.imageUrl != null) {
+    painter = if (item?.urlHd != null) {
       FeedCardDefaults.rememberRetryingAsyncImagePainter(
         item = item,
         width = width,
@@ -104,11 +104,11 @@ fun FeedCard(
 
 @Composable
 fun FeedCard(
-  item: FeedItemDisplayable?,
+  item: AstrobinImage?,
   modifier: Modifier = Modifier,
 ) {
   FeedCard(
-    painter = if (item?.imageUrl != null) {
+    painter = if (item?.urlHd != null) {
       FeedCardDefaults.rememberRetryingAsyncImagePainter(
         item = item,
       )
@@ -128,7 +128,7 @@ private object EmptyPainter : Painter() {
 object FeedCardDefaults {
   @Composable
   fun rememberRetryingAsyncImagePainter(
-    item: FeedItemDisplayable,
+    item: AstrobinImage,
     error: Painter? = null,
     fallback: Painter? = error,
     onLoading: ((AsyncImagePainter.State.Loading) -> Unit)? = null,
@@ -139,11 +139,11 @@ object FeedCardDefaults {
   ): AsyncImagePainter {
     // Reloading the image on failure the ugly way. Open issue in Coil since 2021:
     // https://github.com/coil-kt/coil/issues/884#issuecomment-975932886
-    var retryHash by remember(item.imageUrl) { mutableIntStateOf(0) }
+    var retryHash by remember(item.urlHd) { mutableIntStateOf(0) }
     val painter = rememberAsyncImagePainter(
       model = ImageRequest
         .Builder(LocalPlatformContext.current)
-        .data(item.imageUrl)
+        .data(item.urlHd)
 //                .extras.set(Extras.Key("retryHash"), retryHash)
 //                .setParameter("retryHash", retryHash)
         // By default retryHash is also included in keys.
@@ -151,8 +151,8 @@ object FeedCardDefaults {
         // with retryHash == 0 next time.
         // Set our own cache keys to avoid it.
         // TODO not the case anymore?
-        .diskCacheKey(item.imageUrl)
-        .memoryCacheKey(item.imageUrl)
+        .diskCacheKey(item.urlHd)
+        .memoryCacheKey(item.urlHd)
         // TODO transformations are not supported for Desktop and iOS. Does Kamel support them?
 //                .transformations(BitmapTransformations.getFor(item.source))
         .build(),
@@ -184,7 +184,7 @@ object FeedCardDefaults {
 
   @Composable
   fun rememberRetryingAsyncImagePainter(
-    item: FeedItemDisplayable,
+    item: AstrobinImage,
     width: Dp,
     height: Dp,
     error: Painter? = null,
@@ -197,11 +197,11 @@ object FeedCardDefaults {
   ): AsyncImagePainter {
     // Reloading the image on failure the ugly way. Open issue in Coil since 2021:
     // https://github.com/coil-kt/coil/issues/884#issuecomment-975932886
-    var retryHash by remember(item.imageUrl) { mutableIntStateOf(0) }
+    var retryHash by remember(item.urlHd) { mutableIntStateOf(0) }
     val painter = rememberAsyncImagePainter(
       model = ImageRequest
         .Builder(LocalPlatformContext.current)
-        .data(item.imageUrl)
+        .data(item.urlHd)
 //                .extras.set(Extras.Key("retryHash"), retryHash)
 //                .setParameter("retryHash", retryHash)
         // The size has to be provided since we rely on AsyncImagePager.state for the placeholder
@@ -215,8 +215,8 @@ object FeedCardDefaults {
         // with retryHash == 0 next time.
         // Set our own cache keys to avoid it.
         // TODO not the case anymore?
-        .diskCacheKey(item.imageUrl)
-        .memoryCacheKey(item.imageUrl)
+        .diskCacheKey(item.urlHd)
+        .memoryCacheKey(item.urlHd)
         // TODO transformations are not supported for Desktop and iOS. Does Kamel support them?
 //                .transformations(BitmapTransformations.getFor(item.source))
         .build(),

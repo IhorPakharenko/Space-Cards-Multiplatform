@@ -12,8 +12,10 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.WhileSubscribed
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.flatMapConcat
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.merge
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.onStart
@@ -38,14 +40,14 @@ abstract class MviViewModel<UI_STATE, PARTIAL_UI_STATE, EVENT, INTENT>(initialSt
 
   /**
    * The flow of UI state which can safely be observed forever.
-   * It only contains a copy of the latest UI state,
-   * so observing this flow will still allow [uiState] and [continuousPartialStateFlow] to stop.
+   * It only contains a copy of the latest UI state.
+   * Observing this will NOT cause state updates.
    */
   protected val uiStateSnapshot = privateUiStateSnapshot.asStateFlow()
 
   /**
    * The flow of UI state which should be accessed only from the UI.
-   * Will stop without subscribers, stopping every flow of [continuousPartialStateFlow] as well.
+   * Observing this will cause state updates.
    */
   val uiState = merge(
     userIntents(),
@@ -54,7 +56,11 @@ abstract class MviViewModel<UI_STATE, PARTIAL_UI_STATE, EVENT, INTENT>(initialSt
     .scan(initialState, ::reduceUiState)
     .onEach { privateUiStateSnapshot.value = it }
     .onEach { Logger.d("New state:\n$it") }
-    .catch { Logger.e(it.message.toString(), it) }
+    //TODO don't catch everything.
+    // Would removing this cause ViewModel to break even if an exception would be handled later elsewhere?
+    // Instead of catching everything, this might be a good place to catch errors like
+    // no more memory available, no internet, 500, 400, invalid json
+//    .catch { Logger.e(it.message.toString(), it) }
     .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5.seconds), initialState)
 
   private val eventChannel = Channel<EVENT>(Channel.BUFFERED)
@@ -93,4 +99,18 @@ abstract class MviViewModel<UI_STATE, PARTIAL_UI_STATE, EVENT, INTENT>(initialSt
     previousState: UI_STATE,
     partialState: PARTIAL_UI_STATE,
   ): UI_STATE
+
+  protected fun <UI_STATE_PART> observeContinuousChanges(
+    dependingOnState: (UI_STATE) -> UI_STATE_PART,
+    getChangesFlow: (UI_STATE_PART) -> Flow<PARTIAL_UI_STATE>,
+  ) {
+    observeContinuousChanges(
+      uiStateSnapshot
+        .map(dependingOnState)
+        .distinctUntilChanged()
+        .flatMapLatest { dependency ->
+          getChangesFlow(dependency)
+        },
+    )
+  }
 }
