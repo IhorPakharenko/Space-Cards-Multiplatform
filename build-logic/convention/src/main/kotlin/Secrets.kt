@@ -16,7 +16,7 @@ class Secrets(
 
   private val secrets: Properties by lazy {
     val properties = Properties()
-    val secretsFile = project.file("secrets.properties")
+    val secretsFile = project.rootProject.file("secrets.properties")
     if (secretsFile.exists()) {
       secretsFile.inputStream().use { properties.load(it) }
     }
@@ -25,7 +25,7 @@ class Secrets(
 
   fun get(
     key: String,
-    fallback: String? = "",
+    fallback: String? = null,
   ): String = secrets.getProperty(key) ?: System.getenv(key) ?: fallback
     ?: throw IllegalArgumentException(
       "Secret not found: $key. Please add it to secrets.properties or set an environment variable.",
@@ -33,7 +33,7 @@ class Secrets(
 
   fun buildConfigField(
     key: Key,
-    fallback: String? = "",
+    fallback: String? = null,
   ): NamedDomainObjectProvider<BuildConfigField> =
     buildConfigExtension.buildConfigField(key.name, get(key.name, fallback))
 }

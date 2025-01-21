@@ -36,6 +36,7 @@ fun FeedRoute(viewModel: FeedViewModel = koinViewModel()) {
 //TODO app window gets cut off on fablets and tablets
 //TODO display author and optional stuff on card
 //TODO relying on db (isSeen) to hide seen items is not ideal
+//TODO retry on errors
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
 @Composable
 fun FeedScreen(
