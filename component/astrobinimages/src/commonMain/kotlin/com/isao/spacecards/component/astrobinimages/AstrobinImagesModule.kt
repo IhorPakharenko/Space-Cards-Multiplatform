@@ -1,11 +1,10 @@
 package com.isao.spacecards.component.astrobinimages
 
-import com.isao.spacecards.component.astrobinimages.data.AstrobinImageApi
-import com.isao.spacecards.component.astrobinimages.data.AstrobinRemoteMediator
 import com.isao.spacecards.component.astrobinimages.data.DefaultAstrobinImageRepository
 import com.isao.spacecards.component.astrobinimages.domain.AstrobinImageRepository
-import com.isao.spacecards.component.astrobinimages.domain.ObservePagedAstrobinImagesUseCase
-import com.isao.spacecards.component.astrobinimages.network.DefaultAstrobinImageApi
+import com.isao.spacecards.component.astrobinimages.domain.PageAstrobinImagesUseCase
+import com.isao.spacecards.component.astrobinimages.domain.PageBookmarkedAstrobinImagesUseCase
+import com.isao.spacecards.component.astrobinimages.network.AstrobinImageApi
 import io.ktor.client.HttpClient
 import io.ktor.client.plugins.DefaultRequest
 import io.ktor.http.path
@@ -14,20 +13,16 @@ import org.koin.core.qualifier.named
 import org.koin.dsl.bind
 import org.koin.dsl.module
 
-//TODO add component to the name
-val astrobinImagesModule = module {
+val astrobinImagesComponentModule = module {
   factoryOf(::DefaultAstrobinImageRepository) bind AstrobinImageRepository::class
 
-  factory { DefaultAstrobinImageApi(get(named(AstrobinImageApi.CLIENT))) } bind
-    AstrobinImageApi::class
+  factoryOf(::PageAstrobinImagesUseCase)
 
-  factoryOf(::ObservePagedAstrobinImagesUseCase)
+  factoryOf(::PageBookmarkedAstrobinImagesUseCase)
 
-  factory { params -> AstrobinRemoteMediator(get(), get(), params.get(), params.getOrNull()) }
-
+  factory { AstrobinImageApi(get(named(AstrobinImageApi.CLIENT))) }
   single(named(AstrobinImageApi.CLIENT)) {
-    val client: HttpClient = get()
-    return@single client.config {
+    return@single get<HttpClient>().config {
       install(DefaultRequest) {
         url {
           host = AstrobinImageApi.HOST

@@ -1,12 +1,11 @@
 package com.isao.spacecards.feature.feed
 
-import com.isao.spacecards.component.astrobinimages.domain.AstrobinImage
-import kotlinx.datetime.Instant
-
 sealed class FeedIntent {
-  data class StartFromInstant(val instant: Instant?) : FeedIntent()
+  data class StartFromMillisUTC(val millis: Long) : FeedIntent()
 
-  data class Like(val item: AstrobinImage) : FeedIntent()
+  data object Retry : FeedIntent()
 
-  data class Dislike(val item: AstrobinImage) : FeedIntent()
+  class Like(val item: PagedItem) : FeedIntent()
+
+  data class Dislike(val item: PagedItem) : FeedIntent()
 }

@@ -4,11 +4,18 @@
     <string name="liked">Liked</string>
     <string name="like">Like</string>
     <string name="nope">Nope</string>
-    <string name="nothing_is_there_yet">Nothing is there yet!</string>
+    <string name="like_images_to_view_them_here">Like images to view them here!</string>
     <string name="something_went_wrong">Something went wrong</string>
     <string name="loading">loading</string>
     <string name="added">Added</string>
     <string name="image_by">Image by %1$s</string>
     <string name="delete">Delete</string>
     <string name="ok">OK</string>
+    <string name="retry">Retry</string>
+    <string name="error_connection">Check your Internet connection and try again</string>
+    <string name="error_server_astrobin">Looks like Astrobin is down! Try again in a minute</string>
+    <string name="error_image">Couldn't get the image</string>
+    <string name="space_on_date">Space on %1$s</string>
+    <string name="youre_offline">You're offline</string>
+    <string name="showing_outdated_content">Showing outdated content</string>
 </resources>

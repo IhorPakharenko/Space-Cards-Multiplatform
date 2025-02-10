@@ -29,11 +29,9 @@ dependencyResolutionManagement {
   }
 }
 
-include(":composeApp")
+include(":app")
+include(":foundation")
 include(":core")
-include(":core:db")
-include(":core:sqldelight")
-include(":core:network")
 include(":core:ktor")
 include(":feature")
 include(":feature:common")
@@ -41,6 +39,7 @@ include(":feature:designsystem")
 include(":feature:feed")
 include(":feature:liked")
 include(":component")
-include(":component:images")
 include(":component:common")
 include(":component:astrobinimages")
+include(":pager")
+include(":pager:test")
