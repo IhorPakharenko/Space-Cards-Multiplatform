@@ -13,7 +13,9 @@ plugins {
   alias(libs.plugins.kotlinMultiplatform) apply false
   alias(libs.plugins.jetbrains.kotlin.jvm) apply false
   alias(libs.plugins.ksp) apply false
-  kotlin("plugin.serialization") version "2.1.0" apply false
+  alias(libs.plugins.sqldelight) apply false
+  kotlin("plugin.serialization") version libs.versions.kotlin apply false
+  alias(libs.plugins.kotest.multiplatform) apply false
   alias(libs.plugins.buildConfig) apply false
   alias(libs.plugins.versions)
   alias(libs.plugins.versionCatalogUpdate)

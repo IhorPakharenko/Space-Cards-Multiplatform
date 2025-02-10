@@ -51,5 +51,9 @@ gradlePlugin {
       id = "com.isao.spacecards.koinAnnotations"
       implementationClass = "KoinAnnotationsConventionPlugin"
     }
+    register("arrowOptics") {
+      id = "com.isao.spacecards.arrowOptics"
+      implementationClass = "ArrowOpticsConventionPlugin"
+    }
   }
 }

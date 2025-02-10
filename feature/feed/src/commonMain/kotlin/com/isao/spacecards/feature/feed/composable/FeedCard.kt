@@ -1,262 +1,104 @@
 package com.isao.spacecards.feature.feed.composable
 
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ErrorOutline
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Card
-import androidx.compose.material3.Icon
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.LocalContentColor
+import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.FilterQuality
-import androidx.compose.ui.graphics.drawscope.DrawScope
-import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.platform.LocalInspectionMode
-import androidx.compose.ui.unit.Dp
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.compose.LocalLifecycleOwner
-import androidx.lifecycle.compose.currentStateAsState
-import co.touchlab.kermit.Logger
+import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImagePainter
-import coil3.compose.LocalPlatformContext
-import coil3.compose.rememberAsyncImagePainter
-import coil3.request.ImageRequest
 import com.isao.spacecards.component.astrobinimages.domain.AstrobinImage
-import com.isao.spacecards.feature.common.util.CatPreviewPlaceholder
-import com.isao.spacecards.feature.common.util.debugPlaceholder
-import io.ktor.client.network.sockets.SocketTimeoutException
-import kotlinx.coroutines.delay
-import kotlin.time.Duration.Companion.seconds
 
 @Composable
-fun FeedCard(
-  painter: AsyncImagePainter?,
-  modifier: Modifier = Modifier,
-) = Card(modifier) {
-  if (LocalInspectionMode.current) {
-    CatPreviewPlaceholder(Modifier.fillMaxSize())
-    return@Card
-  }
-
-  val painterState = painter?.state?.collectAsState()?.value
-  val isAnyErrorExceptBadInternet = painterState?.let {
-    it is AsyncImagePainter.State.Error &&
-      it.result.throwable !is SocketTimeoutException
-    // TODO what is the new type for this? && it.result.throwable !is UnknownHostException
-  }
-  AnimatedVisibility(
-    visible = isAnyErrorExceptBadInternet == true,
-    enter = fadeIn(),
-    exit = fadeOut(),
-  ) {
-    ErrorPlaceholder()
-  }
-  // TODO placeholder
-  Image(
-    painter = painter ?: EmptyPainter,
-    contentDescription = null,
-    modifier = Modifier
-      .fillMaxSize(),
-//            .placeholder(
-//                visible = painterState !is AsyncImagePainter.State.Success,
-//                highlight = PlaceholderHighlight.shimmer()
-//            )
-    contentScale = ContentScale.Crop,
-  )
-}
-
-@Composable
-fun FeedCard(
-  item: AstrobinImage?,
-  width: Dp,
-  height: Dp,
+internal fun FeedCard(
+  item: AstrobinImage,
+  painter: AsyncImagePainter,
   modifier: Modifier = Modifier,
 ) {
-  FeedCard(
-    painter = if (item?.urlHd != null) {
-      FeedCardDefaults.rememberRetryingAsyncImagePainter(
-        item = item,
-        width = width,
-        height = height,
+  Card(modifier) {
+    Box {
+      Image(
+        painter = painter,
+        contentDescription = null,
+        contentScale = ContentScale.Crop,
+        modifier = Modifier.fillMaxSize(),
       )
-    } else {
-      null
-    },
-    modifier = modifier,
-  )
-}
-
-@Composable
-fun FeedCard(
-  item: AstrobinImage?,
-  modifier: Modifier = Modifier,
-) {
-  FeedCard(
-    painter = if (item?.urlHd != null) {
-      FeedCardDefaults.rememberRetryingAsyncImagePainter(
-        item = item,
-      )
-    } else {
-      null
-    },
-    modifier = modifier,
-  )
-}
-
-private object EmptyPainter : Painter() {
-  override val intrinsicSize: Size get() = Size.Unspecified
-
-  override fun DrawScope.onDraw() {}
-}
-
-object FeedCardDefaults {
-  @Composable
-  fun rememberRetryingAsyncImagePainter(
-    item: AstrobinImage,
-    error: Painter? = null,
-    fallback: Painter? = error,
-    onLoading: ((AsyncImagePainter.State.Loading) -> Unit)? = null,
-    onSuccess: ((AsyncImagePainter.State.Success) -> Unit)? = null,
-    onError: ((AsyncImagePainter.State.Error) -> Unit)? = null,
-    contentScale: ContentScale = ContentScale.Crop,
-    filterQuality: FilterQuality = DrawScope.DefaultFilterQuality,
-  ): AsyncImagePainter {
-    // Reloading the image on failure the ugly way. Open issue in Coil since 2021:
-    // https://github.com/coil-kt/coil/issues/884#issuecomment-975932886
-    var retryHash by remember(item.urlHd) { mutableIntStateOf(0) }
-    val painter = rememberAsyncImagePainter(
-      model = ImageRequest
-        .Builder(LocalPlatformContext.current)
-        .data(item.urlHd)
-//                .extras.set(Extras.Key("retryHash"), retryHash)
-//                .setParameter("retryHash", retryHash)
-        // By default retryHash is also included in keys.
-        // This results in a bit longer loading if the same image is requested
-        // with retryHash == 0 next time.
-        // Set our own cache keys to avoid it.
-        // TODO not the case anymore?
-        .diskCacheKey(item.urlHd)
-        .memoryCacheKey(item.urlHd)
-        // TODO transformations are not supported for Desktop and iOS. Does Kamel support them?
-//                .transformations(BitmapTransformations.getFor(item.source))
-        .build(),
-      placeholder = debugPlaceholder(Color.Magenta),
-      contentScale = contentScale,
-      error = error,
-      fallback = fallback,
-      onLoading = onLoading,
-      onSuccess = onSuccess,
-      onError = onError,
-      filterQuality = filterQuality,
-    )
-
-    val painterState = painter.state.collectAsState().value
-    val lifecycleState by LocalLifecycleOwner.current.lifecycle.currentStateAsState()
-    val isAtLeastResumed = lifecycleState.isAtLeast(Lifecycle.State.RESUMED)
-    val imageRequestFailure = (painterState as? AsyncImagePainter.State.Error)?.result?.throwable
-    LaunchedEffect(isAtLeastResumed, imageRequestFailure) {
-      if (isAtLeastResumed && imageRequestFailure != null) {
-        Logger.e("Feed image request failed", imageRequestFailure)
-        delay(if (retryHash <= 2) 2.seconds else 5.seconds)
-        painter.restart()
-        retryHash++
-      }
-    }
-
-    return painter
-  }
-
-  @Composable
-  fun rememberRetryingAsyncImagePainter(
-    item: AstrobinImage,
-    width: Dp,
-    height: Dp,
-    error: Painter? = null,
-    fallback: Painter? = error,
-    onLoading: ((AsyncImagePainter.State.Loading) -> Unit)? = null,
-    onSuccess: ((AsyncImagePainter.State.Success) -> Unit)? = null,
-    onError: ((AsyncImagePainter.State.Error) -> Unit)? = null,
-    contentScale: ContentScale = ContentScale.Crop,
-    filterQuality: FilterQuality = DrawScope.DefaultFilterQuality,
-  ): AsyncImagePainter {
-    // Reloading the image on failure the ugly way. Open issue in Coil since 2021:
-    // https://github.com/coil-kt/coil/issues/884#issuecomment-975932886
-    var retryHash by remember(item.urlHd) { mutableIntStateOf(0) }
-    val painter = rememberAsyncImagePainter(
-      model = ImageRequest
-        .Builder(LocalPlatformContext.current)
-        .data(item.urlHd)
-//                .extras.set(Extras.Key("retryHash"), retryHash)
-//                .setParameter("retryHash", retryHash)
-        // The size has to be provided since we rely on AsyncImagePager.state for the placeholder
-        // https://coil-kt.github.io/coil/compose/#observing-asyncimagepainterstate
-        .size(
-          with(LocalDensity.current) { width.roundToPx() },
-          with(LocalDensity.current) { height.roundToPx() },
+      Column(
+        Modifier
+          .fillMaxWidth()
+          .background(
+            Brush.verticalGradient(
+              listOf(
+                Color.Black.copy(alpha = 0.5f),
+                Color.Black.copy(alpha = 0f),
+              ),
+            ),
+          ).padding(horizontal = 8.dp),
+      ) {
+        Text(
+          text = item.title ?: "",
+          style = MaterialTheme.typography.titleMedium,
+          color = Color.White,
+          modifier = Modifier.fillMaxWidth(),
+          maxLines = 3,
         )
-        // By default retryHash is also included in keys.
-        // This results in a bit longer loading if the same image is requested
-        // with retryHash == 0 next time.
-        // Set our own cache keys to avoid it.
-        // TODO not the case anymore?
-        .diskCacheKey(item.urlHd)
-        .memoryCacheKey(item.urlHd)
-        // TODO transformations are not supported for Desktop and iOS. Does Kamel support them?
-//                .transformations(BitmapTransformations.getFor(item.source))
-        .build(),
-      placeholder = debugPlaceholder(Color.Magenta),
-      contentScale = contentScale,
-      error = error,
-      fallback = fallback,
-      onLoading = onLoading,
-      onSuccess = onSuccess,
-      onError = onError,
-      filterQuality = filterQuality,
-    )
-
-    val lifecycleState by LocalLifecycleOwner.current.lifecycle.currentStateAsState()
-    val isAtLeastResumed = lifecycleState.isAtLeast(Lifecycle.State.RESUMED)
-    val hasImageRequestFailed =
-      painter.state.collectAsState().value is AsyncImagePainter.State.Error
-    LaunchedEffect(isAtLeastResumed, hasImageRequestFailed) {
-      if (isAtLeastResumed && hasImageRequestFailed) {
-        delay(if (retryHash <= 2) 2.seconds else 5.seconds)
-        painter.restart()
-        retryHash++
+        Text(
+          text = item.user,
+          style = MaterialTheme.typography.titleSmall,
+          color = Color.White,
+          modifier = Modifier.fillMaxWidth(),
+          maxLines = 2,
+        )
       }
     }
-
-    return painter
   }
 }
 
 @Composable
-private fun ErrorPlaceholder() {
-  Box(
-    modifier = Modifier.fillMaxSize(),
-    contentAlignment = Alignment.Center,
+internal fun LoadingCard(modifier: Modifier = Modifier) {
+  Card(
+    modifier = modifier,
+    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant),
   ) {
-    Icon(
-      imageVector = Icons.Default.ErrorOutline,
-      contentDescription = null,
-      modifier = Modifier.fillMaxSize(0.2f),
-      tint = MaterialTheme.colorScheme.error,
+    Box(
+      modifier = Modifier.fillMaxSize(),
+      contentAlignment = Alignment.Center,
+    ) {
+      CircularProgressIndicator()
+    }
+  }
+}
+
+@Composable
+internal fun ErrorCard(
+  modifier: Modifier = Modifier,
+  content: @Composable ColumnScope.() -> Unit,
+) {
+  CompositionLocalProvider(
+    LocalContentColor provides MaterialTheme.colorScheme.onErrorContainer,
+    LocalTextStyle provides MaterialTheme.typography.headlineSmall,
+  ) {
+    Card(
+      modifier = modifier,
+      colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.errorContainer),
+      content = content,
     )
   }
 }

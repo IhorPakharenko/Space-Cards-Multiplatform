@@ -5,9 +5,8 @@ plugins {
 kotlin {
   sourceSets {
     commonMain.dependencies {
-      //TODO leaking sqldelight into a common component module. Should we do that?
-      implementation(projects.core.sqldelight)
-      implementation(libs.paging.common)
+      implementation(projects.foundation)
+      implementation(libs.ktor.client.core)
     }
   }
 }

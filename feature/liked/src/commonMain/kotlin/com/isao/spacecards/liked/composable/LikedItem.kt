@@ -15,23 +15,17 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalInspectionMode
-import androidx.compose.ui.unit.Dp
 import coil3.compose.AsyncImagePainter
-import coil3.compose.LocalPlatformContext
 import coil3.compose.rememberAsyncImagePainter
-import coil3.request.ImageRequest
 import com.isao.spacecards.feature.common.util.CatPreviewPlaceholder
 import com.isao.spacecards.feature.common.util.debugPlaceholder
-import com.isao.spacecards.liked.model.LikedImageDisplayable
+import com.isao.spacecards.liked.PagedItem
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun LikedItem(
-  item: LikedImageDisplayable,
-  width: Dp,
-  height: Dp,
+internal fun LikedItem(
+  item: PagedItem,
   onClick: () -> Unit,
   onLongClick: () -> Unit,
   modifier: Modifier = Modifier,
@@ -41,17 +35,7 @@ fun LikedItem(
     return
   }
   val painter = rememberAsyncImagePainter(
-    model = ImageRequest
-      .Builder(LocalPlatformContext.current)
-      .data(item.imageUrl)
-      // The size has to be provided since we rely on AsyncImagePager.state for the placeholder
-      // https://coil-kt.github.io/coil/compose/#observing-asyncimagepainterstate
-      .size(
-        with(LocalDensity.current) { width.roundToPx() },
-        with(LocalDensity.current) { height.roundToPx() },
-      )
-//            .transformations(BitmapTransformations.getFor(item.source))
-      .build(),
+    model = item.astrobinImage.urlHd,
     placeholder = debugPlaceholder(Color.Magenta),
     contentScale = ContentScale.Crop,
   )
@@ -64,10 +48,6 @@ fun LikedItem(
           onClick = onClick,
           onLongClick = onLongClick,
         ),
-//                .placeholder(
-//                    visible = painter.state is AsyncImagePainter.State.Loading,
-//                    highlight = PlaceholderHighlight.shimmer()
-//                )
       contentScale = ContentScale.Crop,
     )
   } else {

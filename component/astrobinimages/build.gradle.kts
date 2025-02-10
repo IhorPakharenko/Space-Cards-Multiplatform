@@ -2,7 +2,7 @@ plugins {
   alias(libs.plugins.spacecards.kotlinMultiplatform)
   alias(libs.plugins.sqldelight)
   alias(libs.plugins.buildConfig)
-  kotlin("plugin.serialization") version "2.1.0" //TODO add to toml
+  kotlin("plugin.serialization") version libs.versions.kotlin
 }
 
 buildConfig {
@@ -17,14 +17,13 @@ buildConfig {
 kotlin {
   sourceSets {
     commonMain.dependencies {
+      implementation(projects.foundation)
       implementation(projects.component.common)
-      implementation(projects.core.sqldelight)
+      implementation(projects.pager)
       implementation(libs.ktor.client.core)
       implementation(libs.sqldelight.coroutines)
-      implementation(libs.store)
-      implementation(libs.store.paging)
+      // TODO should be available by default, but it is not
       implementation(libs.kotlinx.coroutines.core)
-      implementation(libs.paging.common)
     }
   }
 }
@@ -32,7 +31,7 @@ kotlin {
 sqldelight {
   databases {
     create("Database") {
-      packageName.set("com.isao.spacecards.astrobinimages.data")
+      packageName.set("com.isao.spacecards.component.astrobinimages.data")
     }
   }
 }

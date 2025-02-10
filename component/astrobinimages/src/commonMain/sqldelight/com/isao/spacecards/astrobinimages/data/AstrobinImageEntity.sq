@@ -10,17 +10,17 @@ CREATE TABLE AstrobinImageEntity (
     license INTEGER AS Int NOT NULL,
     licenseName TEXT,
     likes INTEGER AS Int NOT NULL,
-    published TEXT AS Instant NOT NULL,
+    publishedAt TEXT AS Instant NOT NULL,
     title TEXT,
-    updated TEXT AS Instant NOT NULL,
-    uploaded TEXT AS Instant NOT NULL,
+    updatedAt TEXT AS Instant NOT NULL,
+    uploadedAt TEXT AS Instant NOT NULL,
     urlGallery TEXT,
     urlHd TEXT NOT NULL,
     urlHistogram TEXT,
     urlReal TEXT NOT NULL,
     urlRegular TEXT,
     urlThumb TEXT,
-    user TEXT,
+    user TEXT NOT NULL,
     views INTEGER AS Int NOT NULL,
     bookmarkedAt TEXT AS Instant,
     viewedAt TEXT AS Instant
@@ -29,45 +29,64 @@ CREATE TABLE AstrobinImageEntity (
 insertEntity:
 INSERT INTO AstrobinImageEntity VALUES ?;
 
-insert:
-INSERT INTO AstrobinImageEntity (
-    id, bookmarks, comments, dataSource, description,
-    license, licenseName, likes, published, title, updated, uploaded,
-    urlGallery, urlHd, urlHistogram, urlReal, urlRegular, urlThumb,
-    user, views, bookmarkedAt, viewedAt
-) VALUES (
-    ?, ?, ?, ?, ?, ?,
-    ?, ?, ?, ?, ?,
-    ?, ?, ?, ?, ?,
-    ?, ?,?,  ?,?, ?
-);
-
 selectById:
 SELECT * FROM AstrobinImageEntity WHERE id = ? LIMIT 1;
 
-select:
+selectByUploadedAt:
 SELECT * FROM AstrobinImageEntity
-WHERE (bookmarkedAt IS NOT NULL) = :isBookmarked
-AND (viewedAt IS NOT NULL) = :isViewed
-AND (:uploadedEarlierThan IS NULL OR uploaded < :uploadedEarlierThan)
-ORDER BY uploaded DESC
-LIMIT :limit OFFSET :offset;
+WHERE (:isBookmarked IS NULL OR (bookmarkedAt IS NOT NULL) = :isBookmarked)
+AND (:isViewed IS NULL OR (viewedAt IS NOT NULL) = :isViewed)
+AND (:uploadedEarlierThan IS NULL OR uploadedAt < :uploadedEarlierThan)
+ORDER BY uploadedAt DESC
+LIMIT :limit
+OFFSET :offset;
+
+selectByBookmarkedAt:
+SELECT * FROM AstrobinImageEntity
+WHERE (:isBookmarked IS NULL OR (bookmarkedAt IS NOT NULL) = :isBookmarked)
+AND (:isViewed IS NULL OR (viewedAt IS NOT NULL) = :isViewed)
+ORDER BY
+    CASE WHEN :shouldSortAscending = 1 THEN bookmarkedAt END ASC,
+    CASE WHEN :shouldSortAscending = 0 THEN bookmarkedAt END DESC
+LIMIT :limit
+OFFSET :offset;
 
 upsertEntity:
 INSERT OR REPLACE INTO AstrobinImageEntity VALUES ?;
 
-upsert:
-INSERT OR REPLACE INTO AstrobinImageEntity (
+insertEntityOrIgnore:
+INSERT OR IGNORE INTO AstrobinImageEntity (
     id, bookmarks, comments, dataSource, description,
-    license, licenseName, likes,published, title, updated, uploaded,
+    license, licenseName, likes, publishedAt, title, updatedAt, uploadedAt,
     urlGallery, urlHd, urlHistogram, urlReal, urlRegular, urlThumb,
     user, views, bookmarkedAt, viewedAt
-) VALUES (
-    ?, ?, ?, ?, ?, ?,
-    ?, ?, ?, ?, ?,
-    ?, ?, ?, ?, ?,
-    ?, ?,?, ?, ?, ?
-);
+) VALUES ?;
+
+selectLastInsertRowId:
+SELECT last_insert_rowid();
+
+update:
+UPDATE AstrobinImageEntity SET
+    bookmarks = ?,
+    comments = ?,
+    dataSource = ?,
+    description = ?,
+    license = ?,
+    licenseName = ?,
+    likes = ?,
+    publishedAt = ?,
+    title = ?,
+    updatedAt = ?,
+    uploadedAt = ?,
+    urlGallery = ?,
+    urlHd = ?,
+    urlHistogram = ?,
+    urlReal = ?,
+    urlRegular = ?,
+    urlThumb = ?,
+    user = ?,
+    views = ?
+WHERE id = ?;
 
 setBookmarkedAt:
 UPDATE AstrobinImageEntity SET bookmarkedAt = ? WHERE id = ?;
@@ -75,11 +94,8 @@ UPDATE AstrobinImageEntity SET bookmarkedAt = ? WHERE id = ?;
 setViewedAt:
 UPDATE AstrobinImageEntity SET viewedAt = ? WHERE id = ?;
 
-resetViewedAt:
+resetViewedAtForAll:
 UPDATE AstrobinImageEntity SET viewedAt = NULL;
-
-delete:
-DELETE FROM AstrobinImageEntity WHERE id = ?;
 
 deleteAll:
 DELETE FROM AstrobinImageEntity WHERE (bookmarkedAt IS NOT NULL) = :isBookmarked;

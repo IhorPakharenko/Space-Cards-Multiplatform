@@ -1,12 +1,12 @@
 package com.isao.spacecards.liked
 
-import androidx.compose.runtime.Immutable
-import com.isao.spacecards.liked.model.LikedImageDisplayable
+import com.isao.spacecards.component.astrobinimages.domain.AstrobinImage
 
-@Immutable
 data class LikedUiState(
-  val items: List<LikedImageDisplayable> = emptyList(),
-  val shouldSortAscending: Boolean = false,
+  val items: List<PagedItem> = emptyList(),
+  val currentPage: Int = 0,
   val isLoading: Boolean = false,
-  val isError: Boolean = false,
+  val shouldSortAscending: Boolean = false,
 )
+
+data class PagedItem(val page: Int, val astrobinImage: AstrobinImage)

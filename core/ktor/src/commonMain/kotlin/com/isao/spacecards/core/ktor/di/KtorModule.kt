@@ -2,6 +2,7 @@ package com.isao.spacecards.core.ktor.di
 
 import io.ktor.client.HttpClient
 import io.ktor.client.plugins.DefaultRequest
+import io.ktor.client.plugins.HttpTimeout
 import io.ktor.client.plugins.cache.HttpCache
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.plugins.logging.Logger
@@ -30,7 +31,10 @@ val ktorModule = module {
       install(DefaultRequest) {
         header(HttpHeaders.ContentType, ContentType.Application.Json)
       }
-      //TODO make sure not to log api keys on CI/CD
+      install(HttpTimeout) {
+        requestTimeoutMillis = 10_000
+      }
+      // Make sure not to log api keys on CI/CD!!
       install(Logging) {
         logger = object : Logger {
           override fun log(message: String) {
@@ -39,6 +43,6 @@ val ktorModule = module {
           }
         }
       }
-    }.config { }
+    }
   }
 }
