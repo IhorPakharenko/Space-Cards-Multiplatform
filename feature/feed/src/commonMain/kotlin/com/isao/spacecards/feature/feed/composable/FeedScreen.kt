@@ -336,7 +336,12 @@ private fun TopCard(
   onRetry: () -> Unit,
   modifier: Modifier = Modifier,
 ) {
-  val movableLoadingCard = remember(modifier) { movableContentOf { LoadingCard(modifier) } }
+  val movableLoadingCard = remember {
+    movableContentOf { modifier: Modifier ->
+      LoadingCard(modifier)
+    }
+  }
+
   when {
     //TODO we display item from local urgently, so when a new item is loaded
     // from remote later, the image may flicker. Display a tiny loading indicator somewhere?
@@ -381,7 +386,7 @@ private fun TopCard(
         }
 
         is AsyncImagePainter.State.Loading, AsyncImagePainter.State.Empty -> {
-          movableLoadingCard()
+          movableLoadingCard(modifier)
         }
       }
     }
@@ -409,7 +414,7 @@ private fun TopCard(
       }
     }
 
-    else -> movableLoadingCard()
+    else -> movableLoadingCard(modifier)
   }
 }
 
@@ -427,7 +432,6 @@ private fun DatePicker(
   val datePickerState = rememberDatePickerState(
     initialSelectedDateMillis =
       (startFromDateTime?.toInstant(TimeZone.UTC) ?: nowInstant).toEpochMilliseconds(),
-    initialDisplayedMonthMillis = null,
     yearRange = 2000..nowDateTime.year,
     selectableDates = object : SelectableDates {
       override fun isSelectableDate(utcTimeMillis: Long): Boolean =
