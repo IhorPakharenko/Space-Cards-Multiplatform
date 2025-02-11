@@ -3,13 +3,13 @@ package com.isao.spacecards.feature.feed
 import com.isao.spacecards.component.astrobinimages.domain.AstrobinImageRepository
 import com.isao.spacecards.component.astrobinimages.domain.PageAstrobinImagesUseCase
 import com.isao.spacecards.feature.designsystem.MviViewModel
+import com.isao.spacecards.feature.designsystem.Reducer
 import isao.pager.Config
 import isao.pager.LoadOrder
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import kotlinx.datetime.Clock
 import kotlinx.datetime.DateTimeUnit
@@ -20,15 +20,13 @@ import kotlinx.datetime.toInstant
 import kotlinx.datetime.toLocalDateTime
 import kotlin.time.Duration.Companion.microseconds
 
-internal typealias FeedPartialState = (FeedUiState) -> FeedUiState
-
 // Declare ViewModel in Koin Module until this issue is fixed:
 // https://github.com/InsertKoinIO/koin-annotations/issues/185
 // @KoinViewModel
 class FeedViewModel(
   private val astrobinImageRepository: AstrobinImageRepository,
   private val pageAstrobinImagesUseCase: PageAstrobinImagesUseCase,
-) : MviViewModel<FeedUiState, FeedPartialState, Nothing, FeedIntent>(
+) : MviViewModel<FeedUiState, Nothing, FeedIntent>(
     FeedUiState(),
   ) {
   init {
@@ -37,10 +35,10 @@ class FeedViewModel(
     ) { getAstrobinItems(it) }
   }
 
-  override fun mapIntents(intent: FeedIntent): Flow<FeedPartialState> = when (intent) {
-    is FeedIntent.StartFromMillisUTC -> flowOf { state ->
+  override fun mapIntents(intent: FeedIntent): Flow<Reducer<FeedUiState>> = when (intent) {
+    is FeedIntent.StartFromMillisUTC -> flowOfUpdateState {
       // Query images shot earlier than the last moment of the day
-      state.copy(
+      copy(
         startFromInstant = Instant
           .fromEpochMilliseconds(
             intent.millis,
@@ -50,6 +48,7 @@ class FeedViewModel(
           .toInstant(TimeZone.currentSystemDefault()),
       )
     }
+
     is FeedIntent.Like -> {
       likeItem(intent.item)
     }
@@ -65,14 +64,9 @@ class FeedViewModel(
     }
   }
 
-  override fun reduceUiState(
-    previousState: FeedUiState,
-    partialState: FeedPartialState,
-  ): FeedUiState = partialState(previousState)
-
   private val retryFlow = MutableSharedFlow<Instant?>()
 
-  private fun getAstrobinItems(startFromInstant: Instant?): Flow<FeedPartialState> =
+  private fun getAstrobinItems(startFromInstant: Instant?): Flow<Reducer<FeedUiState>> =
     pageAstrobinImagesUseCase(
       config = Config(
         loadOrder = LoadOrder.BothSimultaneously,
@@ -87,8 +81,8 @@ class FeedViewModel(
             ?.page
         }.distinctUntilChanged(),
     ).map { pages ->
-      { state ->
-        state.copy(
+      updateState {
+        copy(
           items = pages
             .flatMap { page ->
               if (page.lastValidItems.isEmpty()) {
@@ -115,11 +109,11 @@ class FeedViewModel(
       }
     }
 
-  private fun likeItem(item: PagedItem): Flow<FeedPartialState> = flow {
+  private fun likeItem(item: PagedItem): Flow<Reducer<FeedUiState>> = flow {
     astrobinImageRepository.setBookmarkedAndViewed(item.lastValidData!!.id, at = Clock.System.now())
   }
 
-  private fun dislikeItem(item: PagedItem): Flow<FeedPartialState> = flow {
+  private fun dislikeItem(item: PagedItem): Flow<Reducer<FeedUiState>> = flow {
     astrobinImageRepository.setViewed(item.lastValidData!!.id, at = Clock.System.now())
   }
 }
