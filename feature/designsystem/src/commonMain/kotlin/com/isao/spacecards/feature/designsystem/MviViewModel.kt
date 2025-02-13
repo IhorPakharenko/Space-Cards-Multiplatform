@@ -20,7 +20,7 @@ import kotlinx.coroutines.flow.merge
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.receiveAsFlow
-import kotlinx.coroutines.flow.scan
+import kotlinx.coroutines.flow.shareIn
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -52,7 +52,7 @@ abstract class MviViewModel<UI_STATE, EVENT, INTENT>(initialState: UI_STATE) : V
   val uiState = merge(
     userIntents(),
     continuousFlows().flatMapConcat { it.merge() },
-  ).scan(initialState) { state, reducer -> reducer(state) }
+  ).map { reducer -> reducer(uiStateSnapshot.value) }
     .onEach { privateUiStateSnapshot.value = it }
     // The last line of defense against unhandled exceptions (except Thread.UncaughtExceptionHandler).
     // Most should be allowed to crash the app as we don't know how to recover.
@@ -109,9 +109,8 @@ abstract class MviViewModel<UI_STATE, EVENT, INTENT>(initialState: UI_STATE) : V
       uiStateSnapshot
         .map(dependingOnState)
         .distinctUntilChanged()
-        .flatMapLatest { dependency ->
-          getChangesFlow(dependency)
-        },
+        .shareIn(viewModelScope, SharingStarted.Lazily)
+        .flatMapLatest { getChangesFlow(it) },
     )
   }
 
