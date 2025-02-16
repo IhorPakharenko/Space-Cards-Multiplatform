@@ -2,6 +2,7 @@ package com.isao.spacecards.feature.feed.composable
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.State
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.platform.LocalContext
 import coil3.compose.AsyncImagePainter
@@ -21,15 +22,15 @@ import kotlin.time.Duration.Companion.seconds
  */
 @OptIn(FlowPreview::class)
 @Composable
-actual fun DisableSplashWhenFinished(painterState: AsyncImagePainter.State) {
+actual fun DisableSplashWhenFinished(painterState: State<AsyncImagePainter.State>) {
   val splashScreenHost = LocalContext.current.findActivity() as? SplashScreenHost
   if (splashScreenHost?.shouldKeepSplashScreen != true) return
   LaunchedEffect(Unit) {
-    snapshotFlow { painterState }
+    snapshotFlow { painterState.value }
       .map {
         it is AsyncImagePainter.State.Success ||
           it is AsyncImagePainter.State.Error
-      }.timeout(1.seconds)
+      }.timeout(2.seconds)
       .catch { emit(true) }
       .filter { it }
       .collect {

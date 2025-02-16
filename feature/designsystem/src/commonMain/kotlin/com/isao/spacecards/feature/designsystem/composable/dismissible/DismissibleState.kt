@@ -96,7 +96,10 @@ class DismissibleState(
    * Not coerced by allowed directions.
    */
   val combinedDismissProgress by derivedStateOf {
-    hypot(horizontalDismissProgress.absoluteValue, verticalDismissProgress.absoluteValue)
+    hypot(
+      horizontalDismissProgress.absoluteValue,
+      verticalDismissProgress.absoluteValue,
+    ).coerceIn(0f, 1f)
   }
 
   val rotationZ by derivedStateOf {

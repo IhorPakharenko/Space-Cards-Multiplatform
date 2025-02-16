@@ -2,24 +2,25 @@ package com.isao.spacecards.feature.feed.composable
 
 import androidx.compose.animation.core.Animatable
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CalendarMonth
 import androidx.compose.material.icons.filled.OfflinePin
 import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Button
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDialog
+import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SelectableDates
 import androidx.compose.material3.Text
@@ -31,7 +32,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
-import androidx.compose.runtime.movableContentOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -47,9 +47,10 @@ import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.zIndex
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.window.core.layout.WindowWidthSizeClass.Companion.COMPACT
-import coil3.compose.AsyncImagePainter
+import coil3.compose.AsyncImagePainter.State
 import coil3.compose.rememberAsyncImagePainter
 import com.isao.spacecards.feature.common.extension.appendStringResourceWithStyles
 import com.isao.spacecards.feature.common.extension.delayedWhen
@@ -64,15 +65,13 @@ import com.isao.spacecards.feature.feed.FeedViewModel
 import com.isao.spacecards.feature.feed.PagedItem
 import com.isao.spacecards.foundation.ApiFailure
 import com.isao.spacecards.resources.Res
-import com.isao.spacecards.resources.error_connection
-import com.isao.spacecards.resources.error_image
-import com.isao.spacecards.resources.error_server_astrobin
 import com.isao.spacecards.resources.ok
 import com.isao.spacecards.resources.retry
 import com.isao.spacecards.resources.showing_outdated_content
 import com.isao.spacecards.resources.space_on_date
 import com.isao.spacecards.resources.youre_offline
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.filter
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
 import kotlinx.datetime.LocalDate
@@ -92,7 +91,6 @@ fun FeedRoute(viewModel: FeedViewModel = koinViewModel()) {
   FeedScreen(uiState = uiState, onIntent = viewModel::acceptIntent)
 }
 
-//TODO preload images
 @Composable
 private fun FeedScreen(
   uiState: FeedUiState,
@@ -108,10 +106,7 @@ private fun FeedScreen(
   ) {
     var isOffline by rememberSaveable { mutableStateOf(false) }
     LaunchedEffect(uiState.items) {
-      // Don't decide if we're offline if no actual data has been loaded yet
-      if (uiState.items.any { it.isLoading } || uiState.items.all { it.lastValidData == null }) {
-        return@LaunchedEffect
-      }
+      if (uiState.items.any { it.isLoading }) return@LaunchedEffect
       isOffline = uiState.items.any { it.remoteFailure == ApiFailure.Connection }
     }
 
@@ -123,6 +118,8 @@ private fun FeedScreen(
         .getOrNull(0)
         ?.lastValidData
         ?.uploadedAt
+        .delayedWhen { _, new -> new == null }
+        .value
         ?: uiState.startFromInstant
         ?: Clock.System.now(),
       isOffline = isOffline,
@@ -150,11 +147,10 @@ private fun FeedScreen(
       val backgroundItem = uiState.items.getOrNull(1)
 
       var topPainterState by remember(topItem?.lastValidData?.id) {
-        mutableStateOf<AsyncImagePainter.State>(AsyncImagePainter.State.Empty)
+        mutableStateOf<State>(State.Empty)
       }
-      DisableSplashWhenFinished(topPainterState)
-      val isLikeAllowed = topPainterState is AsyncImagePainter.State.Success
-      val isDislikeAllowed = topPainterState != AsyncImagePainter.State.Empty
+      val isLikeAllowed = topPainterState is State.Success
+      val isDislikeAllowed = topPainterState != State.Empty
 
       val dismissibleState = key(topItem?.lastValidData?.id) {
         rememberDismissibleState(
@@ -172,6 +168,11 @@ private fun FeedScreen(
 
       val cardPadding = PaddingValues(horizontal = 16.dp, vertical = 32.dp)
 
+      val urlsToPreload = remember(uiState.items) {
+        uiState.items.drop(2).mapNotNull { it.lastValidData?.urlHd }
+      }
+      PreloadImages(urlsToPreload)
+
       BackgroundCard(
         item = backgroundItem,
         dismissibleState = dismissibleState,
@@ -182,6 +183,7 @@ private fun FeedScreen(
 
       TopCard(
         item = topItem,
+        startFromInstant = uiState.startFromInstant,
         onPainterState = { topPainterState = it },
         onRetry = { onIntent(FeedIntent.Retry) },
         modifier = Modifier
@@ -298,123 +300,141 @@ private fun BackgroundCard(
       backgroundCardScale.animateTo(targetScale)
     }
   }
-  val painter = key(item) {
-    rememberAsyncImagePainter(item?.lastValidData?.urlHd)
-  }
-  val cardModifier = modifier
-    .graphicsLayer {
+
+  val painter = rememberAsyncImagePainter(item?.lastValidData?.urlHd)
+  val painterState by painter.state.collectAsState()
+
+  ElevatedCard(
+    modifier.graphicsLayer {
       scaleX = backgroundCardScale.value
       scaleY = backgroundCardScale.value
-    }
-  val painterState by painter.state.collectAsState()
-  when {
-    painterState is AsyncImagePainter.State.Success && item?.lastValidData != null -> {
-      FeedCard(
+    },
+  ) {
+    when {
+      item == null || (item.lastValidData == null && !item.isLoading) ->
+        LoadingCardContent(Modifier.fillMaxSize())
+
+      painterState is State.Success && item.lastValidData != null -> FeedCardContent(
         item = item.lastValidData,
         painter = painter,
-        modifier = cardModifier,
+        modifier = Modifier.fillMaxSize(),
       )
-    }
 
-    painterState is AsyncImagePainter.State.Error -> {
-      ErrorCard(modifier = cardModifier) {
-        // No content for background image on error
+      painterState is State.Error -> CoilErrorCardContent(
+        onRetry = { },
+        modifier = Modifier.fillMaxSize(),
+      )
+
+      item.remoteFailure != null -> ApiFailureCardContent(
+        failure = item.remoteFailure,
+        onRetry = { },
+        modifier = Modifier.fillMaxSize(),
+      )
+
+      else -> {
+        LoadingCardContent(Modifier.fillMaxSize())
       }
-    }
-
-    else -> {
-      LoadingCard(cardModifier)
     }
   }
 }
 
 @Composable
-@Suppress("ktlint:compose:modifier-reused-check") // False positive
 private fun TopCard(
   item: PagedItem?,
-  onPainterState: (AsyncImagePainter.State) -> Unit,
+  startFromInstant: Instant?,
+  onPainterState: (State) -> Unit,
   onRetry: () -> Unit,
   modifier: Modifier = Modifier,
 ) {
-  val movableLoadingCard = remember {
-    movableContentOf { modifier: Modifier ->
-      LoadingCard(modifier)
+  var lastContent by remember { mutableStateOf<(@Composable () -> Unit)?>(null) }
+
+  val displayedItem = item?.takeIf {
+    val todayDate = Clock.System
+      .now()
+      .toLocalDateTime(TimeZone.currentSystemDefault())
+      .date
+    val startDate = startFromInstant?.toLocalDateTime(TimeZone.currentSystemDefault())?.date
+    val uploadDate = item.lastValidData
+      ?.uploadedAt
+      ?.toLocalDateTime(TimeZone.currentSystemDefault())
+      ?.date
+    when {
+      startDate == null -> !item.isLoading
+      uploadDate == null -> !item.isLoading
+      startDate == todayDate -> !item.isLoading
+      uploadDate != startDate -> !item.isLoading
+      else -> true
     }
   }
+  val displayedPainter = if (displayedItem?.lastValidData != null) {
+    rememberAsyncImagePainter(
+      displayedItem.lastValidData.urlHd,
+      onSuccess = {
+        onPainterState(it)
+      },
+      onError = {
+        onPainterState(it)
+      },
+      onLoading = {
+        onPainterState(it)
+      },
+    ).also {
+      DisableSplashWhenFinished(it.state.collectAsState())
+    }
+  } else {
+    null
+  }
+  val finalPainterState = displayedPainter
+    ?.state
+    ?.filter { it !is State.Loading && it !is State.Empty }
+    ?.collectAsState(null)
+    ?.value
 
-  when {
-    //TODO we display item from local urgently, so when a new item is loaded
-    // from remote later, the image may flicker. Display a tiny loading indicator somewhere?
-    item?.lastValidData != null -> {
-      val painter = rememberAsyncImagePainter(
-        item.lastValidData.urlHd,
-        transform = {
-          it.also { onPainterState(it) }
-        },
-      )
-      val delayedPainterState by painter.state.collectAsState().value.delayedWhen { _, new ->
-        new is AsyncImagePainter.State.Loading
-      }
-      when (delayedPainterState) {
-        is AsyncImagePainter.State.Success -> {
-          FeedCard(
-            item = item.lastValidData,
-            painter = painter,
-            modifier = modifier,
-          )
-        }
+  val shouldShowNoDataPlaceholder = item == null || (item.lastValidData == null && !item.isLoading)
+  val shouldShowLoading =
+    displayedItem == null || displayedItem.isLoading || finalPainterState == null
 
-        is AsyncImagePainter.State.Error -> {
-          ErrorCard(modifier = modifier) {
-            Column(
-              verticalArrangement = Arrangement.Center,
-              horizontalAlignment = Alignment.CenterHorizontally,
-              modifier = Modifier.fillMaxSize().padding(16.dp),
-            ) {
-              Text(
-                // I can't be bothered to research which throwables
-                // in Coil Multiplatform correspond to particular errors
-                text = stringResource(Res.string.error_image),
-                textAlign = TextAlign.Center,
-                modifier = Modifier.padding(bottom = 16.dp),
-              )
-              Button(onClick = { painter.restart() }) {
-                Text(stringResource(Res.string.retry))
-              }
-            }
-          }
-        }
-
-        is AsyncImagePainter.State.Loading, AsyncImagePainter.State.Empty -> {
-          movableLoadingCard(modifier)
-        }
-      }
+  ElevatedCard(modifier) {
+    if (shouldShowNoDataPlaceholder) {
+      LoadingCardContent(Modifier.fillMaxSize())
+      return@ElevatedCard
     }
 
-    item?.remoteFailure != null -> ErrorCard(modifier = modifier) {
-      Column(
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = Modifier.fillMaxSize().padding(16.dp),
-      ) {
-        Text(
-          text = stringResource(
-            when (item.remoteFailure) {
-              ApiFailure.Connection -> Res.string.error_connection
-              is ApiFailure.Serialization, is ApiFailure.Server ->
-                Res.string.error_server_astrobin
-            },
-          ),
-          textAlign = TextAlign.Center,
-          modifier = Modifier.padding(bottom = 16.dp),
+    if (shouldShowLoading) {
+      Box {
+        LinearProgressIndicator(
+          trackColor = Color.Unspecified,
+          modifier = Modifier.fillMaxWidth().zIndex(1f),
         )
-        Button(onClick = { onRetry() }) {
-          Text(stringResource(Res.string.retry))
-        }
+        lastContent?.let { it() } ?: LoadingCardContent(Modifier.fillMaxSize())
+        return@ElevatedCard
       }
     }
 
-    else -> movableLoadingCard(modifier)
+    lastContent = {
+      when {
+        displayedItem?.lastValidData != null && finalPainterState is State.Success ->
+          FeedCardContent(
+            item = displayedItem.lastValidData,
+            painter = displayedPainter,
+            modifier = Modifier.fillMaxSize(),
+          )
+
+        finalPainterState is State.Error -> CoilErrorCardContent(
+          onRetry = { displayedPainter.restart() },
+          modifier = Modifier.fillMaxSize(),
+        )
+
+        displayedItem?.remoteFailure != null -> ApiFailureCardContent(
+          failure = displayedItem.remoteFailure,
+          onRetry = { onRetry() },
+          modifier = Modifier.fillMaxSize(),
+        )
+
+        else -> LoadingCardContent(Modifier.fillMaxSize())
+      }
+    }
+    lastContent?.invoke()
   }
 }
 
@@ -485,7 +505,7 @@ fun OfflineModeDialog(
 }
 
 @Composable
-expect fun DisableSplashWhenFinished(painterState: AsyncImagePainter.State)
+expect fun DisableSplashWhenFinished(painterState: androidx.compose.runtime.State<State>)
 
 //TODO Previews for Android Studio are in early access:
 // https://youtrack.jetbrains.com/issue/KTIJ-32720/Support-common-org.jetbrains.compose.ui.tooling.preview.Preview-in-IDEA-and-Android-Studio

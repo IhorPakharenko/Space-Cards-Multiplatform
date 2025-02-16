@@ -9,9 +9,16 @@ import kotlinx.coroutines.delay
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.milliseconds
 
+/**
+ * When condition is true, the state will be delayed for [delay] before being emitted.
+ * When condition is false, the state will be emitted immediately.
+ *
+ * This is useful for displaying a non-loading state when the actual state is loading,
+ * but it might load so fast the UI might flicker if the loading state is displayed right away.
+ */
 @Composable
 fun <T> T.delayedWhen(
-  delayMillis: Duration = 300.milliseconds,
+  delay: Duration = 300.milliseconds,
   condition: (T, T) -> Boolean,
 ): State<T> {
   val currentState = this
@@ -20,7 +27,7 @@ fun <T> T.delayedWhen(
 
   LaunchedEffect(currentState, condition) {
     if (condition(lastUndelayedState.value, currentState)) {
-      delay(delayMillis)
+      delay(delay)
     } else {
       lastUndelayedState.value = currentState
     }

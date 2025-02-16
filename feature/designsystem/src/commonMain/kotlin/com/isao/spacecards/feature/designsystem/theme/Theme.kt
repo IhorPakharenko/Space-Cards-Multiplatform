@@ -30,9 +30,6 @@ val LightColorScheme = lightColorScheme(
 
 @Composable
 fun SpaceCardsTheme(
-//    darkTheme: Boolean = isSystemInDarkTheme(),
-//    // Dynamic color is available on Android 12+
-//    dynamicColor: Boolean = true,
   colorScheme: ColorScheme = LightColorScheme,
   typography: Typography = Typography,
   content: @Composable () -> Unit,
