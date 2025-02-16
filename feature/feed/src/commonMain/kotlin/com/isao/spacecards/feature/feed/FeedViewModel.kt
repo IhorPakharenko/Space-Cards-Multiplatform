@@ -23,6 +23,7 @@ import kotlin.time.Duration.Companion.microseconds
 // Declare ViewModel in Koin Module until this issue is fixed:
 // https://github.com/InsertKoinIO/koin-annotations/issues/185
 // @KoinViewModel
+//TODO handle process death
 class FeedViewModel(
   private val astrobinImageRepository: AstrobinImageRepository,
   private val pageAstrobinImagesUseCase: PageAstrobinImagesUseCase,

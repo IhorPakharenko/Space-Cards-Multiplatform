@@ -1,7 +1,6 @@
 package com.isao.spacecards.liked.composable
 
 import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -129,9 +128,6 @@ internal fun LikedScreen(
   }
 }
 
-// Restarting the image request after regaining network connectivity is an open issue
-// in coil since 2019: https://github.com/coil-kt/coil/issues/132
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun ItemsAvailableContent(
   uiState: LikedUiState,

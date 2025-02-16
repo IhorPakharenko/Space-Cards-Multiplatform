@@ -33,6 +33,19 @@ kotlin {
   }
 }
 
+android {
+  defaultConfig {
+    versionCode = 1
+    versionName = "1.0.0"
+  }
+  buildTypes {
+    getByName("release") {
+      //TODO a real app would have a real signing config
+      signingConfig = signingConfigs.getByName("debug")
+    }
+  }
+}
+
 compose.desktop {
   application {
     mainClass = "com.isao.spacecards.MainKt"

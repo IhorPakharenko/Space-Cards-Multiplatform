@@ -17,11 +17,12 @@ internal fun Project.configureKotlinAndroid() {
     namespace =
       if (moduleName.isNotEmpty()) "com.isao.spacecards.$moduleName" else "com.isao.spacecards"
 
-    compileSdkVersion(libs.findVersion("android.compileSdk").get().requiredVersion.toInt())
+    compileSdk = libs.findVersion("android.compileSdk").get().requiredVersion.toInt()
     defaultConfig {
       minSdk = libs.findVersion("android.minSdk").get().requiredVersion.toInt()
       testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
+
     compileOptions {
       sourceCompatibility = JavaVersion.VERSION_17
       targetCompatibility = JavaVersion.VERSION_17
