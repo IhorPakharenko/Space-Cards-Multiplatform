@@ -104,6 +104,7 @@ private fun FeedScreen(
       .consumeWindowInsets(padding)
       .fillMaxSize(),
   ) {
+    // TODO retry when back online automatically
     var isOffline by rememberSaveable { mutableStateOf(false) }
     LaunchedEffect(uiState.items) {
       if (uiState.items.any { it.isLoading }) return@LaunchedEffect
@@ -118,6 +119,7 @@ private fun FeedScreen(
         .getOrNull(0)
         ?.lastValidData
         ?.uploadedAt
+        ?.takeUnless { uiState.items.any { it.isLoading } }
         .delayedWhen { _, new -> new == null }
         .value
         ?: uiState.startFromInstant
@@ -146,12 +148,15 @@ private fun FeedScreen(
       val topItem = uiState.items.getOrNull(0)
       val backgroundItem = uiState.items.getOrNull(1)
 
-      var topPainterState by remember(topItem?.lastValidData?.id) {
+      val topPainterState = remember(topItem?.lastValidData?.id) {
         mutableStateOf<State>(State.Empty)
       }
-      val isLikeAllowed = topPainterState is State.Success
-      val isDislikeAllowed = topPainterState != State.Empty
+      DisableSplashWhenFinished(topPainterState)
+      val isLikeAllowed = topPainterState.value is State.Success
+      val isDislikeAllowed = topPainterState.value != State.Empty
 
+      //TODO Noticeable lag when used for the first time after installing the app.
+      // A baseline profile should fix it.
       val dismissibleState = key(topItem?.lastValidData?.id) {
         rememberDismissibleState(
           onDismiss = { direction ->
@@ -166,12 +171,12 @@ private fun FeedScreen(
         )
       }
 
-      val cardPadding = PaddingValues(horizontal = 16.dp, vertical = 32.dp)
-
       val urlsToPreload = remember(uiState.items) {
         uiState.items.drop(2).mapNotNull { it.lastValidData?.urlHd }
       }
       PreloadImages(urlsToPreload)
+
+      val cardPadding = PaddingValues(horizontal = 16.dp, vertical = 32.dp)
 
       BackgroundCard(
         item = backgroundItem,
@@ -184,7 +189,7 @@ private fun FeedScreen(
       TopCard(
         item = topItem,
         startFromInstant = uiState.startFromInstant,
-        onPainterState = { topPainterState = it },
+        onPainterState = { topPainterState.value = it },
         onRetry = { onIntent(FeedIntent.Retry) },
         modifier = Modifier
           .fillMaxSize()
@@ -331,9 +336,7 @@ private fun BackgroundCard(
         modifier = Modifier.fillMaxSize(),
       )
 
-      else -> {
-        LoadingCardContent(Modifier.fillMaxSize())
-      }
+      else -> LoadingCardContent(Modifier.fillMaxSize())
     }
   }
 }
@@ -378,9 +381,7 @@ private fun TopCard(
       onLoading = {
         onPainterState(it)
       },
-    ).also {
-      DisableSplashWhenFinished(it.state.collectAsState())
-    }
+    )
   } else {
     null
   }
@@ -390,16 +391,10 @@ private fun TopCard(
     ?.collectAsState(null)
     ?.value
 
-  val shouldShowNoDataPlaceholder = item == null || (item.lastValidData == null && !item.isLoading)
   val shouldShowLoading =
     displayedItem == null || displayedItem.isLoading || finalPainterState == null
 
   ElevatedCard(modifier) {
-    if (shouldShowNoDataPlaceholder) {
-      LoadingCardContent(Modifier.fillMaxSize())
-      return@ElevatedCard
-    }
-
     if (shouldShowLoading) {
       Box {
         LinearProgressIndicator(
