@@ -391,10 +391,15 @@ private fun TopCard(
     ?.collectAsState(null)
     ?.value
 
+  val shouldShowNoDataPlaceholder = item == null || (item.lastValidData == null && !item.isLoading)
   val shouldShowLoading =
     displayedItem == null || displayedItem.isLoading || finalPainterState == null
 
   ElevatedCard(modifier) {
+    if (shouldShowNoDataPlaceholder) {
+      LoadingCardContent(Modifier.fillMaxSize())
+      return@ElevatedCard
+    }
     if (shouldShowLoading) {
       Box {
         LinearProgressIndicator(
