@@ -17,8 +17,6 @@ import isao.pager.RemoteSuccess
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.emitAll
-import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
@@ -54,30 +52,27 @@ internal class DefaultAstrobinImageRepository(
     }
   }
 
+  override suspend fun resetViewedForAll() = withContext(Dispatchers.IO) {
+    queries.resetViewedAtForAll()
+  }
+
+  //TODO flow update is triggered for each page even if the
+  // result does not change. Can we do something about it?
   override fun observePage(
     key: Instant?,
     config: Config<Instant?>,
-  ): Flow<List<AstrobinImage>> = flow {
-    if (key == config.initialRequestKey) {
-      queries.resetViewedAtForAll()
-    }
-    //TODO flow update is triggered for each page even if the
-    // result does not change. Can we do something about it?
-    emitAll(
-      queries
-        .selectByUploadedAt(
-          isBookmarked = null,
-          isViewed = false,
-          uploadedEarlierThan = key,
-          limit = config.pageSize.toLong(),
-          offset = 0,
-        ).asFlow()
-        .mapToList(Dispatchers.IO)
-        .map { page ->
-          page.map { it.toDomainModel() }
-        },
-    )
-  }.flowOn(Dispatchers.IO)
+  ): Flow<List<AstrobinImage>> = queries
+    .selectByUploadedAt(
+      isBookmarked = null,
+      isViewed = false,
+      uploadedEarlierThan = key,
+      limit = config.pageSize.toLong(),
+      offset = 0,
+    ).asFlow()
+    .mapToList(Dispatchers.IO)
+    .map { page ->
+      page.map { it.toDomainModel() }
+    }.flowOn(Dispatchers.IO)
 
   override fun observeBookmarkedPage(
     key: Int,

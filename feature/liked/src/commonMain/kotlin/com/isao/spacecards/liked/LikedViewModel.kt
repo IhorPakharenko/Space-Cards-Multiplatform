@@ -9,11 +9,9 @@ import com.isao.spacecards.feature.designsystem.Reducer
 import com.isao.spacecards.liked.LikedViewModel.Keys.SHOULD_SORT_ASCENDING
 import isao.pager.Config
 import isao.pager.LoadOrder
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.emitAll
-import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
@@ -21,7 +19,6 @@ import kotlinx.coroutines.launch
 // Declare ViewModel in Koin Module until this issue is fixed:
 // https://github.com/InsertKoinIO/koin-annotations/issues/185
 // @KoinViewModel
-@OptIn(ExperimentalCoroutinesApi::class)
 class LikedViewModel(
   private val observeImagesUseCase: PageBookmarkedAstrobinImagesUseCase,
   private val astrobinImageRepository: AstrobinImageRepository,
@@ -33,13 +30,8 @@ class LikedViewModel(
   ) {
   init {
     observeContinuousChanges(
-      uiStateSnapshot
-        .map { it.shouldSortAscending }
-        .distinctUntilChanged()
-        .flatMapLatest { sortAscending ->
-          getImages(sortAscending)
-        },
-    )
+      dependingOnState = { it.shouldSortAscending },
+    ) { getImages(it) }
 
     viewModelScope.launch {
       uiStateSnapshot.collect { state ->
