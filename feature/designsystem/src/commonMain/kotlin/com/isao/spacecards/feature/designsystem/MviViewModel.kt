@@ -20,7 +20,6 @@ import kotlinx.coroutines.flow.merge
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.receiveAsFlow
-import kotlinx.coroutines.flow.shareIn
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -109,7 +108,6 @@ abstract class MviViewModel<UI_STATE, EVENT, INTENT>(initialState: UI_STATE) : V
       uiStateSnapshot
         .map(dependingOnState)
         .distinctUntilChanged()
-        .shareIn(viewModelScope, SharingStarted.Lazily)
         .flatMapLatest { getChangesFlow(it) },
     )
   }

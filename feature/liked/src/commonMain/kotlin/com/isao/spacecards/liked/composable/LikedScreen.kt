@@ -71,6 +71,7 @@ import kotlinx.datetime.Clock
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 
+//TODO configure Coil's DiskCache to use up more space
 @Composable
 fun LikedRoute(viewModel: LikedViewModel = koinViewModel()) {
   HandleEvents(viewModel.event)

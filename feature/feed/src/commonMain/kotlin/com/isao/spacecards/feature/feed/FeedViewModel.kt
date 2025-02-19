@@ -1,5 +1,6 @@
 package com.isao.spacecards.feature.feed
 
+import androidx.lifecycle.viewModelScope
 import com.isao.spacecards.component.astrobinimages.domain.AstrobinImageRepository
 import com.isao.spacecards.component.astrobinimages.domain.PageAstrobinImagesUseCase
 import com.isao.spacecards.feature.designsystem.MviViewModel
@@ -9,8 +10,10 @@ import isao.pager.LoadOrder
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
 import kotlinx.datetime.DateTimeUnit
 import kotlinx.datetime.Instant
@@ -31,9 +34,23 @@ class FeedViewModel(
     FeedUiState(),
   ) {
   init {
-    observeContinuousChanges(
-      dependingOnState = { it.startFromInstant },
-    ) { getAstrobinItems(it) }
+    // Display items from the beginning of the day when the app is first opened
+    // and when the selected date is changed
+    var lastStartFromInstant: Instant? = null
+    viewModelScope.launch {
+      astrobinImageRepository.resetViewedForAll()
+      observeContinuousChanges(
+        dependingOnState = { it.startFromInstant },
+      ) { startFromInstant ->
+        flow {
+          if (lastStartFromInstant != startFromInstant) {
+            astrobinImageRepository.resetViewedForAll()
+          }
+          lastStartFromInstant = startFromInstant
+          emitAll(getAstrobinItems(startFromInstant))
+        }
+      }
+    }
   }
 
   override fun mapIntents(intent: FeedIntent): Flow<Reducer<FeedUiState>> = when (intent) {

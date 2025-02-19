@@ -23,6 +23,8 @@ interface AstrobinImageRepository {
     at: Instant?,
   )
 
+  suspend fun resetViewedForAll()
+
   fun observePage(
     key: Instant?,
     config: Config<Instant?>,
