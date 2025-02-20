@@ -13,6 +13,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CalendarMonth
 import androidx.compose.material.icons.filled.OfflinePin
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDialog
@@ -395,7 +396,11 @@ private fun TopCard(
   val shouldShowLoading =
     displayedItem == null || displayedItem.isLoading || finalPainterState == null
 
-  ElevatedCard(modifier) {
+  ElevatedCard(
+    modifier,
+    // Removes barely visible jagged outline on the card when dragged
+    colors = CardDefaults.cardColors(containerColor = Color.Transparent),
+  ) {
     if (shouldShowNoDataPlaceholder) {
       LoadingCardContent(Modifier.fillMaxSize())
       return@ElevatedCard
