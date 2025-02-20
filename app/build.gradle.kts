@@ -54,6 +54,9 @@ compose.desktop {
       targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
       packageName = "com.isao.spacecards"
       packageVersion = "1.0.0"
+
+      modules("java.sql")
+      modules("java.net.http")
     }
   }
 }

@@ -5,8 +5,6 @@ import io.ktor.client.plugins.DefaultRequest
 import io.ktor.client.plugins.HttpTimeout
 import io.ktor.client.plugins.cache.HttpCache
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
-import io.ktor.client.plugins.logging.Logger
-import io.ktor.client.plugins.logging.Logging
 import io.ktor.client.request.header
 import io.ktor.http.ContentType
 import io.ktor.http.HttpHeaders
@@ -33,15 +31,6 @@ val ktorModule = module {
       }
       install(HttpTimeout) {
         requestTimeoutMillis = 10_000
-      }
-      // Make sure not to log api keys on CI/CD!!
-      install(Logging) {
-        logger = object : Logger {
-          override fun log(message: String) {
-            co.touchlab.kermit.Logger
-              .i(message)
-          }
-        }
       }
     }
   }
