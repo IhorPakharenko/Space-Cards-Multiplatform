@@ -1,16 +1,20 @@
 # <p align="center">Space Cards Multiplatform</p>
 
 Marvel at the sheer scale of the Universe with the convenience of your favorite doomscrolling app.
-Built with Compose Multiplatform, using Astrobin as a backend.
+Built with [Compose Multiplatform](https://www.jetbrains.com/compose-multiplatform/), powered by [Astrobin](https://www.astrobin.com/).
 
-![Image](https://i.imgur.com/0Z0Z0Z0.png)
+https://github.com/user-attachments/assets/63889489-d189-430d-bfae-b34525f708ca
+
+https://github.com/user-attachments/assets/04ae108b-3a93-402a-ab79-a30a283e8105
+
+<img src="readme/feed_desktop.png" alt="Feed" width="480"> <img src="readme/liked_desktop.png" alt="Liked" width="480"> 
 
 ## 🚀 Features
 
 - Fancy Tinder-like UI
 - Offline-first approach
 - Flexible and scalable implementation of Clean Architecture with minimal boilerplate
-- Custom paging solution (because Paging3 is **not ** great!)
+- Custom paging solution (because Paging3 is **not** great!)
 - Custom MVI-focused ViewModel (the default one is fine — I just wanted to try building my own!)
 - Full Android support, basic desktop support (usable but lacks desktop-specific interactions)
 
@@ -116,8 +120,7 @@ ASTROBIN_API_SECRET=[...]
 
 - [Astrobin](https://www.astrobin.com/) for serving as the backend for this app
 - [Denis Brandi](https://dnsbrnd.medium.com/) for awesome articles on Clean Architecture
-- [Quantum fluctuations](https://en.wikipedia.org/wiki/Quantum_fluctuation#/media/File:Quantum_Fluctuations.gif)
-  for kickstarting this whole Universe thing
+- [Quantum fluctuations](https://en.wikipedia.org/wiki/Quantum_fluctuation#/media/File:Quantum_Fluctuations.gif) for originating the large-scale structure of the Universe by introducing a non-uniformity in energy distribution during cosmic inflation
 
 ## 📝 License
 
